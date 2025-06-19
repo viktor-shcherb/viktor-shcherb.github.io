@@ -1,0 +1,14 @@
+title: "Viktor Shcherbakov"
+description: "Machine Learning Engineer"
+
+remote_theme: pages-themes/minimal
+plugins:
+  - jekyll-remote-theme
+  - jekyll-seo-tag
+  - jekyll-sitemap
+defaults:                # expose the custom header on every page
+  -
+    scope: { path: "" }
+    values:
+      header: header-custom
+

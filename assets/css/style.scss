@@ -1,0 +1,122 @@
+---
+---
+
+/* 1 — palette */
+:root{
+  --bg:          #ffffff;  /* light mode */
+  --surface:     #efefef;
+  --text:        #232730;
+  --accent:      #82a9ac;
+}
+
+[data-theme='dark']{
+  --bg:          #232730;
+  --surface:     #31353e;
+  --text:        #efefef;
+  --accent:      #82a9ac;  /* same accent works on both */
+}
+
+/* 2 — glue those vars onto Slate */
+@import "{{ site.theme }}";
+
+/* body & headings */
+body{background:var(--bg)!important;color:var(--text)!important;}
+h1,h2,h3,h4,h5,h6{color:var(--text)!important;}
+
+/* links & buttons */
+a,a:visited{color:var(--accent);}
+a:hover,a:focus{opacity:.75;}
+
+/* code blocks / pre tags */
+pre,code{background:var(--surface);border:none;}
+
+/* cards / footer strip */
+.site-footer, .site-header, .site-nav{background:var(--surface);}
+
+/* optional — subtle border colour */
+hr{border-color:rgba(var(--text),.2);}
+
+/* 3 — tiny accessibility helper */
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;}
+}
+
+
+/* --- NAV LAYOUT --------------------------------------------------- */
+.site-nav{
+  display:flex;
+  gap:0.75rem;              /* even spacing */
+  align-items:center;
+  padding:0;                /* kill gray background padding */
+  background:none;          /* kill gray background colour   */
+  border:none;
+  font-weight:600;
+}
+
+/* remove default underline + use accent colour */
+.site-nav a{
+  color:var(--accent);
+  text-decoration:none;
+  position:relative;
+}
+
+/* -- ACTIVE / CURRENT PAGE ---------------------------------------- */
+.site-nav a.active{
+  color:var(--text);                  /* darker text    */
+}
+
+.site-nav a.active::before{           /* subtle bottom bar */
+  content:"";
+  position:absolute;
+  left:0; right:0; bottom:-4px;
+  height:2px;
+  background:var(--accent);
+  border-radius:1px;
+}
+
+/* ---- footer ---------------------------------------------------- */
+.site-footer{
+  display:flex;
+  justify-content:center;
+  padding:2rem 0 3rem;   /* extra bottom room for mobile gestures */
+  background:none;       /* match page background */
+  border-top:1px solid rgba(var(--text),.2);
+}
+
+.theme-btn{
+  background:none;
+  border:none;
+  cursor:pointer;
+  font-size:2rem;        /* icon size */
+  color:var(--accent);
+  line-height:1;
+  padding:0.25rem 0.5rem;
+  border-radius:0.5rem;
+  transition:background 0.2s;
+}
+
+.theme-btn:hover,
+.theme-btn:focus{
+  background:rgba(var(--text),.1);
+  outline:none;
+}
+
+.go-blog{
+  margin:1rem 0 2rem;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  gap:0.25rem;
+}
+
+.go-blog a{
+  color:var(--accent);
+  text-decoration:none;
+}
+
+.go-blog a:hover{ text-decoration:underline; }
+.go-blog .material-symbols-outlined{ font-size:1.2em; }
+
+
+
+
