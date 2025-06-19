@@ -1,14 +1,33 @@
-title: "Viktor Shcherbakov"
-description: "Machine Learning Engineer"
+title:  Viktor Shcherbakov
+tagline: Machine Learning Engineer
+description: >-
+  This is a personal website where I write about my experience, thoughts and share 
+  potentially useful information.
+url: "https://viktor-shcherb.github.io/"
+logo: /logos-flavicon/flavicon.svg
+author: Viktor Shcherbakov
+github:
+  username: viktor-shcherb
+locale: en_US
 
 remote_theme: pages-themes/minimal
 plugins:
   - jekyll-remote-theme
   - jekyll-seo-tag
   - jekyll-sitemap
-defaults:                # expose the custom header on every page
+  - jekyll-feed
+defaults:
   -
     scope: { path: "" }
     values:
       header: header-custom
+
+feed:
+  path: feed.xml
+  title: "Viktor Shcherbakov — Blog"
+  description: "The theme of the blog is to be defined, but you are welcome to have a look around!"
+  lang: en-US
+  author_name: Viktor Shcherbakov
+  author_url: https://viktor-shcherb.github.io/about/
+  full_content: true
 
