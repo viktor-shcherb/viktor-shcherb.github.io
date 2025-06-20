@@ -18,6 +18,21 @@
 })();
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/anchor-js@5.0.0/anchor.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const article = document.querySelector(".post-content");
+  if (!article) return;          // safety for non-content pages
+
+  anchors.options = {
+    placement: "right",
+    icon: "",
+    visible: "hover"
+  };
+  anchors.add("h1,h2,h3,h4,h5,h6", article); // <- only headings inside Markdown
+});
+</script>
+
 <html lang="{{ site.lang | default: "en-US" }}">
   <head>
     {% seo %}
@@ -36,7 +51,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-{% seo %}
     <link rel="stylesheet" href="{{ "/assets/css/style.css?v=" | append: site.github.build_revision | relative_url }}">
     <!--[if lt IE 9]>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -87,7 +101,9 @@
       </header>
       <section>
 
-      {{ content }}
+      <article class="post-content">
+        {{ content }}
+      </article>
 
       </section>
       <footer class="site-footer">

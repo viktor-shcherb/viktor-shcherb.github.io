@@ -118,5 +118,36 @@ hr{border-color:rgba(var(--text),.2);}
 .go-blog .material-symbols-outlined{ font-size:1.2em; }
 
 
+a:hover,
+a:link,
+a:visited {
+  font-weight: normal;
+}
 
+strong,
+b{
+  color: var(--text);
+}
 
+table th {
+  color: var(--text);
+}
+
+.anchorjs-link::after {
+  font-family: "Material Symbols Outlined";
+  content: "link";           /* the Material glyph name */
+  font-size: 1em;
+  vertical-align: -0.15em;   /* lowers the icon a touch to align with text */
+  opacity: 0;                /* hidden until hover (matches visible:"hover") */
+  transition: opacity .15s ease;
+  margin-left: .25rem;
+}
+
+h1:hover .anchorjs-link::after,
+h2:hover .anchorjs-link::after,
+h3:hover .anchorjs-link::after,
+h4:hover .anchorjs-link::after,
+h5:hover .anchorjs-link::after,
+h6:hover .anchorjs-link::after {
+  opacity: .6;               /* fade in when the heading is hovered */
+}
