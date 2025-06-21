@@ -3,7 +3,8 @@ tagline: Machine Learning Engineer
 description: >-
   This is a personal website where I write about my experience, thoughts and share 
   potentially useful information.
-url: "https://viktor-shcherb.github.io/"
+url: "https://viktor-shcherb.github.io"
+baseurl: ""
 logo: /logos-flavicon/flavicon.svg
 author: Viktor Shcherbakov
 github:
