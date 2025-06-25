@@ -151,3 +151,12 @@ h5:hover .anchorjs-link::after,
 h6:hover .anchorjs-link::after {
   opacity: .6;               /* fade in when the heading is hovered */
 }
+
+.img-caption {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.75rem;
+  color: rgba(136, 136, 136, 0.7); // last value is the alpha channel
+  text-align: center;
+  font-style: italic;
+}
