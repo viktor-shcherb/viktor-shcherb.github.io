@@ -2,6 +2,9 @@
 layout: post
 title: "Path to working permits for Swiss graduates"
 author: "Viktor Shcherbakov"
+description: >
+  Guide for non-EU Swiss graduates: how to leverage Art. 21 FNIA, sail through the
+  job-search L-permit phase, beat quota rules and lock down a Swiss B work permit.
 tags:
   - Switzerland
   - Swiss work permit
