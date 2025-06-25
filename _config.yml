@@ -10,6 +10,7 @@ author: Viktor Shcherbakov
 github:
   username: viktor-shcherb
 locale: en_US
+future: true          # tells Jekyll to publish posts dated in the future
 
 remote_theme: pages-themes/minimal
 plugins:
