@@ -52,7 +52,10 @@ document.addEventListener("DOMContentLoaded", () => {
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     {% comment %}Inline above-the-fold CSS{% endcomment %}
-    <style>{% include_relative assets/css/critical.css %}</style>
+    <style>
+    {% include critical.css %}
+    </style>
+
     <link rel="preload"
           href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}"
           as="style"

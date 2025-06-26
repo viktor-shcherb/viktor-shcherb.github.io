@@ -1,4 +1,4 @@
-name: PR preview + Lighthouse
+name: PR preview
 on:
   pull_request:
     types: [opened, reopened, synchronize, closed]
@@ -17,14 +17,14 @@ jobs:
       - uses: actions/checkout@v4
 
       # ------------------------------------------------------------------
-      # 1 Build static site the same way GitHub Pages does
+      # 1 Build static site the same way GitHub Pages does
       # ------------------------------------------------------------------
       - name: Configure Pages
         uses: actions/configure-pages@v5          # sets up Ruby & Bundler cache
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1       # outputs to ./_site
       # ------------------------------------------------------------------
-      # 2 Deploy preview under pr-preview/pr-<num>/ on gh-pages
+      # 2 Deploy preview under pr-preview/pr-<num>/ on gh-pages
       # ------------------------------------------------------------------
       - name: Deploy PR preview
         id: preview
