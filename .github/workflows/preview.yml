@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Lighthouse audit + PR comment
-        uses: foo-software/lighthouse-check-action@v12
+        uses: foo-software/lighthouse-check-action@master
         with:
           urls: |
             ${{ needs.build-and-preview.outputs.preview_url }}
