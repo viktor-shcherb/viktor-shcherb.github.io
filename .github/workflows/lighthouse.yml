@@ -1,0 +1,24 @@
+# .github/workflows/lighthouse.yml
+name: Lighthouse CI
+
+on:
+  push:
+    branches: [master]   # or main
+  pull_request:
+
+jobs:
+  lhci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # One self-contained step: downloads Lighthouse CI,
+      # runs the audits, uploads the HTML reports as artifacts.
+      - name: Audit live site with Lighthouse
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            https://viktor-shcherb.github.io/
+            https://viktor-shcherb.github.io/about
+          uploadArtifacts: true          # keep the reports
+          temporaryPublicStorage: true   # shareable links
