@@ -12,6 +12,7 @@
   --accent:#82a9ac;
 }
 body{background:var(--bg);color:var(--text);font-family:sans-serif;margin:0;}
+.wrapper{max-width:80rem;margin:0 auto;}
 .site-nav{display:flex;align-items:center;gap:1rem;font-weight:600;}
 .site-nav a{position:relative;color:var(--accent);text-decoration:none;padding-block:.25rem;}
 .site-nav a::after{content:"";position:absolute;inset-inline:0;bottom:0;height:2px;border-radius:1px;background:transparent;transition:background .15s ease-in-out;}
