@@ -6,6 +6,7 @@ on:
 # needed so the action can push the preview to gh-pages
 permissions:
   contents: write
+  issues: write
 
 concurrency: preview-${{ github.ref }}
 
