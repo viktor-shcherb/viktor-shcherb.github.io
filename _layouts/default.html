@@ -7,12 +7,16 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block" as="style">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block"></noscript>
 
 <link rel="stylesheet"
       href="/assets/css/style.css?v={{ site.github.build_revision }}"
+      data-turbo-track="reload">
+
+<link rel="stylesheet"
+      href="/assets/fonts/material-symbols.css"
       data-turbo-track="reload">
 
 <script>
@@ -72,6 +76,14 @@ Promise.all([fontsReady, cssReady]).then(() => {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <script type="speculationrules">
+    {
+      "prerender": [
+        { "source": "list", "urls": ["/blog/", "/about/", "/"] }
+      ]
+    }
+    </script>
+
     {% comment %}Inline above-the-fold CSS{% endcomment %}
     <style>
     {% include critical.css %}
@@ -99,11 +111,11 @@ Promise.all([fontsReady, cssReady]).then(() => {
             {%- assign here = item.url | relative_url -%}
 
             <a href="{{ here }}"
-               class="{% if page.url == here
-                           or (item.title == 'Blog' and page.layout == 'post') %}active{% endif %}">
+               class="{% if page.url == here or item.title == 'Blog' and page.layout == 'post' %}active{% endif %}">
                {{ item.title }}
             </a>
           {%- endfor -%}
+
 
           <button id="theme-toggle"
                   class="theme-btn"
