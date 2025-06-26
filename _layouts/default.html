@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <!--[if lt IE 9]>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
     <![endif]-->
-    {% include head-custom.html %}
+    {% include person-schema.html %}
   </head>
   <body>
     <div class="wrapper">
@@ -63,11 +63,19 @@ document.addEventListener("DOMContentLoaded", () => {
         <nav class="site-nav">
           {%- for item in site.data.nav -%}
             {%- assign here = item.url | relative_url -%}
+
             <a href="{{ here }}"
-               class="{% if page.url == here %}active{% endif %}">
+               class="{% if page.url == here
+                           or (item.title == 'Blog' and page.layout == 'post') %}active{% endif %}">
                {{ item.title }}
             </a>
           {%- endfor -%}
+
+          <button id="theme-toggle"
+                  class="theme-btn"
+                  aria-label="Toggle colour scheme">
+            <span class="material-symbols-outlined" id="theme-icon" aria-hidden="true"></span>
+          </button>
         </nav>
 
         <hr style="margin:1.5rem 0">
@@ -107,11 +115,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       </section>
       <footer class="site-footer">
-        <button id="theme-toggle"
-                class="theme-btn"
-                aria-label="Toggle colour scheme">
-          <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
-        </button>
       </footer>
 
       <script src="{{ '/assets/js/theme-toggle.js' | relative_url }}" defer></script>

@@ -23,6 +23,7 @@ plugins:
   - jekyll-sitemap
   - jekyll-feed
   - jekyll-redirect-from
+  - jekyll-avatar
 defaults:
   -
     scope: { path: "" }

@@ -1,0 +1,78 @@
+{% comment %}
+Outputs JSON-LD only on pages whose front-matter sets schema: person
+{% endcomment %}
+{% if page.schema == 'person' %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+
+  "name": "Viktor Shcherbakov",
+  "givenName": "Viktor",
+  "familyName": "Shcherbakov",
+  "alternateName": "Viktor Scherbakov",
+  "jobTitle": "Machine-Learning Engineer",
+  "description": "Machine-learning engineer based in Switzerland.",
+  "url": "https://viktor-shcherb.github.io/about/",
+
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Geneva",
+    "addressCountry": "CH"
+  },
+
+  "birthPlace": {
+    "@type":"City",
+    "name":"Moscow"
+  },
+
+  "image": {
+    "@type": "ImageObject",
+    "url": "https://github.com/viktor-shcherb.png?size=600",
+    "width": 600,
+    "height": 600
+  },
+
+  "worksFor": {
+    "@type": "Organization",
+    "name": "HEC Lausanne, UNIL",
+    "url": "https://www.digital-markets.ch/"
+  },
+
+  "alumniOf": [
+    {
+      "@type": "CollegeOrUniversity",
+      "name": "University of Geneva",
+      "url": "https://www.unige.ch/en/"
+    },
+
+    {
+      "@type": "CollegeOrUniversity",
+      "name": "Lomonosov Moscow State University",
+      "url": "https://msu.ru/en/"
+    }
+  ],
+
+  "identifier": {
+    "@type": "PropertyValue",
+    "propertyID": "ORCID",
+    "value": "0000-0003-1098-9548"
+  },
+
+  "knowsLanguage": ["en", "ru"],
+  "knowsAbout": [
+    "Machine Learning",
+    "Deep Learning",
+    "Natural Language Processing",
+    "Large Language Models"
+  ],
+
+  "sameAs": [
+    "https://github.com/viktor-shcherb",
+    "https://www.linkedin.com/in/viktoroo/",
+    "https://mastodon.social/@viktor_shcherb",
+    "https://orcid.org/0000-0003-1098-9548"
+  ]
+}
+</script>
+{% endif %}

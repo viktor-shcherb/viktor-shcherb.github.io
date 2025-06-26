@@ -31,7 +31,7 @@ a:hover,a:focus{opacity:.75;}
 pre,code{background:var(--surface);border:none;}
 
 /* cards / footer strip */
-.site-footer, .site-header, .site-nav{background:var(--surface);}
+.site-footer, .site-header{background:var(--surface);}
 
 /* optional — subtle border colour */
 hr{border-color:rgba(var(--text),.2);}
@@ -41,37 +41,63 @@ hr{border-color:rgba(var(--text),.2);}
   *{transition:none!important;}
 }
 
+/* ─── STRIP THE HEADER BACKDROP ──────────────────────────────────── */
 
-/* --- NAV LAYOUT --------------------------------------------------- */
-.site-nav{
-  display:flex;
-  gap:0.75rem;              /* even spacing */
-  align-items:center;
-  padding:0;                /* kill gray background padding */
-  background:none;          /* kill gray background colour   */
-  border:none;
-  font-weight:600;
+header,                     /* fallback for plain <header>        */
+.site-header {              /* class if you added it earlier      */
+  background: none !important;   /* kill the grey rectangle      */
+  border: none;                  /* remove any bottom line       */
+  padding-block: 0;              /* optional: tighten vertical   */
+  box-shadow: none;              /* just in case theme adds one  */
 }
 
-/* remove default underline + use accent colour */
-.site-nav a{
-  color:var(--accent);
-  text-decoration:none;
-  position:relative;
+/* ─── NAVIGATION ─────────────────────────────────────────────────── */
+
+/* 1 ▸ container layout */
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;              /* consistent breathing room            */
+  font-weight: 600;
 }
 
-/* -- ACTIVE / CURRENT PAGE ---------------------------------------- */
-.site-nav a.active{
-  color:var(--text);                  /* darker text    */
+/* 2 ▸ base link */
+.site-nav a {
+  position: relative;     /* enables the ::after underline        */
+  color: var(--accent);   /* default link tint                    */
+  text-decoration: none;
+  padding-block: .25rem;  /* reserves space for underline → no jump */
+  transition: color .15s ease-in-out;
 }
 
-.site-nav a.active::before{           /* subtle bottom bar */
-  content:"";
-  position:absolute;
-  left:0; right:0; bottom:-4px;
-  height:2px;
-  background:var(--accent);
-  border-radius:1px;
+/* 3 ▸ invisible underline that already occupies height            */
+/*     becomes visible on hover / focus / current page             */
+.site-nav a::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;        /* left:0 & right:0 in logical terms    */
+  bottom: 0;
+  height: 2px;
+  border-radius: 1px;
+  background: transparent;
+  transition: background .15s ease-in-out;
+}
+
+/* 4 ▸ interaction states                                           */
+.site-nav a:hover::after,
+.site-nav a:focus-visible::after,
+.site-nav a.active::after {
+  background: var(--accent);
+}
+
+.site-nav a.active {
+  color: var(--text);     /* slightly darker when on the page     */
+}
+
+/* 5 ▸ accessible keyboard outline                                  */
+.site-nav a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* ---- footer ---------------------------------------------------- */
@@ -84,21 +110,18 @@ hr{border-color:rgba(var(--text),.2);}
 }
 
 .theme-btn{
+  margin-left: auto;
   background:none;
   border:none;
   cursor:pointer;
-  font-size:2rem;        /* icon size */
+  font-size:.01rem;        /* icon size */
   color:var(--accent);
   line-height:1;
-  padding:0.25rem 0.5rem;
-  border-radius:0.5rem;
   transition:background 0.2s;
 }
 
-.theme-btn:hover,
-.theme-btn:focus{
-  background:rgba(var(--text),.1);
-  outline:none;
+.theme-btn:hover{
+  opacity: 0.75;
 }
 
 .go-blog{
@@ -154,9 +177,19 @@ h6:hover .anchorjs-link::after {
 
 .img-caption {
   display: block;
-  margin-top: 0.1rem;
+  margin-top: 0.0rem;
   font-size: 0.75rem;
   color: rgba(136, 136, 136, 0.7); // last value is the alpha channel
   text-align: center;
   font-style: italic;
+}
+
+.post-content img {
+  display: block;            /* keeps the image on its own line */
+  border-radius: 8px;        /* soften the corners */
+  box-shadow:
+    0 2px 6px rgba(0,0,0,.2),   /* soft outer shadow */
+    0 1px 3px rgba(0,0,0,.1);   /* subtle inner lift */
+  width: auto;               /* keep natural width */
+  max-width: 100%;           /* stay responsive */
 }
