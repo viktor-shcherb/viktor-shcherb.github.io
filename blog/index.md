@@ -1,24 +1,16 @@
 ---
-layout: default 
-permalink: /blog/        # keep the /blog/ URL
+layout: post
+permalink: /blog/
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <!-- Liquid grabs the first post (newest) -->
-    {% assign latest = site.posts | first %}
-    <meta http-equiv="refresh"
-          content="0; url={{ latest.url | relative_url }}">
-    <link rel="canonical"
-          href="{{ latest.url | absolute_url }}">
-    <title>Redirecting to {{ latest.title }}</title>
-  </head>
-  <body>
-    <p>
-      Redirecting to
-      <a href="{{ latest.url | relative_url }}">{{ latest.title }}</a>…
-    </p>
-  </body>
-</html>
+{% assign latest = site.posts | first %}
+<link rel="canonical" href="{{ latest.url | absolute_url }}">
+
+<h1>{{ latest.title }}</h1>
+<p class="post-meta">
+  <time datetime="{{ latest.date | date_to_xmlschema }}">
+    {{ latest.date | date: "%b %-d, %Y" }}
+  </time>
+</p>
+
+{{ latest.content }}
