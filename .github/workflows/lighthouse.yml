@@ -1,9 +1,9 @@
-name: Lighthouse CI
+name: Lighthouse
 
 on:
   push:
-    branches: [master]
-  pull_request:
+    branches:
+      [master]
 
 jobs:
   lhci:
@@ -11,13 +11,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # One self-contained step: downloads Lighthouse CI,
-      # runs the audits, uploads the HTML reports as artifacts.
+      # ---- build dynamic URL list from the sitemap -------------------------
+      - id: urls
+        run: |
+          curl -s https://viktor-shcherb.github.io/sitemap.xml \
+            | grep -Eo '<loc>[^<]+' | sed 's/<loc>//' > urls.txt
+          echo "URLS<<EOF" >> $GITHUB_ENV
+          cat urls.txt >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      # ---- Lighthouse ------------------------------------------------------
       - name: Audit live site with Lighthouse
         uses: treosh/lighthouse-ci-action@v12
         with:
-          urls: |
-            https://viktor-shcherb.github.io/
-            https://viktor-shcherb.github.io/about
-          uploadArtifacts: true          # keep the reports
-          temporaryPublicStorage: true   # shareable links
+          urls: ${{ env.URLS }}
+          uploadArtifacts: true
+          temporaryPublicStorage: true
