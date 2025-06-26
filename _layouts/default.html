@@ -7,9 +7,9 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" as="style">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap"></noscript>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block" as="style">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block"></noscript>
 
 <script>
 (()=>{
@@ -79,7 +79,7 @@
           <button id="theme-toggle"
                   class="theme-btn"
                   aria-label="Toggle colour scheme">
-            <span class="material-symbols-outlined" id="theme-icon" aria-hidden="true"></span>
+            <span class="material-symbols-outlined" id="theme-icon" aria-hidden="true" data-icon></span>
           </button>
         </nav>
 
@@ -92,7 +92,7 @@
         {%- else -%}
           <div class="recent-posts">
             <h2 class="recent-heading">
-              <span class="material-symbols-outlined" aria-hidden="true">article</span>
+              <span class="material-symbols-outlined" aria-hidden="true" data-icon="article"></span>
               Recent&nbsp;posts
             </h2>
 
