@@ -39,12 +39,13 @@ jobs:
   lighthouse:
     needs: build-and-preview
     runs-on: ubuntu-latest
-    # still run when the PR is closed so you don’t get a dangling job
     steps:
-      - name: Audit preview with Lighthouse
-        uses: treosh/lighthouse-ci-action@v12
+      - name: Lighthouse audit + PR comment
+        uses: foo-software/lighthouse-check-action@v12
         with:
           urls: |
             ${{ needs.build-and-preview.outputs.preview_url }}
           uploadArtifacts: true          # keep HTML reports
           temporaryPublicStorage: true   # get shareable links
+          outputHtmlPath: ./lh-report        # saved as workflow artifact
+          commentResults: true               # default; writes “lighthouse-bot” comment
