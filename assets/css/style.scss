@@ -16,6 +16,10 @@
   --accent:      #82a9ac;  /* same accent works on both */
 }
 
+html{
+  scrollbar-gutter: stable both-edges;
+}
+
 /* 2 — glue those vars onto Slate */
 @import "{{ site.theme }}";
 

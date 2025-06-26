@@ -11,6 +11,7 @@
   --text:#efefef;
   --accent:#82a9ac;
 }
+html{scrollbar-gutter:stable both-edges;}
 body{background:var(--bg);color:var(--text);font-family:sans-serif;margin:0;}
 .wrapper{max-width:80rem;margin:0 auto;}
 .site-nav{display:flex;align-items:center;gap:1rem;font-weight:600;}
