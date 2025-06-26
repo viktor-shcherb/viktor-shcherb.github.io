@@ -1,0 +1,19 @@
+name: Lighthouse CI
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.12.x
+      - name: Run Lighthouse CI
+        run: lhci autorun
