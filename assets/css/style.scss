@@ -120,6 +120,12 @@ header,                     /* fallback for plain <header>        */
   transition:background 0.2s;
 }
 
+#theme-icon{
+  font-size:1.25rem;
+  width:1em;
+  display:inline-block;
+}
+
 .theme-btn:hover{
   opacity: 0.75;
 }
@@ -139,6 +145,11 @@ header,                     /* fallback for plain <header>        */
 
 .go-blog a:hover{ text-decoration:underline; }
 .go-blog .material-symbols-outlined{ font-size:1.2em; }
+
+.material-symbols-outlined{
+  display:inline-block;
+  width:1em;
+}
 
 
 a:hover,
