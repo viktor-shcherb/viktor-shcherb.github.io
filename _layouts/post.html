@@ -2,9 +2,28 @@
 layout: default
 ---
 <h1>{{ page.title }}</h1>
+
 <p class="post-meta">
+  {%- if page.author -%}
+    <span class="byline">{{ page.author }}</span>
+    &nbsp;•&nbsp;
+  {%- endif -%}
+
   <time datetime="{{ page.date | date_to_xmlschema }}">
     {{ page.date | date: "%b %-d, %Y" }}
   </time>
 </p>
+
 {{ content }}
+
+{%- if page.tags and page.tags != empty -%}
+  <p class="post-tags" style="font-size:0.85em;">
+    <strong><em>Keywords: </em></strong>
+    {%- for tag in page.tags -%}
+      <em>{{ tag }}</em>{% unless forloop.last %}&nbsp;&middot;&nbsp;{% endunless %}
+    {%- endfor -%}
+  </p>
+{%- endif -%}
+
+
+
