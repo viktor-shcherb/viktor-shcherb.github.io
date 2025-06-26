@@ -19,3 +19,25 @@ body{background:var(--bg);color:var(--text);font-family:sans-serif;margin:0;}
 .site-nav a::after{content:"";position:absolute;inset-inline:0;bottom:0;height:2px;border-radius:1px;background:transparent;transition:background .15s ease-in-out;}
 .site-nav a:hover::after,.site-nav a:focus-visible::after,.site-nav a.active::after{background:var(--accent);}
 .theme-btn{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--accent);line-height:1;}
+
+/* === loading curtain === */
+#app-loader{
+  position:fixed; inset:0; z-index:9999;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--bg);
+  transition:opacity .05s ease-out;
+}
+#app-loader.fade{opacity:0; pointer-events:none;}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{
+  width:2rem;height:2rem;
+  border-color: var(--accent); border-top-color: transparent;
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .spinner{animation:none;}
+}
+

@@ -12,6 +12,17 @@
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block"></noscript>
 
 <script>
+window.addEventListener('load', () => {
+  const curtain = document.getElementById('app-loader');
+  if (!curtain) return;
+  curtain.classList.add('fade');           // start the CSS fade-out
+  setTimeout(() => curtain.remove(), 500); // cleanup after the transition
+});
+</script>
+
+<noscript><style>#app-loader{display:none!important}</style></noscript>
+
+<script>
 (()=>{
   const key   = 'prefers-dark';
   const dark  = localStorage.getItem(key)==='true' ||
@@ -63,6 +74,9 @@
     {% include person-schema.html %}
   </head>
   <body>
+    <div id="app-loader" aria-hidden="true">
+      <div class="spinner" aria-hidden="true"></div>
+    </div>
     <div class="wrapper">
       <header>
         <nav class="site-nav">
