@@ -22,7 +22,11 @@ tags:
   - Higher education
 ---
 
-![Photo by Piotr Guzik, Unsplash.com]({{ page.image }})  
+<img src="{{ page.image }}"
+     alt="Photo by Piotr Guzik, Unsplash.com"
+     width="1200" height="630"
+     loading="lazy"
+     decoding="async">
 *Photo by Piotr Guzik / Unsplash*
 {: .img-caption }
 
