@@ -11,19 +11,22 @@ permissions:
 concurrency: preview-${{ github.ref }}
 
 jobs:
-  build-and-preview:
+  preview:
     runs-on: ubuntu-latest
     if: github.event.action != 'closed'   # skip the Jekyll build on PR close
     steps:
-      - uses: actions/checkout@v4
-
       # ------------------------------------------------------------------
       # 1 Build static site the same way GitHub Pages does
       # ------------------------------------------------------------------
-      - name: Configure Pages
-        uses: actions/configure-pages@v5          # sets up Ruby & Bundler cache
-      - name: Build with Jekyll
-        uses: actions/jekyll-build-pages@v1       # outputs to ./_site
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Build
+        uses: actions/jekyll-build-pages@v1
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+
       # ------------------------------------------------------------------
       # 2 Deploy preview under pr-preview/pr-<num>/ on gh-pages
       # ------------------------------------------------------------------
@@ -66,5 +69,4 @@ jobs:
       - name: Lighthouse audit + PR comment
         uses: foo-software/lighthouse-check-action@master
         with:
-          urls: |
-            ${{ needs.build-and-preview.outputs.preview_url }}
+          urls: '${{ needs.build-and-preview.outputs.preview_url }},${{ needs.build-and-preview.outputs.preview_url }}/about'
