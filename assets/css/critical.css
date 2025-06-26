@@ -1,0 +1,19 @@
+/* Critical CSS for initial render */
+:root {
+  --bg:#ffffff;
+  --surface:#efefef;
+  --text:#232730;
+  --accent:#82a9ac;
+}
+[data-theme='dark']{
+  --bg:#232730;
+  --surface:#31353e;
+  --text:#efefef;
+  --accent:#82a9ac;
+}
+body{background:var(--bg);color:var(--text);font-family:sans-serif;margin:0;}
+.site-nav{display:flex;align-items:center;gap:1rem;font-weight:600;}
+.site-nav a{position:relative;color:var(--accent);text-decoration:none;padding-block:.25rem;}
+.site-nav a::after{content:"";position:absolute;inset-inline:0;bottom:0;height:2px;border-radius:1px;background:transparent;transition:background .15s ease-in-out;}
+.site-nav a:hover::after,.site-nav a:focus-visible::after,.site-nav a.active::after{background:var(--accent);}
+.theme-btn{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--accent);line-height:1;}
