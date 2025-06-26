@@ -5,8 +5,11 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/logos-flavicon/apple-touch-icon.png" />
 <link rel="manifest" href="/logos-flavicon/site.webmanifest" />
 
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
-      rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" as="style">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap"></noscript>
 
 <script>
 (()=>{
@@ -18,33 +21,26 @@
 })();
 </script>
 
-<script async src="https://cdn.jsdelivr.net/npm/anchor-js@5.0.0/anchor.min.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const article = document.querySelector(".post-content");
-  if (!article) return;          // safety for non-content pages
-
-  anchors.options = {
-    placement: "right",
-    icon: "",
-    visible: "hover"
-  };
-  anchors.add("h1,h2,h3,h4,h5,h6", article); // <- only headings inside Markdown
-});
-</script>
 
 <html lang="{{ site.lang | default: "en-US" }}">
   <head>
     {% seo %}
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D4QCB67CDX"></script>
+    {% if jekyll.environment == 'production' %}
+    <link rel="preconnect" href="https://www.google-analytics.com">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-D4QCB67CDX');
+      document.addEventListener('DOMContentLoaded', function(){
+        var s=document.createElement('script');
+        s.src='https://www.googletagmanager.com/gtag/js?id=G-D4QCB67CDX';
+        s.async=true;
+        document.head.appendChild(s);
+        gtag('js', new Date());
+        gtag('config', 'G-D4QCB67CDX');
+      });
     </script>
+    {% endif %}
 
     <meta charset="UTF-8">
     <meta name="color-scheme" content="light dark">
@@ -129,5 +125,16 @@ document.addEventListener("DOMContentLoaded", () => {
       <script src="{{ '/assets/js/theme-toggle.js' | relative_url }}" defer></script>
     </div>
     <script defer src="{{ '/assets/js/scale.fix.js' | relative_url }}"></script>
+    {% if page.layout == 'post' %}
+    <script defer src="https://cdn.jsdelivr.net/npm/anchor-js@5.0.0/anchor.min.js"></script>
+    <script defer>
+      document.addEventListener('DOMContentLoaded', () => {
+        const article = document.querySelector('.post-content');
+        if (!article) return;
+        anchors.options = { placement: 'right', icon: '', visible: 'hover' };
+        anchors.add('h1,h2,h3,h4,h5,h6', article);
+      });
+    </script>
+    {% endif %}
   </body>
 </html>
