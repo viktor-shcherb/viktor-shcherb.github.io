@@ -11,15 +11,26 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block"></noscript>
 
+<link rel="stylesheet"
+      href="/assets/css/style.css?v={{ site.github.build_revision }}"
+      data-turbo-track="reload">
+
 <script>
-Promise.all([
-  new Promise(r => document.addEventListener('DOMContentLoaded', r, { once: true })),
-  document.fonts.ready          // waits for web-font swap
-]).then(() => {
+const fontsReady = document.fonts.ready;
+
+const cssReady = new Promise(resolve => {
+  const link = document.querySelector('link[href*="style.css"]');
+  if (!link) return resolve();           // should never happen
+  if (link.sheet) return resolve();      // CSS already parsed
+
+  link.addEventListener('load', resolve, { once: true });
+});
+
+Promise.all([fontsReady, cssReady]).then(() => {
   const l = document.getElementById('app-loader');
   if (!l) return;
   l.classList.add('fade');
-  setTimeout(() => l.remove(), 500);
+  setTimeout(() => l.remove(), 500);     // 0.05 s fade-out
 });
 </script>
 
@@ -75,6 +86,10 @@ Promise.all([
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
     <![endif]-->
     {% include person-schema.html %}
+
+    <script
+      src="https://unpkg.com/@hotwired/turbo@8/dist/turbo.es2017-esm.js"
+      type="module"></script>
   </head>
   <body>
     <div class="wrapper">
