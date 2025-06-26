@@ -3,10 +3,10 @@ on:
   pull_request:
     types: [opened, reopened, synchronize, closed]
 
-# needed so the action can push the preview to gh-pages
+# needed so the action can push the preview to gh-pages and add comments
 permissions:
   contents: write
-  issues: write
+  pull-requests: write
 
 concurrency: preview-${{ github.ref }}
 
