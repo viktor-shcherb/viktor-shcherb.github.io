@@ -1,0 +1,10 @@
+{
+  "ci": {
+    "collect": {
+      "url": ["https://viktor-shcherb.github.io/"]
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}
