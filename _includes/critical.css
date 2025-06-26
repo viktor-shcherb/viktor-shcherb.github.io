@@ -21,8 +21,10 @@ body{background:var(--bg);color:var(--text);font-family:sans-serif;margin:0;}
 .theme-btn{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--accent);line-height:1;}
 
 /* === loading curtain === */
+
+.wrapper { position: relative; }
 #app-loader{
-  position:fixed; inset:0; z-index:9999;
+  position:absolute; inset:0; z-index:9999;
   display:flex; align-items:center; justify-content:center;
   background:var(--bg);
   transition:opacity .05s ease-out;

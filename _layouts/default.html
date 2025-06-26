@@ -12,11 +12,14 @@
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block"></noscript>
 
 <script>
-window.addEventListener('load', () => {
-  const curtain = document.getElementById('app-loader');
-  if (!curtain) return;
-  curtain.classList.add('fade');           // start the CSS fade-out
-  setTimeout(() => curtain.remove(), 500); // cleanup after the transition
+Promise.all([
+  new Promise(r => document.addEventListener('DOMContentLoaded', r, { once: true })),
+  document.fonts.ready          // waits for web-font swap
+]).then(() => {
+  const l = document.getElementById('app-loader');
+  if (!l) return;
+  l.classList.add('fade');
+  setTimeout(() => l.remove(), 500);
 });
 </script>
 
@@ -74,9 +77,6 @@ window.addEventListener('load', () => {
     {% include person-schema.html %}
   </head>
   <body>
-    <div id="app-loader" aria-hidden="true">
-      <div class="spinner" aria-hidden="true"></div>
-    </div>
     <div class="wrapper">
       <header>
         <nav class="site-nav">
@@ -126,6 +126,11 @@ window.addEventListener('load', () => {
 
 
       </header>
+
+      <div id="app-loader" aria-hidden="true">
+        <div class="spinner" aria-hidden="true"></div>
+      </div>
+
       <section>
 
       <article class="post-content">
