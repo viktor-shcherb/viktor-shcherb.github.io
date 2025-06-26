@@ -60,10 +60,10 @@ jobs:
 
       # expose the URL to the next job
     outputs:
-      preview_url: ${{ steps.preview.outputs.preview-url }}
+      preview_url: ${{ steps.preview-step.outputs.preview-url }}
 
   lighthouse:
-    needs: build-and-preview
+    needs: preview
     runs-on: ubuntu-latest
     steps:
       - name: Lighthouse audit + PR comment
