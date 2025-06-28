@@ -43,3 +43,31 @@ body{background:var(--bg);color:var(--text);font-family:sans-serif;margin:0;}
   .spinner{animation:none;}
 }
 
+pre, code, .highlight {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-radius: 4px;
+  padding: 0.4em 0.7em;
+  font-family: 'Fira Mono', 'Consolas', monospace;
+  font-size: 1em;
+  box-shadow: none;
+  border: none;
+  margin-top: 0rem;
+  margin-bottom: 1rem;
+}
+
+
+code {
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.output code {
+  color: #35393f; /* dark gray for 'disabled' look, adjust as needed */
+  background: #eee;
+}
+[data-theme='dark'] .output code {
+  color: #55595f;
+  background: #232730;
+}

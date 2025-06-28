@@ -50,6 +50,40 @@ Promise.all([fontsReady, cssReady]).then(() => {
 })();
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Support multiple dropdowns, if needed
+  document.querySelectorAll('.dropdown-toggle').forEach(function(toggle) {
+    toggle.addEventListener('click', function(e) {
+      e.stopPropagation();
+      // Close any other open dropdowns
+      document.querySelectorAll('.dropdown.open').forEach(function(openDropdown) {
+        if (openDropdown !== toggle.parentElement) openDropdown.classList.remove('open');
+      });
+      // Toggle this dropdown
+      toggle.parentElement.classList.toggle('open');
+    });
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    document.querySelectorAll('.dropdown.open').forEach(function(openDropdown) {
+      openDropdown.classList.remove('open');
+    });
+  });
+
+  // Optional: close dropdown when focus leaves the menu
+  document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
+    menu.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        menu.parentElement.classList.remove('open');
+        menu.previousElementSibling.focus();
+      }
+    });
+  });
+});
+</script>
+
 
 <html lang="{{ site.lang | default: "en-US" }}">
   <head>
@@ -107,15 +141,24 @@ Promise.all([fontsReady, cssReady]).then(() => {
     <div class="wrapper">
       <header>
         <nav class="site-nav">
-          {%- for item in site.data.nav -%}
-            {%- assign here = item.url | relative_url -%}
-
-            <a href="{{ here }}"
-               class="{% if page.url == here or item.title == 'Blog' and page.layout == 'post' %}active{% endif %}">
-               {{ item.title }}
-            </a>
-          {%- endfor -%}
-
+          {% for item in site.data.nav %}
+            {% if item.sublinks %}
+              <div class="dropdown">
+                <button type="button" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+                  {{ item.title }}
+                </button>
+                <div class="dropdown-menu" tabindex="-1">
+                  {% for sub in item.sublinks %}
+                    <a href="{{ sub.url }}">{{ sub.title }}</a>
+                  {% endfor %}
+                </div>
+              </div>
+            {% else %}
+              <a href="{{ item.url }}" class="{% if page.url == item.url %}active{% endif %}">
+                {{ item.title }}
+              </a>
+            {% endif %}
+          {% endfor %}
 
           <button id="theme-toggle"
                   class="theme-btn"
@@ -182,5 +225,39 @@ Promise.all([fontsReady, cssReady]).then(() => {
       });
     </script>
     {% endif %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Support multiple dropdowns, if needed
+      document.querySelectorAll('.dropdown-toggle').forEach(function(toggle) {
+        toggle.addEventListener('click', function(e) {
+          e.stopPropagation();
+          // Close any other open dropdowns
+          document.querySelectorAll('.dropdown.open').forEach(function(openDropdown) {
+            if (openDropdown !== toggle.parentElement) openDropdown.classList.remove('open');
+          });
+          // Toggle this dropdown
+          toggle.parentElement.classList.toggle('open');
+        });
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function(e) {
+        document.querySelectorAll('.dropdown.open').forEach(function(openDropdown) {
+          openDropdown.classList.remove('open');
+        });
+      });
+
+      // Optional: close dropdown when focus leaves the menu
+      document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
+        menu.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') {
+            menu.parentElement.classList.remove('open');
+            menu.previousElementSibling.focus();
+          }
+        });
+      });
+    });
+    </script>
+
   </body>
 </html>
