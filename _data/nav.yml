@@ -4,3 +4,7 @@
   url: /blog/
 - title: About
   url: /about/
+- title: More
+  sublinks:
+    - title: Algorithms Preparation
+      url: /algoprep/

@@ -63,6 +63,45 @@ header,                     /* fallback for plain <header>        */
   align-items: center;
   gap: 1rem;              /* consistent breathing room            */
   font-weight: 600;
+  position: relative;
+}
+
+/* some menu items have drop-down options */
+
+.dropdown-toggle {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0rem;
+  font-family: inherit;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  background: var(--surface);
+  box-shadow: 0 4px 6px rgba(0,0,0,.1);
+  border-radius: 4px;
+  padding: .5rem 0;
+  min-width: 200px;
+  z-index: 1000;
+}
+
+.dropdown-menu a {
+  display: block;
+  color: var(--text);
+  padding: .5rem 1rem;
+  text-decoration: none;
+  transition: color .15s ease-in-out;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown.open .dropdown-menu {
+  display: block;
 }
 
 /* 2 ▸ base link */
@@ -208,3 +247,52 @@ h6:hover .anchorjs-link::after {
   max-width: 100%;           /* stay responsive */
   height: auto;              /* keep aspect ratio when dims set */
 }
+
+.tab-switcher {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.tab-switcher input[type="radio"] {
+  display: none;
+}
+
+.tab-btn {
+  display: inline-block;
+  padding: 0.6em 2.2em;
+  border-radius: 2em;
+  font-size: 0.8em;
+  font-weight: 700;
+  cursor: pointer;
+  background: var(--surface, #ececec);
+  color: var(--text, #232730);
+  border: 2px solid var(--accent, #82a9ac);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  margin-bottom: 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+
+input#tab-desc:checked + label[for="tab-desc"],
+input#tab-code:checked + label[for="tab-code"] {
+  background: var(--accent, #82a9ac);
+  color: var(--bg, #fff);
+  border-color: var(--accent, #82a9ac);
+}
+
+.tab-content {
+  width: 100%;
+}
+
+#tab-desc:checked ~ label[for="tab-desc"],
+#tab-code:checked ~ label[for="tab-code"] {
+  background: var(--accent, #82a9ac);
+  color: var(--bg, #fff);
+  border-color: var(--accent, #82a9ac);
+}
+
+
