@@ -1,0 +1,74 @@
+---
+layout: default
+---
+
+<!-- No need for task-list container on task detail page! -->
+
+<h1 id="task-title" style="text-align:center;">Loading...</h1>
+
+<div class="tab-switcher">
+  <div class="tab-btn-row">
+    <input type="radio" id="tab-desc" name="tasktab" checked>
+    <label for="tab-desc" class="tab-btn" tabindex="0">Task Description</label>
+    <input type="radio" id="tab-code" name="tasktab">
+    <label for="tab-code" class="tab-btn" tabindex="0">Code Interpreter</label>
+  </div>
+
+  <div class="tab-content" style="margin-top:2em;">
+    <div class="tab-panel desc-panel active">
+      <article>
+        <div id="task-description"></div>
+        <div id="task-signature"></div>
+        <div id="task-examples" style="display:none">
+          <hr>
+          <div id="example-block-1" class="example-block"></div>
+          <div id="example-block-2" class="example-block"></div>
+          <div id="example-block-3" class="example-block"></div>
+          <hr>
+        </div>
+        <div id="task-contributor"></div>
+      </article>
+    </div>
+    <div class="tab-panel code-panel">
+      <div id="editor"></div>
+
+      <div id="pyodide-spinner" style="display:none; text-align:center; margin-top:2em;">
+        <span class="spinner" style="
+          display:inline-block; width:32px; height:32px; border:4px solid #ccc; border-top:4px solid #82a9ac; border-radius:50%; animation: spin 1s linear infinite;
+        "></span>
+        <div style="margin-top:.5em;">Loading Python...</div>
+      </div>
+
+
+      <div class="code-runner">
+        <div class="input-row">
+          <textarea id="code-input" placeholder="Input (stdin)"></textarea>
+          <button id="run-code-btn" class="run-btn" type="button" title="Run code">
+            <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
+          </button>
+        </div>
+        <pre class="io-codemirror" id="output-wrapper" style="display:none;"><code id="code-output"></code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { renderTaskDetail } from '{{ "/assets/js/algoprep-task.js" | relative_url }}';
+  function safe() {
+    if (document.getElementById('tab-desc') && document.getElementById('tab-code')) {
+      renderTaskDetail();
+    } else {
+      setTimeout(safe, 30);
+    }
+  }
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    safe();
+  } else {
+    document.addEventListener('DOMContentLoaded', safe);
+  }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script type="module" src="{{ '/assets/js/editor.js' | relative_url }}"></script>
+

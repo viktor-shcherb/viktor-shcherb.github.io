@@ -1,0 +1,15 @@
+{
+  "title": "Hello World",
+  "description": "Write a Python function that prints `Hello, World!`.",
+  "signature": { "name": "hello_world", "args": [] },
+  "tests": [
+    {
+      "input": {},
+      "output": "Hello world!"
+    }
+  ],
+  "contributor": {
+    "name": "Viktor Shcherbakov",
+    "github": "https://github.com/viktor-shcherb"
+  }
+}
