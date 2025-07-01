@@ -4,7 +4,7 @@
 export async function renderTaskList(taskFiles) {
   const list = document.getElementById('task-list');
   if (!list) return;
-  list.innerHTML = '<h2>Available Tasks</h2><ul id="task-list-ul"><li>Loading tasks...</li></ul>';
+  list.innerHTML = '<ul id="task-list-ul"><li>Loading tasks...</li></ul>';
 
   // Fetch all JSON files in parallel
   const tasks = await Promise.all(

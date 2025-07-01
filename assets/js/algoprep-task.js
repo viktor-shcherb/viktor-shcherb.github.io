@@ -107,7 +107,7 @@ export async function renderTaskDetail() {
     await setupRunner();
 
     // --- Only set up tab switcher once ---
-    setupTabSwitcher();
+    setupTabSwitcher(task);
 
   } catch (err) {
     if (titleEl) {

@@ -2,11 +2,20 @@
 layout: default
 title: "Algorithms Preparation"
 permalink: /algoprep/
+description: "Practice Python algorithm problems interactively in your browser. Browse, solve, and contribute new tasks."
+robots: index, follow
 ---
 
-<!--
-  This page intentionally left blank: task list and content are rendered by JS at runtime.
--->
+# Algorithms Preparation Tasks
+
+Welcome! This page contains a collection of Python algorithm problems for practice, contributed by the community.
+Browse, solve, and contribute your own!
+
+Find the source and contribute at [GitHub](https://github.com/viktor-shcherb/viktor-shcherb.github.io).
+
+<hr>
+
+## Available Tasks
 
 <ul id="task-list" style="margin-top:2em;"><li>Loading tasks...</li></ul>
 
