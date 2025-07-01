@@ -16,11 +16,6 @@ future: true          # tells Jekyll to publish posts dated in the future
 # remove .html from the blog pages
 permalink: /:year/:month/:day/:title/
 
-collections:
-  algoprep_tasks:
-    output: true
-    permalink: /algoprep/:path/
-
 remote_theme: pages-themes/minimal
 plugins:
   - jekyll-remote-theme
