@@ -19,24 +19,7 @@
       href="/assets/fonts/material-symbols.css"
       data-turbo-track="reload">
 
-<script>
-const fontsReady = document.fonts.ready;
 
-const cssReady = new Promise(resolve => {
-  const link = document.querySelector('link[href*="style.css"]');
-  if (!link) return resolve();           // should never happen
-  if (link.sheet) return resolve();      // CSS already parsed
-
-  link.addEventListener('load', resolve, { once: true });
-});
-
-Promise.all([fontsReady, cssReady]).then(() => {
-  const l = document.getElementById('app-loader');
-  if (!l) return;
-  l.classList.add('fade');
-  setTimeout(() => l.remove(), 500);     // 0.05 s fade-out
-});
-</script>
 
 <noscript><style>#app-loader{display:none!important}</style></noscript>
 
@@ -197,6 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
       </footer>
 
       <script src="{{ '/assets/js/theme-toggle.js' | relative_url }}" defer></script>
+      <script src="{{ '/assets/js/loader.js' | relative_url }}" defer></script>
     </div>
     <script defer src="{{ '/assets/js/scale.fix.js' | relative_url }}"></script>
     {% if page.layout == 'post' %}
