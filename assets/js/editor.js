@@ -102,6 +102,7 @@ export function renderReadOnlyCodeBlocks() {
     // Create a container for CodeMirror
     const wrapper = document.createElement('div');
     wrapper.className = "cm-static-view";
+    wrapper.id = block.id;
     wrapper.setAttribute('data-code', code); // <-- Store code for re-theming
     block.parentNode.replaceWith(wrapper);
 
@@ -115,29 +116,6 @@ export function renderReadOnlyCodeBlocks() {
         customTheme
       ],
       parent: wrapper
-    });
-  });
-}
-
-export function rerenderStaticCodeBlocks() {
-  document.querySelectorAll('.cm-static-view').forEach(wrapper => {
-    const code = wrapper.getAttribute('data-code');
-    if (code == null) return;
-    const parent = wrapper.parentNode;
-    const newWrapper = document.createElement('div');
-    newWrapper.className = 'cm-static-view';
-    newWrapper.setAttribute('data-code', code);
-    parent.replaceChild(newWrapper, wrapper);
-
-    new EditorView({
-      doc: code,
-      extensions: [
-        python(),
-        themeCompartment.of(getThemeExtension()),
-        EditorView.editable.of(false),
-        customTheme
-      ],
-      parent: newWrapper
     });
   });
 }
@@ -187,14 +165,19 @@ let pyodideReadyPromise = null;
 export async function setupRunner() {
   const runBtn = document.getElementById('run-code-btn');
   const codeOutputWrapper = document.getElementById('output-wrapper');
-  const codeOutput = document.getElementById('code-output');
+  // a helper to (re)fetch the current <code> element
+  function setCodeOutput(text) {
+    codeOutputWrapper.firstElementChild.innerHTML = `<pre><code class="language-io-codemirror">${text}</code></pre>`;
+    renderReadOnlyInputOutputBlocks();
+  }
+
   const codeInput = document.getElementById('code-input');
   const editorContainer = document.getElementById('editor');
-  if (!runBtn || !codeOutput || !editorContainer) return;
+  if (!runBtn || !editorContainer) return;
 
   // Disable run button while loading Pyodide
   runBtn.disabled = true;
-  codeOutput.textContent = "⏳ Loading Python interpreter...";
+  setCodeOutput("⏳ Loading Python interpreter...");
   codeOutputWrapper.style.display = "";
 
   // Only load Pyodide once
@@ -206,7 +189,7 @@ export async function setupRunner() {
   try {
     pyodide = await pyodideReadyPromise;
   } catch (e) {
-    codeOutput.textContent = "❌ Failed to load Python environment.";
+    setCodeOutput("❌ Failed to load Python environment");
     runBtn.disabled = true;
     return;
   }
@@ -222,7 +205,7 @@ export async function setupRunner() {
     }
     const stdin = codeInput.value;
 
-    codeOutput.textContent = "⏳ Running...";
+    setCodeOutput("⏳ Running...")
     codeOutputWrapper.style.display = "";
 
     try {
@@ -248,19 +231,21 @@ __builtins__.input = _input
 `);
       // Capture stdout/stderr
       let output = "";
-      let errOutput = "";
-      pyodide.setStdout({
-        batched: (s) => output += s,
-      });
-      pyodide.setStderr({
-        batched: (s) => errOutput += s,
-      });
+
+      function appendChunk(text) {
+        output += text + '\n';             // fresh reference
+        setCodeOutput(output)
+      }
+
+      pyodide.setStdout({ batched: appendChunk });
+      pyodide.setStderr({ batched: appendChunk });
 
       await pyodide.runPythonAsync(code);
-
-      codeOutput.textContent = output || errOutput || "[No output]";
     } catch (err) {
-      codeOutput.textContent = "❌ Error:\n" + (err.message || err.toString());
+      let codeOutput = codeOutputWrapper.firstElementChild;
+
+      let error_msg = "❌ Error:\n" + (err.message || err.toString());
+      setCodeOutput(error_msg);
     }
   };
 }

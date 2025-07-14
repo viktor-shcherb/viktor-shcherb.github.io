@@ -21,7 +21,7 @@ permalink: /blog/
 
 {%- if latest.tags and latest.tags != empty -%}
   <p class="post-tags" style="font-size:0.85em;">
-    <strong><em>Keywords:</em></strong>
+    <strong><em>Keywords: </em></strong>
     {%- for tag in latest.tags -%}
       <em>{{ tag }}</em>{% unless forloop.last %}&nbsp;&middot;&nbsp;{% endunless %}
     {%- endfor -%}

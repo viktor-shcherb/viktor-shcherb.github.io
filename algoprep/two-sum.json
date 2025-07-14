@@ -1,0 +1,39 @@
+{
+  "title": "Two-sum",
+  "description": "Write a Python function that sums up two numbers.",
+  "signature": {
+    "name": "two_sum",
+    "args": [
+      {"name": "x", "type": "int"},
+      {"name": "y", "type": "int"}
+    ],
+    "return_type": "int"
+  },
+  "tests": [
+    {
+      "args": {
+        "x": 1,
+        "y": 2
+      },
+      "return": 3
+    },
+    {
+      "args": {
+        "x": 100,
+        "y": 1
+      },
+      "return": 101
+    },
+    {
+      "args": {
+        "x": 0,
+        "y": 0
+      },
+      "return": 0
+    }
+  ],
+  "contributor": {
+    "name": "Viktor Shcherbakov",
+    "github": "https://github.com/viktor-shcherb"
+  }
+}

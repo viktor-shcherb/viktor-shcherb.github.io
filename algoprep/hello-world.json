@@ -4,8 +4,7 @@
   "signature": { "name": "hello_world", "args": [] },
   "tests": [
     {
-      "input": {},
-      "output": "Hello world!"
+      "stdout": "Hello world!"
     }
   ],
   "contributor": {

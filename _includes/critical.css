@@ -1,15 +1,55 @@
 /* Critical CSS for initial render */
-:root {
-  --bg:#ffffff;
-  --surface:#efefef;
-  --text:#232730;
-  --accent:#82a9ac;
+:root{
+  --bg:          #ffffff;  /* light mode */
+  --surface:     #efefef;
+  --text:        #232730;
+
+  --accent-h: 184deg;
+  --accent-s: 50%;
+  --accent-l: 35%;      /* darker ⇒ passes contrast on light bg */
+  --accent: hsl(var(--accent-h) var(--accent-s) var(--accent-l));
+
+  /*--accent:      #4b6f71; */
+  --surface-accented: color-mix(in srgb, var(--accent) 6%, transparent);
+
+  --text-muted:  #6f747d;  /* 60 % greyed version of --text */
+  --btn-disabled-bg: #6e747d;      /* same as text-muted */
+  --btn-text:        #ffffff;      /* one text colour for ALL buttons */
+
+  /* ── overlay / glass ───────────────── */
+  --glass-overlay-clr : rgba(20 20 30 / .15);  /* tint colour   */
+  --glass-blur        : 6px;                  /* blur strength */
+  --glass-dim         : 1;                    /* brightness()  */
+
+  --surface-hover : color-mix(in srgb, var(--surface) 90%, black 10%);
+  --surface-active: color-mix(in srgb, var(--surface) 80%, black 20%);
+
+  --accent-disabled: #b3b7c0;
 }
+
 [data-theme='dark']{
-  --bg:#232730;
-  --surface:#31353e;
-  --text:#efefef;
-  --accent:#82a9ac;
+  --bg:          #232730;
+  --surface:     #31353e;
+  --text:        #efefef;
+  --accent-s: 15%;
+  --accent-l: 50%;      /* lighter ⇒ pops on dark bg */
+  /*--accent:      #82a9ac;*/
+
+  --btn-disabled-bg: #31353e;      /* same as surface */
+  --text-muted:  #a9adb8;  /* 65 % tint of --text */
+
+  /* lighter tint + dimmer backdrop */
+  --glass-overlay-clr : rgba(255 255 255 / .08);
+  --glass-dim         : .7;
+
+  --surface-hover : color-mix(in srgb, var(--surface) 85%, white 15%);
+  --surface-active: color-mix(in srgb, var(--surface) 70%, white 30%);
+
+  --accent-disabled: #50545e;
+}
+
+html{
+  scrollbar-gutter: stable both-edges;
 }
 html{scrollbar-gutter:stable both-edges;}
 body{background:var(--bg);color:var(--text);font-family:sans-serif;margin:0;}
@@ -70,4 +110,36 @@ code {
 [data-theme='dark'] .output code {
   color: #55595f;
   background: #232730;
+}
+
+/* ============================================================
+   Icon-image helper
+   Add class="btn-icon" (or .btn__icon if you prefer BEM)
+   to any <img> that lives inside a <button>.
+   ============================================================ */
+.btn-icon{
+  height:1.4em;
+  width:1.4em;
+  font-size:1.4em;  /* for some reason this makes the size better */
+
+  /* — Layout — */
+  flex-shrink:0;        /* prevents icon from shrinking in flex buttons */
+  display:inline-block; /* ensures the width/height actually apply      */
+  vertical-align:middle;
+  margin-right: .5em;
+
+  /* — Render quality + clean look — */
+  object-fit:contain;   /* avoid distortion for non-SVG images */
+  box-shadow:none !important;   /* nuke any inherited shadows */
+  filter:none !important;       /* avoid unexpected drop-shadows */
+}
+
+.btn-icon-material-symbols{
+  font-size:1.65em !important;  /* material-symbols icons obey font-size, so set that too */
+
+  /* — Layout — */
+  flex-shrink:0;        /* prevents icon from shrinking in flex buttons */
+  display:inline-block; /* ensures the width/height actually apply      */
+  vertical-align:middle;
+  margin-right: .5em;
 }

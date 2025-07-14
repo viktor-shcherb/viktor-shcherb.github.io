@@ -1,111 +1,71 @@
 <!DOCTYPE html>
-<link rel="icon" type="image/png" href="/logos-flavicon/favicon-96x96.png" sizes="96x96" />
-<link rel="icon" type="image/svg+xml" href="/logos-flavicon/favicon.svg" />
-<link rel="shortcut icon" href="/logos-flavicon/favicon.ico" />
-<link rel="apple-touch-icon" sizes="180x180" href="/logos-flavicon/apple-touch-icon.png" />
-<link rel="manifest" href="/logos-flavicon/site.webmanifest" />
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block" rel="stylesheet" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block"></noscript>
-
-<link rel="stylesheet"
-      href="/assets/css/style.css?v={{ site.github.build_revision }}"
-      data-turbo-track="reload">
-
-<link rel="stylesheet"
-      href="/assets/fonts/material-symbols.css"
-      data-turbo-track="reload">
-
-
-
-<noscript><style>#app-loader{display:none!important}</style></noscript>
-
-<script>
-(()=>{
-  const key   = 'prefers-dark';
-  const dark  = localStorage.getItem(key)==='true' ||
-                (localStorage.getItem(key)===null &&
-                 matchMedia('(prefers-color-scheme: dark)').matches);
-  if(dark) document.documentElement.dataset.theme='dark';
-})();
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Support multiple dropdowns, if needed
-  document.querySelectorAll('.dropdown-toggle').forEach(function(toggle) {
-    toggle.addEventListener('click', function(e) {
-      e.stopPropagation();
-      // Close any other open dropdowns
-      document.querySelectorAll('.dropdown.open').forEach(function(openDropdown) {
-        if (openDropdown !== toggle.parentElement) openDropdown.classList.remove('open');
-      });
-      // Toggle this dropdown
-      toggle.parentElement.classList.toggle('open');
-    });
-  });
-
-  // Close dropdown when clicking outside
-  document.addEventListener('click', function(e) {
-    document.querySelectorAll('.dropdown.open').forEach(function(openDropdown) {
-      openDropdown.classList.remove('open');
-    });
-  });
-
-  // Optional: close dropdown when focus leaves the menu
-  document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
-    menu.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        menu.parentElement.classList.remove('open');
-        menu.previousElementSibling.focus();
-      }
-    });
-  });
-});
-</script>
-
-
-<html lang="{{ site.lang | default: "en-US" }}">
+<html lang="{{ site.lang | default: 'en-US' }}">
   <head>
     {% seo %}
 
     <meta charset="UTF-8">
-    <meta name="color-scheme" content="light dark">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
 
-    <script type="speculationrules">
-    {
-      "prerender": [
-        { "source": "list", "urls": ["/blog/", "/about/", "/"] }
-      ]
-    }
-    </script>
+    <!-- critical theme guard -->
+    <script>{% include theme-sniff.js %}</script>
 
-    {% comment %}Inline above-the-fold CSS{% endcomment %}
-    <style>
-    {% include critical.css %}
-    </style>
+    <!-- favicons -->
+    <link rel="icon" type="image/png" href="/logos-flavicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/logos-flavicon/favicon.svg" />
+    <link rel="shortcut icon" href="/logos-flavicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/logos-flavicon/apple-touch-icon.png" />
+    <link rel="manifest" href="/logos-flavicon/site.webmanifest" />
 
+    <!-- fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block"
+      crossorigin>
+
+    <!-- critical CSS inline -->
+    <style>{% include critical.css %}</style>
+
+    <!-- async main stylesheet -->
     <link rel="preload"
           href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}"
           as="style"
           onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}"></noscript>
-    <!--[if lt IE 9]>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <![endif]-->
+    <noscript><link rel="stylesheet"
+          href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}"></noscript>
+
+    <!-- Turbo Drive -->
+    <script type="module"
+            src="https://unpkg.com/@hotwired/turbo@8/dist/turbo.es2017-esm.js"></script>
+
+    <!-- speculation rules -->
+    <script type="speculationrules">
+    { "prerender": [ { "source":"list","urls":["/blog/","/about/","/","/algoprep/"] } ] }
+    </script>
+
+    <!-- structured information about blog owner -->
     {% include person-schema.html %}
 
-    <script
-      src="https://unpkg.com/@hotwired/turbo@8/dist/turbo.es2017-esm.js"
-      type="module"></script>
+    <!-- shared JS -->
+    <script type="module" src="/assets/js/main.js" defer></script>
+    <script type="module" src="/assets/js/theme-toggle.js"></script>
+
+    <!-- page-specific JS -->
+    {% if page.layout == 'post' %}
+      <script type="module" src="/assets/js/post.js" defer></script>
+    {% endif %}
+
+    {% if page.uses_pyodide %}
+      <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js" defer></script>
+    {% endif %}
   </head>
   <body>
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+    <!-- all used templates -->
+    {% include task-head-template.html %}
+    {% include task-body-template.html %}
+
     <div class="wrapper">
       <header>
         <nav class="site-nav">
@@ -128,9 +88,8 @@ document.addEventListener('DOMContentLoaded', function() {
             {% endif %}
           {% endfor %}
 
-          <button id="theme-toggle"
-                  class="theme-btn"
-                  aria-label="Toggle colour scheme">
+          <button id="theme-toggle" class="theme-btn"
+            aria-label="Toggle colour scheme" data-turbo-permanent>
             <span class="material-symbols-outlined" id="theme-icon" aria-hidden="true" data-icon></span>
           </button>
         </nav>
@@ -145,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
           <div class="recent-posts">
             <h2 class="recent-heading">
               <span class="material-symbols-outlined" aria-hidden="true" data-icon="article"></span>
-              Recent&nbsp;posts
+              Recent posts
             </h2>
 
             <ul class="posts-feed">
@@ -161,72 +120,17 @@ document.addEventListener('DOMContentLoaded', function() {
           </div>
         {%- endif -%}
 
-
-
       </header>
 
-      <div id="app-loader" aria-hidden="true">
-        <div class="spinner" aria-hidden="true"></div>
-      </div>
-
       <section>
-
-      <article class="post-content">
-        {{ content }}
-      </article>
-
+        <article class="post-content">
+          {{ content }}
+        </article>
       </section>
+
       <footer class="site-footer">
       </footer>
-
-      <script src="{{ '/assets/js/theme-toggle.js' | relative_url }}" defer></script>
-      <script src="{{ '/assets/js/loader.js' | relative_url }}" defer></script>
     </div>
     <script defer src="{{ '/assets/js/scale.fix.js' | relative_url }}"></script>
-    {% if page.layout == 'post' %}
-    <script defer src="https://cdn.jsdelivr.net/npm/anchor-js@5.0.0/anchor.min.js"></script>
-    <script defer>
-      document.addEventListener('DOMContentLoaded', () => {
-        const article = document.querySelector('.post-content');
-        if (!article) return;
-        anchors.options = { placement: 'right', icon: '', visible: 'hover' };
-        anchors.add('h1,h2,h3,h4,h5,h6', article);
-      });
-    </script>
-    {% endif %}
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Support multiple dropdowns, if needed
-      document.querySelectorAll('.dropdown-toggle').forEach(function(toggle) {
-        toggle.addEventListener('click', function(e) {
-          e.stopPropagation();
-          // Close any other open dropdowns
-          document.querySelectorAll('.dropdown.open').forEach(function(openDropdown) {
-            if (openDropdown !== toggle.parentElement) openDropdown.classList.remove('open');
-          });
-          // Toggle this dropdown
-          toggle.parentElement.classList.toggle('open');
-        });
-      });
-
-      // Close dropdown when clicking outside
-      document.addEventListener('click', function(e) {
-        document.querySelectorAll('.dropdown.open').forEach(function(openDropdown) {
-          openDropdown.classList.remove('open');
-        });
-      });
-
-      // Optional: close dropdown when focus leaves the menu
-      document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
-        menu.addEventListener('keydown', function(e) {
-          if (e.key === 'Escape') {
-            menu.parentElement.classList.remove('open');
-            menu.previousElementSibling.focus();
-          }
-        });
-      });
-    });
-    </script>
-
   </body>
 </html>
