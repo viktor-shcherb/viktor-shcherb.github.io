@@ -10,14 +10,15 @@ import { setupEditor,
 let currentTask, editorReady = false;
 
 async function renderPage() {
-  const slug = new URLSearchParams(location.search).get('id');
+  const pre  = window.PRE_RENDERED_TASK;
+  const slug = pre?.slug || new URLSearchParams(location.search).get('id');
   if (!slug) return;
 
   // 1. make sure the placeholders exist in the live DOM
   ensureTaskSkeleton();
 
   // 2. fetch the task JSON and render it into those placeholders
-  currentTask = await loadTask(slug);
+  currentTask = pre || await loadTask(slug);
   renderTask(currentTask, document);
 
   // 3. normal boot-strapping

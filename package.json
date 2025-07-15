@@ -1,0 +1,7 @@
+{
+  "type": "module",
+  "dependencies": {
+    "jsdom": "^24.0.0",
+    "marked": "^9.0.0"
+  }
+}

@@ -4,9 +4,12 @@ export async function renderTaskList(taskFiles) {
 
   list.innerHTML = '<ul id="task-list-ul"><li>Loading tasks...</li></ul>';
 
-  // Fetch all JSON files in parallel
+  // Fetch all JSON files in parallel, preferring pre-rendered data
   const tasks = await Promise.all(
     taskFiles.map(async (slug) => {
+      if (window.preRenderedTasks && window.preRenderedTasks[slug]) {
+        return { slug, ...window.preRenderedTasks[slug] };
+      }
       try {
         const res  = await fetch(`/algoprep/${slug}.json`);
         if (!res.ok) return null;
@@ -21,17 +24,21 @@ export async function renderTaskList(taskFiles) {
   // Build list HTML
   const html = tasks
     .filter(Boolean)
-    .map(
-      (task) => `
+    .map((task) => {
+      const pre = window.preRenderedTasks && window.preRenderedTasks[task.slug];
+      const url = pre
+        ? `/algoprep/task/${task.slug}/`
+        : `/algoprep/task?id=${encodeURIComponent(task.slug)}`;
+      return `
         <li>
-          <a href="/algoprep/task?id=${encodeURIComponent(task.slug)}">
+          <a href="${url}">
             ${task.title || task.slug}
           </a>
           <span style="font-size:.95em;color:#888;">
             ${task.contributor ? `&mdash; ${task.contributor.name}` : ''}
           </span>
-        </li>`
-    )
+        </li>`;
+    })
     .join('');
 
   document.getElementById('task-list-ul').innerHTML =
