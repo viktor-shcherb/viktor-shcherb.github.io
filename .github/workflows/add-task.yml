@@ -1,0 +1,63 @@
+name: Add approved task
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  add-task:
+    if: github.event.label.name == 'approved task'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/github-script@v7
+        id: extract
+        with:
+          script: |
+            const body = context.payload.issue.body || '';
+            const fences = [...body.matchAll(/```json\s+([\s\S]*?)```/g)];
+            function looksLikeTask(o){
+              return o && typeof o === 'object' && 'title' in o && 'description' in o && Array.isArray(o.tests);
+            }
+            let task;
+            for(const m of fences){
+              try{
+                const obj = JSON.parse(m[1]);
+                if(looksLikeTask(obj)){ task = obj; break; }
+              }catch{ }
+            }
+            if(!task) core.setFailed('No valid task JSON found');
+            const slug = task.title.trim().toLowerCase()
+              .replace(/[^a-z0-9\s-]/g, '')
+              .replace(/\s+/g, '-');
+            const fs = require('fs');
+            const path = `algoprep/${slug}.json`;
+            fs.writeFileSync(path, JSON.stringify(task, null, 2));
+            core.setOutput('slug', slug);
+      - name: Commit task file
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add algoprep/${{ steps.extract.outputs.slug }}.json
+          git commit -m "Add task: ${{ steps.extract.outputs.slug }} (closes #${{ github.event.issue.number }})"
+          git push
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const slug = '${{ steps.extract.outputs.slug }}';
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `Your task has been added and is live at:\nhttps://viktor-shcherb.github.io/algoprep/task/${slug}/`
+            });
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              state: 'closed'
+            });
