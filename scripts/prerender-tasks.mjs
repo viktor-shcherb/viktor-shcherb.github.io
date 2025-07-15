@@ -12,7 +12,7 @@ import { marked } from 'marked';
 import { ensureTaskSkeleton, populateTaskDOM } from '../assets/js/task-render-core.js';
 
 const SITE_DIR = '_site';
-const TASK_TEMPLATE = join(SITE_DIR, 'algoprep', 'task.html');
+const TASK_TEMPLATE = join(SITE_DIR, 'algoprep', 'task', 'index.html');
 const TASK_JSON_DIR = 'algoprep';
 
 async function main() {
