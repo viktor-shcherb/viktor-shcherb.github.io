@@ -27,7 +27,7 @@ jobs:
           node-version: '18'
       - run: bundle config set --local deployment true
       - run: bundle install --jobs 4 --retry 3
-      - run: npm ci
+      - run: npm install
       - run: bundle exec jekyll build
       - run: node scripts/prerender-tasks.mjs
       - uses: actions/upload-pages-artifact@v3
