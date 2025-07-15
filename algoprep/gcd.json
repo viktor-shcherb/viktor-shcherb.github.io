@@ -1,0 +1,80 @@
+{
+  "title": "GCD",
+  "description": "Compute the greatest common divisor of two non-negative integers.",
+  "signature": {
+    "name": "gcd",
+    "args": [
+      {
+        "name": "a",
+        "type": "int"
+      },
+      {
+        "name": "b",
+        "type": "int"
+      }
+    ],
+    "return_type": "int"
+  },
+  "tests": [
+    {
+      "args": {
+        "a": 7,
+        "b": 3
+      },
+      "return": 1
+    },
+    {
+      "args": {
+        "a": 100,
+        "b": 10
+      },
+      "return": 10
+    },
+    {
+      "args": {
+        "a": 54,
+        "b": 24
+      },
+      "return": 6
+    },
+    {
+      "args": {
+        "a": 270,
+        "b": 192
+      },
+      "return": 6
+    },
+    {
+      "args": {
+        "a": 1,
+        "b": 0
+      },
+      "return": 1
+    },
+    {
+      "args": {
+        "a": 0,
+        "b": 1
+      },
+      "return": 1
+    },
+    {
+      "args": {
+        "a": 0,
+        "b": 5
+      },
+      "return": 5
+    },
+    {
+      "args": {
+        "a": 13,
+        "b": 13
+      },
+      "return": 13
+    }
+  ],
+  "contributor": {
+    "name": "Viktor Shcherbakov",
+    "github": "https://github.com/viktor-shcherb"
+  }
+}
