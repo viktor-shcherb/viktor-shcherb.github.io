@@ -1,0 +1,65 @@
+{
+  "title": "Palindrome",
+  "description": "Determine if an input string is a palindrome. Palindrome is a sequence that is the same in reverse.",
+  "signature": {
+    "name": "is_palindrome",
+    "args": [
+      {
+        "name": "s",
+        "type": "str"
+      }
+    ],
+    "return_type": "bool"
+  },
+  "tests": [
+    {
+      "args": {
+        "s": "a"
+      },
+      "return": true
+    },
+    {
+      "args": {
+        "s": "ab"
+      },
+      "return": false
+    },
+    {
+      "return": true
+    },
+    {
+      "args": {
+        "s": "aa"
+      },
+      "return": true
+    },
+    {
+      "args": {
+        "s": "aba"
+      },
+      "return": true
+    },
+    {
+      "args": {
+        "s": "aaaaa"
+      },
+      "return": true
+    },
+    {
+      "args": {
+        "s": "aaaba"
+      },
+      "return": false
+    },
+    {
+      "args": {
+        "s": "abcba"
+      },
+      "return": true
+    }
+  ],
+  "contributor": {
+    "name": "Viktor Shcherbakov",
+    "github": "https://github.com/viktor-shcherb"
+  }
+}
