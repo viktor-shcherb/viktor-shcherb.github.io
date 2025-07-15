@@ -2,8 +2,9 @@
 name: New task
 about: Use this template to propose a new task
 title: ''
-labels: New task
+labels: new task
 assignees: viktor-shcherb
+
 ---
 
 # Context
