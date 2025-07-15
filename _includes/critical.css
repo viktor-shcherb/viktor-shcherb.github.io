@@ -63,25 +63,6 @@ body{background:var(--bg);color:var(--text);font-family:sans-serif;margin:0;}
 /* === loading curtain === */
 
 .wrapper { position: relative; }
-#app-loader{
-  position:absolute; inset:0; z-index:9999;
-  display:flex; align-items:center; justify-content:center;
-  background:var(--bg);
-  transition:opacity .05s ease-out;
-}
-#app-loader.fade{opacity:0; pointer-events:none;}
-
-@keyframes spin{to{transform:rotate(360deg)}}
-.spinner{
-  width:2rem;height:2rem;
-  border-color: var(--accent); border-top-color: transparent;
-  border-radius:50%;
-  animation:spin .8s linear infinite;
-}
-
-@media (prefers-reduced-motion: reduce){
-  .spinner{animation:none;}
-}
 
 pre, code, .highlight {
   background: var(--surface) !important;

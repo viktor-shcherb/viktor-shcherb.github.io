@@ -258,6 +258,45 @@ export function setupContribute(modal) {
     return task;
   }
 
+  async function makeIssueMarkdown(){
+    /* 1 ─ fetch the raw issue-template markdown from GitHub  */
+    const rawURL =
+      'https://raw.githubusercontent.com/viktor-shcherb/' +
+      'viktor-shcherb.github.io/master/.github/ISSUE_TEMPLATE/new_task.md';
+
+    const templateMD = await fetch(rawURL).then(res => res.text());
+
+    /* 2 ─ find every  ```json …``` fence                       */
+    const fences = [...templateMD.matchAll(/```json\s+([\s\S]*?)```/g)];
+
+    if (!fences.length) throw new Error('No JSON blocks found in template');
+
+    /* helper that decides “is this the skeleton we expect?”   */
+    const looksLikeTask = obj =>
+          obj && typeof obj === 'object' &&
+          'title' in obj && 'description' in obj &&
+          'tests' in obj && Array.isArray(obj.tests);
+
+    /* 3 ─ pick the first JSON fence that parses & matches keys */
+    let skeleton, fenceText;
+    for (const m of fences){
+      try{
+        const parsed = JSON.parse(m[1]);
+        if (looksLikeTask(parsed)){ skeleton = parsed; fenceText = m[0]; break; }
+      }catch{ /* ignore malformed */ }
+    }
+    if (!skeleton) throw new Error('No matching task-JSON skeleton found');
+
+    /* 4 ─ build the “filled” object from the form  */
+    const filled = buildTaskFromForm(modal, skeleton);
+
+    /* 5 ─ stringify (pretty-print) and substitute in the markdown  */
+    const prettyJSON = JSON.stringify(filled, null, 2);
+    const filledFence = '```json\n' + prettyJSON + '\n```';
+
+    return templateMD.replace(fenceText, filledFence);
+  }
+
 
   /* ────────── tiny helpers ────────── */
   const $  = (sel, scope = modal) => scope.querySelector(sel);
@@ -540,22 +579,40 @@ export function setupContribute(modal) {
     });
   }
 
-  /* ────────── submission stub ────────── */
-  modal.querySelector('#task-form')?.addEventListener('submit', e => {
-    if ($$('.type-select:invalid', argsList).length){
+  /* ────────── form submission – open GitHub issue ────────── */
+  modal.querySelector('#task-form')?.addEventListener('submit', async e => {
+    /* validation */
+    if ($$('.type-select:invalid', argsList).length) {
       alert('Please choose a type for every argument.');
       return;
     }
-
-    if (hasReturnCB.checked && !returnTypeSel.value){
+    if (hasReturnCB.checked && !returnTypeSel.value) {
       alert('Please choose a return type.');
       return;
     }
 
-    e.preventDefault();
-    // TODO: gather data and push to GitHub
-    alert('Ready to submit! (implement logic here)');
-    modal.classList.remove('open');
+    e.preventDefault();               // stay on the page
+
+    try {
+      const bodyMd = await makeIssueMarkdown(modal);
+      const title  = modal.querySelector('#title')?.value.trim() || 'New task';
+
+      const params = new URLSearchParams({
+        template : 'new_task.md',                       // selects template
+        title    : title,
+        body     : bodyMd
+      });
+
+      const repo = 'viktor-shcherb/viktor-shcherb.github.io';
+      const issueUrl = `https://github.com/${repo}/issues/new?${params}`;
+
+      /* open in a new tab so the user can review & submit */
+      window.open(issueUrl, '_blank', 'noopener,noreferrer');
+
+      modal.classList.remove('open'); // close the dialog
+    } catch (err) {
+      alert('Could not create GitHub issue: ' + err.message);
+    }
   });
 
   /* — download the current form state as task.json — */
