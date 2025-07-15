@@ -262,9 +262,13 @@ export function setupContribute(modal) {
     /* 1 ─ fetch the raw issue-template markdown from GitHub  */
     const rawURL =
       'https://raw.githubusercontent.com/viktor-shcherb/' +
-      'viktor-shcherb.github.io/master/.github/ISSUE_TEMPLATE/new_task.md';
+      'viktor-shcherb.github.io/master/.github/ISSUE_TEMPLATE/new-task.md';
 
-    const templateMD = await fetch(rawURL).then(res => res.text());
+    const res = await fetch(rawURL);
+    if (!res.ok) throw new Error(`unable to fetch template (${res.status})`);
+    let templateMD = (await res.text())
+        /* strip YAML front-matter at the very top ------------------ */
+        .replace(/^---[\s\S]*?---\s*/, '');
 
     /* 2 ─ find every  ```json …``` fence                       */
     const fences = [...templateMD.matchAll(/```json\s+([\s\S]*?)```/g)];
@@ -288,7 +292,7 @@ export function setupContribute(modal) {
     if (!skeleton) throw new Error('No matching task-JSON skeleton found');
 
     /* 4 ─ build the “filled” object from the form  */
-    const filled = buildTaskFromForm(modal, skeleton);
+    const filled = collectTaskFromForm();
 
     /* 5 ─ stringify (pretty-print) and substitute in the markdown  */
     const prettyJSON = JSON.stringify(filled, null, 2);
@@ -598,8 +602,8 @@ export function setupContribute(modal) {
       const title  = modal.querySelector('#title')?.value.trim() || 'New task';
 
       const params = new URLSearchParams({
-        template : 'new_task.md',                       // selects template
-        title    : title,
+        template : 'new-task.md',                       // selects template
+        title    : 'New task: ' + title,
         body     : bodyMd
       });
 
