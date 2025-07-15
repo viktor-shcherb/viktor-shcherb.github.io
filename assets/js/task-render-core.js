@@ -1,3 +1,14 @@
+/**
+ * DOM helpers shared by the runtime and the prerender script.
+ * They contain no references to browser-only APIs so that jsdom can
+ * evaluate them when generating static pages.
+ */
+
+/**
+ * Ensure the task placeholders are present.
+ * This runs in both Node (via jsdom) and the browser so that the
+ * prerender script and runtime share exactly the same markup.
+ */
 export function ensureTaskSkeleton(doc) {
   if (doc.querySelector('.task-title')) return;
   const headTpl = doc.getElementById('task-head-template');
@@ -9,6 +20,11 @@ export function ensureTaskSkeleton(doc) {
   panel.appendChild(bodyTpl.content.cloneNode(true));
 }
 
+/**
+ * Build a minimal Python function stub from a signature object.
+ * Sharing this logic keeps editor hints identical between prerender
+ * and client side.
+ */
 export function signatureToString(sig) {
   if (!sig?.name) return '';
   const args = (sig.args || [])
@@ -19,6 +35,11 @@ export function signatureToString(sig) {
   return `def ${sig.name}(${args})${arrow}:\n    pass`;
 }
 
+/**
+ * Render a couple of example cards for display below the task
+ * description.  These examples are static HTML so they can be
+ * embedded during prerendering and later enhanced in the browser.
+ */
 export function buildExamples(tests = [], signature = {}) {
   if (!tests.length) return '';
   const esc = s =>
@@ -60,6 +81,10 @@ export function buildExamples(tests = [], signature = {}) {
   );
 }
 
+/**
+ * Fill the task placeholders with data.  `parseMarkdown` is supplied by
+ * the caller so we can use the same function in Node and the browser.
+ */
 export function populateTaskDOM(task, container, parseMarkdown) {
   const els = {
     title: container.querySelector('.task-title'),

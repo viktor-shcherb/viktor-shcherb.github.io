@@ -1,10 +1,14 @@
+// Build the list of available tasks.  If the prerender script has
+// produced metadata for a task we use it instead of fetching the JSON
+// file, cutting down on network requests.
 export async function renderTaskList(taskFiles) {
   const list = document.getElementById('task-list');
   if (!list) return;
 
   list.innerHTML = '<ul id="task-list-ul"><li>Loading tasks...</li></ul>';
 
-  // Fetch all JSON files in parallel, preferring pre-rendered data
+  // Fetch all JSON files in parallel, but skip the network step when
+  // the prerender script has already supplied the metadata.
   const tasks = await Promise.all(
     taskFiles.map(async (slug) => {
       if (window.preRenderedTasks && window.preRenderedTasks[slug]) {
@@ -26,6 +30,7 @@ export async function renderTaskList(taskFiles) {
     .filter(Boolean)
     .map((task) => {
       const pre = window.preRenderedTasks && window.preRenderedTasks[task.slug];
+      // Use the static page when available so the user loads HTML directly.
       const url = pre
         ? `/algoprep/task/${task.slug}/`
         : `/algoprep/task?id=${encodeURIComponent(task.slug)}`;

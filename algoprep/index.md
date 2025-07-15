@@ -172,6 +172,8 @@ Find the source and contribute at [GitHub](https://github.com/viktor-shcherb/vik
   </div>
 </div>
 
+<!-- Contains a summary produced at build time so this page can render
+     without fetching every task JSON file. -->
 <script src="/assets/js/prerendered-tasks.js"></script>
 <script type="module" src="/assets/js/algoprep-list.js"></script>
 <script type="module" src="/assets/js/algoprep-contribute.js"></script>
