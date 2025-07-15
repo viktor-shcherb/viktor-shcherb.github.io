@@ -29,7 +29,7 @@ jobs:
       - run: npm ci
       - run: bundle exec jekyll build
       - run: node scripts/prerender-tasks.mjs
-      - uses: actions/upload-pages-artifact@v1
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
   deploy:
@@ -40,4 +40,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: deploy
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
