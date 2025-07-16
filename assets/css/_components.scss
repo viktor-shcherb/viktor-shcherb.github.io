@@ -249,6 +249,30 @@ pre code.language-io-codemirror {
   padding:.45em 1.1em;
 }
 
+/* Edit button shown on task pages */
+.edit-task-btn {
+  @extend %btn-base;
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.2em;
+}
+
+/* Container for task title and edit button */
+.task-header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.task-header .edit-task-btn {
+  position: absolute;
+  right: 0;
+}
+
 /* Form for new task information submission */
 
 /* header row inside the modal card */
