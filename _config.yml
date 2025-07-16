@@ -24,6 +24,9 @@ plugins:
   - jekyll-feed
   - jekyll-redirect-from
   - jekyll-avatar
+sass:
+  load_paths:
+    - assets/css
 defaults:
   -
     scope: { path: "" }
