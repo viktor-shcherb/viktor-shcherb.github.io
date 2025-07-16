@@ -483,8 +483,16 @@ textarea{
   background:var(--surface-accented);
 }
 
-.test-item.pass{ background: var(--surface-pass); }
-.test-item.fail{ background: var(--surface-fail); }
+.test-item.pass{
+  border-width: 3px;
+  border-color: var(--green);
+  background: var(--surface-accented);
+}
+.test-item.fail{
+  border-width: 3px;
+  border-color: var(--red);
+  background: var(--surface-accented);
+}
 
 /* one small “form-field” per value */
 .test-item .test-field{
