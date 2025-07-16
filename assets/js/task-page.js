@@ -23,6 +23,9 @@ async function renderPage() {
   //    templates can also be injected by the prerender step.
   ensureTaskSkeleton();
 
+  // Reset editor state when navigating between tasks
+  editorReady = false;
+
   // 2. Either reuse the embedded object or fetch the task JSON and
   //    render it into the skeleton.
   currentTask = pre || await loadTask(slug);
