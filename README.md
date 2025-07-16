@@ -1,5 +1,3 @@
-# viktor-shcherb.github.io
-
 This repository contains the source for my personal website. The site is built with [Jekyll](https://jekyllrb.com/) and hosts my blog, pages about me, and small projects.
 
 ## Projects
