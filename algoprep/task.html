@@ -51,10 +51,21 @@ uses_pyodide: true
     <section class="tab-panel code-panel" id="panel-code">
       <div id="editor"></div>
       <div class="code-runner">
+        <div id="runner-status" class="status-row"></div>
         <div class="controls-row">
           <button id="run-code-btn" class="run-btn" type="button" title="Run code">
             <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
           </button>
+        </div>
+        <div class="checks-row">
+          <label>
+            <input type="checkbox" id="hide-passed" checked>
+            Hide passed
+          </label>
+          <label>
+            <input type="checkbox" id="hide-sample" checked>
+            Hide example tests
+          </label>
         </div>
         <div id="tests-list"></div>
         <button type="button" id="add-test" class="add-btn" style="width:100%;">
