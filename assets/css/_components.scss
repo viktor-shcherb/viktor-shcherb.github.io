@@ -258,6 +258,9 @@ pre code.language-io-codemirror {
   cursor: pointer;
   line-height: 1;
   padding: 0.2em;
+  display: flex;
+  align-items: center;
+  font-size: 0.85em;  /* ~15% smaller than default */
 }
 
 /* Container for task title and edit button */
@@ -270,7 +273,9 @@ pre code.language-io-codemirror {
 
 .task-header .edit-task-btn {
   position: absolute;
+  top: 50%;
   right: 0;
+  transform: translateY(-50%);
 }
 
 /* Form for new task information submission */
