@@ -42,7 +42,7 @@ document.addEventListener('themechange', updateEditorTheme);
 
 document.addEventListener('tabshown', async ({ detail }) => {
   if (detail.panel.id !== 'panel-code' || editorReady) return;
-  setupEditor(signatureToString(currentTask.signature));
+  setupEditor(signatureToString(currentTask.signature), currentTask.slug);
   setupRunner();
   editorReady = true;
 });
