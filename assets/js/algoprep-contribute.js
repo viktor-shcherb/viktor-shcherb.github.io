@@ -154,13 +154,19 @@ function readValue(el, type) {
 
 /* lazy boot + open */
 document.addEventListener('click', e => {
-  if (!e.target.closest('#contribute-btn')) return;
+  const btn = e.target.closest('#contribute-btn, #edit-task-btn');
+  if (!btn) return;
 
   const modal = document.getElementById('contribute-modal');
   if (!modal) return;
 
   if (!modal.dataset.bound) {
     setupContribute(modal);   // ← one-time wiring
+  }
+  if (btn.id === 'edit-task-btn' && window.currentTask) {
+    modal.prefillForm(window.currentTask);
+  } else {
+    modal.prefillForm({});
   }
   modal.classList.add('open');
 });
@@ -465,6 +471,9 @@ export function setupContribute(modal) {
     const idx = uuid();
     const el  = argTemplate(idx, name, type);
     argsList.appendChild(el);
+    if (type) {
+      el.querySelector('.type-select').value = type;
+    }
     appendArgToTests(idx);
   }
 
@@ -582,6 +591,79 @@ export function setupContribute(modal) {
       });
     });
   }
+
+  function resetForm() {
+    modal.querySelector('#task-form').reset();
+    argsList.innerHTML = '';
+    testsList.innerHTML = '';
+  }
+
+  function prefillForm(task = {}) {
+    resetForm();
+
+    $('#title').value = task.title || '';
+    $('#description').value = task.description || '';
+    $('#functionName').value = task.signature?.name || '';
+
+    hasReturnCB.checked = !!task.signature?.return_type;
+    returnTypeSel.disabled = !hasReturnCB.checked;
+    returnTypeSel.value = task.signature?.return_type || '';
+
+    enableStdinCB.checked  = (task.tests || []).some(t => 'stdin' in t);
+    enableStdoutCB.checked = (task.tests || []).some(t => 'stdout' in t);
+
+    (task.signature?.args || []).forEach(arg => addArg(arg.name, arg.type));
+
+    (task.tests || []).forEach(t => {
+      addTest();
+      const testItem = testsList.lastElementChild;
+      const argMap = {};
+      $$('.arg-item[data-idx]', argsList).forEach(argEl => {
+        const idx = argEl.dataset.idx;
+        const name = argEl.querySelector('.name-input').value.trim();
+        argMap[name] = { idx, type: argEl.querySelector('.type-select').value };
+      });
+
+      Object.entries(t.args || {}).forEach(([name, val]) => {
+        const info = argMap[name];
+        if (!info) return;
+        const inp = testItem.querySelector(`.test-arg-input[data-idx="${info.idx}"]`);
+        if (!inp) return;
+        if (inp.classList.contains('bool-toggle')) {
+          inp.dataset.value = val ? 'true' : 'false';
+          inp.textContent   = val ? 'true' : 'false';
+        } else {
+          inp.value = val;
+        }
+      });
+
+      if ('return' in t) {
+        const retInp = testItem.querySelector('.return-field .test-arg-input');
+        if (retInp) {
+          const v = t.return;
+          if (retInp.classList.contains('bool-toggle')) {
+            retInp.dataset.value = v ? 'true' : 'false';
+            retInp.textContent   = v ? 'true' : 'false';
+          } else {
+            retInp.value = v;
+          }
+        }
+      }
+
+      if ('stdin' in t) {
+        const ta = testItem.querySelector('.stdin-field textarea');
+        if (ta) ta.value = t.stdin;
+      }
+      if ('stdout' in t) {
+        const ta = testItem.querySelector('.stdout-field textarea');
+        if (ta) ta.value =
+          typeof t.stdout === 'object' ? JSON.stringify(t.stdout, null, 2) : t.stdout;
+      }
+    });
+
+  }
+
+  modal.prefillForm = prefillForm;
 
   /* ────────── form submission – open GitHub issue ────────── */
   modal.querySelector('#task-form')?.addEventListener('submit', async e => {

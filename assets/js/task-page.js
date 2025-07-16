@@ -29,6 +29,7 @@ async function renderPage() {
   // 2. Either reuse the embedded object or fetch the task JSON and
   //    render it into the skeleton.
   currentTask = pre || await loadTask(slug);
+  window.currentTask = currentTask;
   renderTask(currentTask, document);
 
   // 3. Continue with the interactive features once the static
