@@ -27,13 +27,15 @@ export function updateEditorTheme() {
 }
 
 // Helper: key for storage (can be per-page, or global)
-const STORAGE_KEY = "cm-editor-doc";
+function storageKey(slug) {
+  return slug ? `cm-editor-doc:${slug}` : "cm-editor-doc";
+}
 
 // Save on every change
-function persistExtension() {
+function persistExtension(key) {
   return EditorView.updateListener.of(update => {
     if (update.docChanged) {
-      localStorage.setItem(STORAGE_KEY, update.state.doc.toString());
+      localStorage.setItem(key, update.state.doc.toString());
     }
   });
 }
@@ -55,7 +57,7 @@ const customTheme = EditorView.theme({
   }
 });
 
-export async function setupEditor(initialDoc) {
+export async function setupEditor(initialDoc, slug = null) {
   const editorContainer = document.getElementById("editor");
   if (!editorContainer) return;
 
@@ -69,8 +71,9 @@ export async function setupEditor(initialDoc) {
   const isVisible = !!(editorContainer.offsetWidth || editorContainer.offsetHeight || editorContainer.getClientRects().length);
   if (!isVisible) return;
 
+  const key = storageKey(slug);
   // Priority: localStorage > provided argument > default
-  let savedDoc = localStorage.getItem(STORAGE_KEY);
+  let savedDoc = localStorage.getItem(key);
   if (!savedDoc) {
     savedDoc = typeof initialDoc === "string" ? initialDoc : "# Write your Python code here\nprint('Hello!')";
   }
@@ -89,7 +92,7 @@ export async function setupEditor(initialDoc) {
       selectionMatches(),
       autocompletion(),
       closeBrackets(),
-      persistExtension(),
+      persistExtension(key),
       lineNumbers(),
       themeCompartment.of(getThemeExtension()),
       python(),
@@ -189,7 +192,17 @@ export async function setupRunner() {
 
   // Only load Pyodide once
   if (!pyodideReadyPromise) {
-    pyodideReadyPromise = window.loadPyodide ? window.loadPyodide() : Promise.reject("Pyodide not loaded");
+    if (window.loadPyodide) {
+      pyodideReadyPromise = window.loadPyodide();
+    } else {
+      pyodideReadyPromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js';
+        script.onload = () => window.loadPyodide().then(resolve).catch(reject);
+        script.onerror = () => reject('Pyodide not loaded');
+        document.head.appendChild(script);
+      });
+    }
   }
 
   let pyodide;
