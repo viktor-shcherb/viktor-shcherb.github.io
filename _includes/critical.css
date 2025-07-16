@@ -9,6 +9,12 @@
   --accent-l: 35%;      /* darker ⇒ passes contrast on light bg */
   --accent: hsl(var(--accent-h) var(--accent-s) var(--accent-l));
 
+  /* tuned colours for tests */
+  --green: color-mix(in srgb, hsl(140deg 60% 40%) 80%, var(--accent));
+  --red:   color-mix(in srgb, hsl(0deg 70% 45%) 80%, var(--accent));
+  --surface-pass: color-mix(in srgb, var(--green) 15%, transparent);
+  --surface-fail: color-mix(in srgb, var(--red) 15%, transparent);
+
   /*--accent:      #4b6f71; */
   --surface-accented: color-mix(in srgb, var(--accent) 6%, transparent);
 
@@ -34,6 +40,9 @@
   --accent-s: 15%;
   --accent-l: 50%;      /* lighter ⇒ pops on dark bg */
   /*--accent:      #82a9ac;*/
+
+  --green: color-mix(in srgb, hsl(140deg 60% 50%) 80%, var(--accent));
+  --red:   color-mix(in srgb, hsl(0deg 70% 60%) 80%, var(--accent));
 
   --btn-disabled-bg: #31353e;      /* same as surface */
   --text-muted:  #a9adb8;  /* 65 % tint of --text */
