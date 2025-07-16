@@ -1,4 +1,4 @@
-/* Critical CSS for initial render */
+/* --- Critical CSS for initial render --- */
 :root{
   --bg:          #ffffff;  /* light mode */
   --surface:     #efefef;
@@ -16,7 +16,7 @@
   --btn-disabled-bg: #6e747d;      /* same as text-muted */
   --btn-text:        #ffffff;      /* one text colour for ALL buttons */
 
-  /* ── overlay / glass ───────────────── */
+  /* --- Overlay / glass --- */
   --glass-overlay-clr : rgba(20 20 30 / .15);  /* tint colour   */
   --glass-blur        : 6px;                  /* blur strength */
   --glass-dim         : 1;                    /* brightness()  */
@@ -60,7 +60,7 @@ body{background:var(--bg);color:var(--text);font-family:sans-serif;margin:0;}
 .site-nav a:hover::after,.site-nav a:focus-visible::after,.site-nav a.active::after{background:var(--accent);}
 .theme-btn{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--accent);line-height:1;}
 
-/* === loading curtain === */
+/* --- Loading curtain --- */
 
 .wrapper { position: relative; }
 
@@ -93,11 +93,8 @@ code {
   background: #232730;
 }
 
-/* ============================================================
-   Icon-image helper
-   Add class="btn-icon" (or .btn__icon if you prefer BEM)
-   to any <img> that lives inside a <button>.
-   ============================================================ */
+/* --- Icon image helper ------------------------------------- */
+/* Add class="btn-icon" (or .btn__icon) to any <img> inside a button. */
 .btn-icon{
   height:1.4em;
   width:1.4em;
