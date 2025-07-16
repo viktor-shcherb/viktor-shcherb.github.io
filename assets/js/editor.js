@@ -1,13 +1,13 @@
-import {EditorView, lineNumbers, keymap, drawSelection} from "https://esm.sh/@codemirror/view";
-import {python} from "https://esm.sh/@codemirror/lang-python";
+import {EditorView, lineNumbers, keymap, drawSelection} from "https://esm.sh/@codemirror/view?bundle";
+import {python} from "https://esm.sh/@codemirror/lang-python?bundle";
 
-import {githubDark, githubLight} from "https://esm.sh/@uiw/codemirror-theme-github";
-import {Compartment} from "https://esm.sh/@codemirror/state";
-import {lintKeymap} from "https://esm.sh/@codemirror/lint";
-import {searchKeymap, highlightSelectionMatches as selectionMatches} from "https://esm.sh/@codemirror/search";
+import {githubDark, githubLight} from "https://esm.sh/@uiw/codemirror-theme-github?bundle";
+import {Compartment} from "https://esm.sh/@codemirror/state?bundle";
+import {lintKeymap} from "https://esm.sh/@codemirror/lint?bundle";
+import {searchKeymap, highlightSelectionMatches as selectionMatches} from "https://esm.sh/@codemirror/search?bundle";
 
-import {insertTab, history} from "https://esm.sh/@codemirror/commands";
-import {autocompletion, closeBrackets} from "https://esm.sh/@codemirror/autocomplete";
+import {insertTab, history} from "https://esm.sh/@codemirror/commands?bundle";
+import {autocompletion, closeBrackets} from "https://esm.sh/@codemirror/autocomplete?bundle";
 
 const themeCompartment = new Compartment();
 
