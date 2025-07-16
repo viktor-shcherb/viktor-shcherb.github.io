@@ -249,10 +249,16 @@ pre code.language-io-codemirror {
   padding:.45em 1.1em;
 }
 
-.tasks-header {
+.available-tasks-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: flex-end;    /* bottom‐align each item */
+}
+
+/* nuke default bottom‐margins so they don’t “sit” at different heights */
+.available-tasks-header h2,
+.available-tasks-header button {
+  margin: 0;
 }
 
 /* Edit button shown on task pages */
@@ -275,6 +281,11 @@ pre code.language-io-codemirror {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+/* sync the default margins so both bottoms actually meet */
+.task-header .task-title,
+.task-header .edit-task-btn {
+  margin: 0.5em;
 }
 
 .task-header .edit-task-btn {

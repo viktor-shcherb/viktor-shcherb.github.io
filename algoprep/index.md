@@ -15,7 +15,7 @@ Find the source and contribute at [GitHub](https://github.com/viktor-shcherb/vik
 
 <hr>
 
-<div class="tasks-header">
+<div class="available-tasks-header">
   <h2 id="available-tasks">Available Tasks</h2>
   <button id="contribute-btn" class="contribute-btn">
     Contribute new task
