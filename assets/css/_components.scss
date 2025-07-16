@@ -108,20 +108,9 @@ input#tab-preview:checked + label[for="tab-preview"],
   margin-top: 1.5em;
 }
 
-/* Layout for input row: glue button to right, textarea grows */
-.input-row {
+.controls-row {
   display: flex;
-  align-items: flex-start; /* button glued to top of input */
-  gap: 0.5em;
-}
-
-#code-input {
-  resize: vertical;
-  width: 100%;
-  min-height: 2.5em;
-  flex: auto;
-  background: var(--surface);
-  color: var(--text);
+  justify-content: flex-end;
 }
 
 /* The button: size, alignment, spacing */
@@ -136,8 +125,8 @@ input#tab-preview:checked + label[for="tab-preview"],
   min-width: 2em;
   border-radius: 30%;
   padding: 0;
-  background: var(--accent);
-  color: var(--btn-text);
+  background: none;
+  color: var(--green);
   border: none;
   cursor: pointer;
   font-size: 1.4em;
@@ -494,6 +483,9 @@ textarea{
   background:var(--surface-accented);
 }
 
+.test-item.pass{ background: var(--surface-pass); }
+.test-item.fail{ background: var(--surface-fail); }
+
 /* one small “form-field” per value */
 .test-item .test-field{
   flex: 1 1 var(--basis,18ch);  /* start narrow, may shrink to basis */
@@ -651,6 +643,7 @@ select{
   justify-content: center;
   padding:.45em 1.1em;
 }
+.add-btn.full-row{ width:100%; }
 
 .submit-btn {
   @extend %btn-base;
