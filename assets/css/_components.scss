@@ -800,3 +800,20 @@ button:hover{
   opacity:.8;
 }
 
+/* Copy-to-clipboard button for code blocks */
+pre.copy-wrap {
+  position: relative;
+}
+
+.copy-btn {
+  @extend %btn-base;
+  position: absolute;
+  top: .25em;
+  right: .25em;
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0.2em;
+}
+
