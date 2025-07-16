@@ -284,11 +284,12 @@ export async function setupRunner(task) {
         args[a.name] = val;
       }
       const retInp = testEl.querySelector('.return-field .test-arg-input');
-      const expectedReturn = (retInp && retInp.value !== '')
+      const expectedReturn = retInp
           ? readValue(retInp, task.signature.return_type)
           : undefined;
       const stdin = testEl.querySelector('.stdin-field textarea')?.value || '';
-      const expectedStdout = testEl.querySelector('.stdout-field textarea')?.value.trim();
+      const stdoutInp = testEl.querySelector('.stdout-field textarea');
+      const expectedStdout = stdoutInp ? stdoutInp.value.trim() : undefined;
 
       try {
         const snippet = String.raw`
@@ -316,14 +317,14 @@ result = ${task.signature.name}(**args)
 sys.stdout = _sys_out
 json.dumps({'return': result, 'stdout': _out_buf.getvalue()})`;
 
-        const resStr = await pyodide.runPythonAsync(code + snippet);
+        const resStr = await pyodide.runPythonAsync(code + '\n' + snippet);
         const res = JSON.parse(resStr);
 
         let ok = true;
-        if(expectedReturn !== undefined && expectedReturn !== ''){
+        if(retInp){
           ok = ok && JSON.stringify(res.return) === JSON.stringify(expectedReturn);
         }
-        if(expectedStdout){
+        if(stdoutInp){
           ok = ok && res.stdout.trim() === expectedStdout;
         }
 
