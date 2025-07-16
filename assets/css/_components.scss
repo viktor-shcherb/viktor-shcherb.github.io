@@ -113,6 +113,16 @@ input#tab-preview:checked + label[for="tab-preview"],
   justify-content: flex-end;
 }
 
+.status-row {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.checks-row {
+  display: flex;
+  justify-content: space-between;
+}
+
 /* The button: size, alignment, spacing */
 .run-btn {
   @extend %btn-base;
