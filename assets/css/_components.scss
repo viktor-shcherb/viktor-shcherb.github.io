@@ -249,6 +249,12 @@ pre code.language-io-codemirror {
   padding:.45em 1.1em;
 }
 
+.tasks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
 /* Edit button shown on task pages */
 .edit-task-btn {
   @extend %btn-base;
