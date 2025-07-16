@@ -12,10 +12,17 @@ import {autocompletion, closeBrackets} from "https://esm.sh/@codemirror/autocomp
 const themeCompartment = new Compartment();
 
 export function updateEditorTheme() {
+  const effect = themeCompartment.reconfigure(getThemeExtension());
+
   const editorContainer = document.getElementById("editor");
-  if (!editorContainer || !editorContainer.cmView) return;
-  editorContainer.cmView.dispatch({
-    effects: themeCompartment.reconfigure(getThemeExtension())
+  if (editorContainer && editorContainer.cmView) {
+    editorContainer.cmView.dispatch({ effects: effect });
+  }
+
+  document.querySelectorAll('.cm-static-view').forEach(el => {
+    if (el.cmView) {
+      el.cmView.dispatch({ effects: effect });
+    }
   });
 }
 
@@ -107,7 +114,7 @@ export function renderReadOnlyCodeBlocks() {
     block.parentNode.replaceWith(wrapper);
 
     // Create read-only CodeMirror view
-    new EditorView({
+    wrapper.cmView = new EditorView({
       doc: code,
       extensions: [
         python(),
@@ -148,7 +155,7 @@ export function renderReadOnlyInputOutputBlocks() {
     block.parentNode.replaceWith(wrapper);
 
     // Create read-only CodeMirror view
-    new EditorView({
+    wrapper.cmView = new EditorView({
       doc: code,
       extensions: [
         themeCompartment.of(getThemeExtension()),
