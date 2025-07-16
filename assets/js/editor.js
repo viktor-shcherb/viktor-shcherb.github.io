@@ -186,6 +186,9 @@ export async function setupRunner(task) {
   const runBtn = document.getElementById('run-code-btn');
   const testsList = document.getElementById('tests-list');
   const addTestBtn = document.getElementById('add-test');
+  const statusRow = document.getElementById('runner-status');
+  const hidePassedCB = document.getElementById('hide-passed');
+  const hideSampleCB = document.getElementById('hide-sample');
   const codeOutputWrapper = document.getElementById('output-wrapper');
   function setCodeOutput(text) {
     codeOutputWrapper.firstElementChild.innerHTML = `<pre><code class="language-io-codemirror">${text}</code></pre>`;
@@ -194,6 +197,9 @@ export async function setupRunner(task) {
 
   const editorContainer = document.getElementById('editor');
   if (!runBtn || !editorContainer || !testsList || !addTestBtn) return;
+
+  const hasStdin  = task.tests?.some(t => 'stdin'  in t);
+  const hasStdout = task.tests?.some(t => 'stdout' in t);
 
 
   function testTemplate(tId){
@@ -207,8 +213,8 @@ export async function setupRunner(task) {
         <span class="anchor-end args-end" aria-hidden="true"></span>
         ${ret}
         <span class="anchor-end return-end" aria-hidden="true"></span>
-        ${buildStdInField(tId)}
-        ${buildStdOutField(tId)}
+        ${hasStdin ? buildStdInField(tId) : ''}
+        ${hasStdout ? buildStdOutField(tId) : ''}
         <span class="anchor-end io-end" aria-hidden="true"></span>
         <div class="item-actions">
           <button type="button" class="del-btn"><span class="material-symbols-outlined delete-icon">delete</span></button>
@@ -216,7 +222,50 @@ export async function setupRunner(task) {
       </div>`;
   }
 
-  function addTest(){ testsList.appendChild(testTemplate(uuid())); }
+  function fillTest(el, data){
+    for(const a of task.signature.args){
+      const inp = el.querySelector(`.test-arg-input[data-idx="${a.name}"]`);
+      if(!inp) continue;
+      let val = data.args?.[a.name];
+      if(a.type === 'bool'){
+        const boolVal = Boolean(val);
+        inp.dataset.value = boolVal ? 'true':'false';
+        inp.textContent = boolVal ? 'true':'false';
+      }else if(val !== undefined){
+        inp.value = val;
+      }
+    }
+    if(task.signature.return_type){
+      const retInp = el.querySelector('.return-field .test-arg-input');
+      if(retInp && 'return' in data){
+        if(task.signature.return_type === 'bool'){
+          const b = Boolean(data.return);
+          retInp.dataset.value = b ? 'true':'false';
+          retInp.textContent = b ? 'true':'false';
+        }else{
+          retInp.value = data.return;
+        }
+      }
+    }
+    if(hasStdin){
+      const inp = el.querySelector('.stdin-field textarea');
+      if(inp && data.stdin) inp.value = data.stdin;
+    }
+    if(hasStdout){
+      const inp = el.querySelector('.stdout-field textarea');
+      if(inp && 'stdout' in data) inp.value = typeof data.stdout === 'object' ? JSON.stringify(data.stdout) : data.stdout;
+    }
+  }
+
+  function createTest(data = {}, sample = false){
+    const el = testTemplate(uuid());
+    if(sample) el.classList.add('sample-test');
+    testsList.appendChild(el);
+    fillTest(el, data);
+    return el;
+  }
+
+  function addTest(){ createTest(); }
   addTestBtn.addEventListener('click', addTest);
   testsList.addEventListener('click', e => {
     if(e.target.closest('.del-btn')) e.target.closest('.test-item').remove();
@@ -228,10 +277,26 @@ export async function setupRunner(task) {
     btn.dataset.value = isTrue ? 'false' : 'true';
     btn.textContent   = isTrue ? 'false' : 'true';
   });
+  task.tests?.forEach(t => createTest(t, true));
   addTest();
+  updateVisibility();
+
+  function updateVisibility(){
+    const hidePassed = hidePassedCB?.checked;
+    const hideSample = hideSampleCB?.checked;
+    testsList.querySelectorAll('.test-item').forEach(item => {
+      const passed = item.classList.contains('pass');
+      const sample = item.classList.contains('sample-test');
+      item.style.display = (hidePassed && passed) || (hideSample && sample) ? 'none' : '';
+    });
+  }
+
+  hidePassedCB?.addEventListener('change', updateVisibility);
+  hideSampleCB?.addEventListener('change', updateVisibility);
 
   // Disable run button while loading Pyodide
   runBtn.disabled = true;
+  if(statusRow) statusRow.textContent = 'Loading interpreter...';
   setCodeOutput("⏳ Loading Python interpreter...");
   codeOutputWrapper.style.display = "";
 
@@ -255,12 +320,14 @@ export async function setupRunner(task) {
     pyodide = await pyodideReadyPromise;
   } catch (e) {
     setCodeOutput("❌ Failed to load Python environment");
+    if(statusRow) statusRow.textContent = 'Failed to load interpreter';
     runBtn.disabled = true;
     return;
   }
 
   runBtn.disabled = false;
   runBtn.title = "Run code";
+  if(statusRow) statusRow.textContent = '';
   codeOutputWrapper.style.display = "none";
 
   runBtn.onclick = async () => {
@@ -273,9 +340,11 @@ export async function setupRunner(task) {
     codeOutputWrapper.style.display = "";
 
     const tests = [...testsList.querySelectorAll('.test-item')];
-
-    for(const testEl of tests){
+    let passedCount = 0;
+    for(let i=0; i<tests.length; i++){
+      const testEl = tests[i];
       testEl.classList.remove('pass','fail');
+      if(statusRow) statusRow.textContent = `Running tests ${i+1}/${tests.length}`;
       const args = {};
       for(const a of task.signature.args){
         const inp = testEl.querySelector(`.test-arg-input[data-idx="${a.name}"]`);
@@ -327,12 +396,17 @@ json.dumps({'return': result, 'stdout': _out_buf.getvalue()})`;
         if(stdoutInp){
           ok = ok && res.stdout.trim() === expectedStdout;
         }
-
         testEl.classList.add(ok ? 'pass' : 'fail');
+        if(ok) passedCount++;
       } catch(err){
         testEl.classList.add('fail');
       }
     }
+    if(statusRow){
+      const pct = Math.round((passedCount/tests.length)*100);
+      statusRow.textContent = `Passed tests: ${passedCount}/${tests.length} (${pct}%)`;
+    }
+    updateVisibility();
   };
 }
 
