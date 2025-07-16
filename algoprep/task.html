@@ -51,12 +51,15 @@ uses_pyodide: true
     <section class="tab-panel code-panel" id="panel-code">
       <div id="editor"></div>
       <div class="code-runner">
-        <div class="input-row">
-          <textarea id="code-input" placeholder="Input (stdin)"></textarea>
+        <div class="controls-row">
           <button id="run-code-btn" class="run-btn" type="button" title="Run code">
             <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
           </button>
         </div>
+        <div id="tests-list"></div>
+        <button type="button" id="add-test" class="add-btn" style="width:100%;">
+          Add test
+        </button>
         <div id="output-wrapper" style="display:none;">
           <pre><code id="code-output" class="language-io-codemirror"></code></pre>
         </div>

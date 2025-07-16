@@ -8,6 +8,15 @@ import {searchKeymap, highlightSelectionMatches as selectionMatches} from "https
 
 import {insertTab, history} from "https://esm.sh/@codemirror/commands";
 import {autocompletion, closeBrackets} from "https://esm.sh/@codemirror/autocomplete";
+import {
+  buildTestField,
+  buildReturnField,
+  buildStdInField,
+  buildStdOutField,
+  readValue,
+  html as htmlEl,
+  uuid
+} from '/assets/js/test-fields.js';
 
 const themeCompartment = new Compartment();
 
@@ -170,20 +179,56 @@ export function renderReadOnlyInputOutputBlocks() {
   });
 }
 
+
 let pyodideReadyPromise = null;
 
-export async function setupRunner() {
+export async function setupRunner(task) {
   const runBtn = document.getElementById('run-code-btn');
+  const testsList = document.getElementById('tests-list');
+  const addTestBtn = document.getElementById('add-test');
   const codeOutputWrapper = document.getElementById('output-wrapper');
-  // a helper to (re)fetch the current <code> element
   function setCodeOutput(text) {
     codeOutputWrapper.firstElementChild.innerHTML = `<pre><code class="language-io-codemirror">${text}</code></pre>`;
     renderReadOnlyInputOutputBlocks();
   }
 
-  const codeInput = document.getElementById('code-input');
   const editorContainer = document.getElementById('editor');
-  if (!runBtn || !editorContainer) return;
+  if (!runBtn || !editorContainer || !testsList || !addTestBtn) return;
+
+
+  function testTemplate(tId){
+    const argFields = task.signature.args.map(a =>
+      buildTestField({tId, argIdx:a.name, argName:a.name, argType:a.type})
+    ).join('');
+    const ret = task.signature.return_type ? buildReturnField(tId, task.signature.return_type) : '';
+    return htmlEl/*html*/`
+      <div class="test-item" data-test-id="${tId}">
+        ${argFields}
+        <span class="anchor-end args-end" aria-hidden="true"></span>
+        ${ret}
+        <span class="anchor-end return-end" aria-hidden="true"></span>
+        ${buildStdInField(tId)}
+        ${buildStdOutField(tId)}
+        <span class="anchor-end io-end" aria-hidden="true"></span>
+        <div class="item-actions">
+          <button type="button" class="del-btn"><span class="material-symbols-outlined delete-icon">delete</span></button>
+        </div>
+      </div>`;
+  }
+
+  function addTest(){ testsList.appendChild(testTemplate(uuid())); }
+  addTestBtn.addEventListener('click', addTest);
+  testsList.addEventListener('click', e => {
+    if(e.target.closest('.del-btn')) e.target.closest('.test-item').remove();
+  });
+  testsList.addEventListener('click', e => {
+    const btn = e.target.closest('.bool-toggle');
+    if(!btn) return;
+    const isTrue = btn.dataset.value === 'true';
+    btn.dataset.value = isTrue ? 'false' : 'true';
+    btn.textContent   = isTrue ? 'false' : 'true';
+  });
+  addTest();
 
   // Disable run button while loading Pyodide
   runBtn.disabled = true;
@@ -223,17 +268,34 @@ export async function setupRunner() {
     if (editorContainer.cmView) {
       code = editorContainer.cmView.state.doc.toString();
     }
-    const stdin = codeInput.value;
 
-    setCodeOutput("⏳ Running...")
+    setCodeOutput("⏳ Running...");
     codeOutputWrapper.style.display = "";
 
-    try {
-      pyodide.globals.set("input_data", stdin);
-      pyodide.runPython(`
-import sys
+    const tests = [...testsList.querySelectorAll('.test-item')];
+
+    for(const testEl of tests){
+      testEl.classList.remove('pass','fail');
+      const args = {};
+      for(const a of task.signature.args){
+        const inp = testEl.querySelector(`.test-arg-input[data-idx="${a.name}"]`);
+        if(!inp) continue;
+        const val = readValue(inp, a.type);
+        args[a.name] = val;
+      }
+      const retInp = testEl.querySelector('.return-field .test-arg-input');
+      const expectedReturn = (retInp && retInp.value !== '')
+          ? readValue(retInp, task.signature.return_type)
+          : undefined;
+      const stdin = testEl.querySelector('.stdin-field textarea')?.value || '';
+      const expectedStdout = testEl.querySelector('.stdout-field textarea')?.value.trim();
+
+      try {
+        const snippet = String.raw`
+import json, sys
 from io import StringIO
 
+input_data = ${JSON.stringify(stdin)}
 class PatchedInput:
     def __init__(self, data):
         self.lines = data.splitlines()
@@ -243,36 +305,36 @@ class PatchedInput:
             line = self.lines[self.index]
             self.index += 1
             return line
-        else:
-            raise EOFError("No more input")
-
+        raise EOFError('No more input')
 _input = PatchedInput(input_data)
 __builtins__.input = _input
-`);
-      // Capture stdout/stderr
-      let output = "";
+_out_buf = StringIO()
+_sys_out = sys.stdout
+sys.stdout = _out_buf
+args = json.loads('${JSON.stringify(args)}')
+result = ${task.signature.name}(**args)
+sys.stdout = _sys_out
+json.dumps({'return': result, 'stdout': _out_buf.getvalue()})`;
 
-      function appendChunk(text) {
-        output += text + '\n';             // fresh reference
-        setCodeOutput(output)
+        const resStr = await pyodide.runPythonAsync(code + snippet);
+        const res = JSON.parse(resStr);
+
+        let ok = true;
+        if(expectedReturn !== undefined && expectedReturn !== ''){
+          ok = ok && JSON.stringify(res.return) === JSON.stringify(expectedReturn);
+        }
+        if(expectedStdout){
+          ok = ok && res.stdout.trim() === expectedStdout;
+        }
+
+        testEl.classList.add(ok ? 'pass' : 'fail');
+      } catch(err){
+        testEl.classList.add('fail');
       }
-
-      pyodide.setStdout({ batched: appendChunk });
-      pyodide.setStderr({ batched: appendChunk });
-
-      await pyodide.runPythonAsync(code);
-    } catch (err) {
-      let codeOutput = codeOutputWrapper.firstElementChild;
-
-      let error_msg = "❌ Error:\n" + (err.message || err.toString());
-      setCodeOutput(error_msg);
     }
   };
 }
 
 
-// Call setupRunner after DOM ready:
-document.addEventListener("DOMContentLoaded", setupRunner);
-document.addEventListener("turbo:load", setupRunner);
-document.addEventListener("page:change", setupRunner);
+// setupRunner is invoked from task-page.js once the code panel becomes visible
 
