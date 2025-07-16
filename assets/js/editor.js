@@ -7,7 +7,7 @@ import {lintKeymap} from "https://esm.sh/@codemirror/lint";
 import {searchKeymap, highlightSelectionMatches as selectionMatches} from "https://esm.sh/@codemirror/search";
 
 import {insertTab, history} from "https://esm.sh/@codemirror/commands";
-import {autocompletion, closeBrackets} from "https://esm.sh/@codemirror/autocomplete";
+import {autocompletion, closeBrackets, completeAnyWord} from "https://esm.sh/@codemirror/autocomplete";
 import {
   buildTestField,
   buildReturnField,
@@ -99,7 +99,7 @@ export async function setupEditor(initialDoc, slug = null) {
       history(),
       drawSelection(),
       selectionMatches(),
-      autocompletion(),
+      autocompletion({override: [completeAnyWord]}),
       closeBrackets(),
       persistExtension(key),
       lineNumbers(),
@@ -189,6 +189,9 @@ export async function setupRunner(task) {
   const statusRow = document.getElementById('runner-status');
   const hidePassedCB = document.getElementById('hide-passed');
   const hideSampleCB = document.getElementById('hide-sample');
+  const stopBtn = document.getElementById('stop-code-btn');
+  const infoModal = document.getElementById('test-info-modal');
+  const infoBody  = infoModal?.querySelector('.info-body');
   const codeOutputWrapper = document.getElementById('output-wrapper');
   function setCodeOutput(text) {
     codeOutputWrapper.firstElementChild.innerHTML = `<pre><code class="language-io-codemirror">${text}</code></pre>`;
@@ -217,6 +220,9 @@ export async function setupRunner(task) {
         ${hasStdout ? buildStdOutField(tId) : ''}
         <span class="anchor-end io-end" aria-hidden="true"></span>
         <div class="item-actions">
+          <button type="button" class="info-btn" title="Details">
+            <span class="material-symbols-outlined">info</span>
+          </button>
           <button type="button" class="del-btn"><span class="material-symbols-outlined delete-icon">delete</span></button>
         </div>
       </div>`;
@@ -268,7 +274,15 @@ export async function setupRunner(task) {
   function addTest(){ createTest(); }
   addTestBtn.addEventListener('click', addTest);
   testsList.addEventListener('click', e => {
-    if(e.target.closest('.del-btn')) e.target.closest('.test-item').remove();
+    if(e.target.closest('.del-btn')) {
+      e.target.closest('.test-item').remove();
+      return;
+    }
+    if(e.target.closest('.info-btn')) {
+      const item = e.target.closest('.test-item');
+      showInfoModal(JSON.parse(item.dataset.info || '{}'));
+      return;
+    }
   });
   testsList.addEventListener('click', e => {
     const btn = e.target.closest('.bool-toggle');
@@ -325,12 +339,21 @@ export async function setupRunner(task) {
     return;
   }
 
+  const interruptArr = new Int32Array(new SharedArrayBuffer(4));
+  pyodide.setInterruptBuffer(interruptArr);
+  let running = false;
+  stopBtn.disabled = true;
+
   runBtn.disabled = false;
   runBtn.title = "Run code";
   if(statusRow) statusRow.textContent = '';
   codeOutputWrapper.style.display = "none";
 
   runBtn.onclick = async () => {
+    running = true;
+    runBtn.disabled = true;
+    stopBtn.disabled = false;
+
     let code = "";
     if (editorContainer.cmView) {
       code = editorContainer.cmView.state.doc.toString();
@@ -360,6 +383,9 @@ export async function setupRunner(task) {
       const stdoutInp = testEl.querySelector('.stdout-field textarea');
       const expectedStdout = stdoutInp ? stdoutInp.value.trim() : undefined;
 
+      const argStr = Object.entries(args).map(([k,v])=>`${k}=${JSON.stringify(v)}`).join(', ');
+      const callLine = `${task.signature.name}(${argStr})`;
+      let info = { call: callLine, stdin, expectedReturn, expectedStdout };
       try {
         const snippet = String.raw`
 import json, sys
@@ -396,18 +422,57 @@ json.dumps({'return': result, 'stdout': _out_buf.getvalue()})`;
         if(stdoutInp){
           ok = ok && res.stdout.trim() === expectedStdout;
         }
+        info.return = res.return;
+        info.stdout = res.stdout.trim();
         testEl.classList.add(ok ? 'pass' : 'fail');
         if(ok) passedCount++;
       } catch(err){
         testEl.classList.add('fail');
+        info.error = err.message || String(err);
       }
+      testEl.dataset.info = JSON.stringify(info);
     }
     if(statusRow){
       const pct = Math.round((passedCount/tests.length)*100);
       statusRow.textContent = `Passed tests: ${passedCount}/${tests.length} (${pct}%)`;
     }
     updateVisibility();
+    running = false;
+    runBtn.disabled = false;
+    stopBtn.disabled = true;
   };
+
+  stopBtn.onclick = () => {
+    if(!running) return;
+    interruptArr[0] = 2;
+  };
+
+  infoModal?.addEventListener('click', e => {
+    if(e.target.closest('.modal-close') || e.target.classList.contains('modal-overlay'))
+      infoModal.classList.remove('open');
+  });
+  document.addEventListener('keyup', e => {
+    if(e.key === 'Escape') infoModal?.classList.remove('open');
+  });
+
+  function showInfoModal(info){
+    if(!infoModal || !infoBody) return;
+    const esc = t => t == null ? '' : String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+    let html = `<div class="io-block call"><span class="io-label">Call</span><pre><code class="language-python-codemirror">${esc(info.call)}</code></pre></div>`;
+    if(info.stdin){
+      html += `<div class="io-block input"><span class="io-label">stdin</span><div class="io-surface">${esc(info.stdin)}</div></div>`;
+    }
+    html += `<div class="io-row"><div><div class="io-label">return</div><div class="io-surface">${esc(JSON.stringify(info.return))}</div></div><div><div class="io-label">expected</div><div class="io-surface">${esc(JSON.stringify(info.expectedReturn))}</div></div></div>`;
+    if('expectedStdout' in info || info.stdout !== undefined){
+      html += `<div class="io-row"><div><div class="io-label">stdout</div><div class="io-surface">${esc(info.stdout)}</div></div><div><div class="io-label">expected stdout</div><div class="io-surface">${esc(info.expectedStdout)}</div></div></div>`;
+    }
+    if(info.error){
+      html += `<div><div class="io-label">error</div><div class="io-surface">${esc(info.error)}</div></div>`;
+    }
+    infoBody.innerHTML = html;
+    renderReadOnlyInputOutputBlocks();
+    infoModal.classList.add('open');
+  }
 }
 
 

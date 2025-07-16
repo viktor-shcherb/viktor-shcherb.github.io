@@ -56,6 +56,9 @@ uses_pyodide: true
           <button id="run-code-btn" class="run-btn" type="button" title="Run code">
             <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
           </button>
+          <button id="stop-code-btn" class="stop-btn" type="button" title="Stop" disabled>
+            <span class="material-symbols-outlined" aria-hidden="true">stop</span>
+          </button>
         </div>
         <div class="checks-row">
           <label>
@@ -76,6 +79,19 @@ uses_pyodide: true
         </div>
       </div>
     </section>
+
+    <div id="test-info-modal" class="contribute-modal">
+      <div class="modal-overlay"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Test Information</h2>
+          <button type="button" class="modal-close" title="Close">
+            <span class="material-symbols-outlined" aria-hidden="true">close</span>
+          </button>
+        </div>
+        <div class="info-body"></div>
+      </div>
+    </div>
 
   </div><!-- /.tab-content -->
 </div><!-- /.tab-switcher -->

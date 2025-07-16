@@ -111,6 +111,7 @@ input#tab-preview:checked + label[for="tab-preview"],
 .controls-row {
   display: flex;
   justify-content: flex-end;
+  gap: .5em;
 }
 
 .status-row {
@@ -141,6 +142,17 @@ input#tab-preview:checked + label[for="tab-preview"],
   cursor: pointer;
   font-size: 1.4em;
   margin: 0;
+}
+
+.stop-btn {
+  @extend .run-btn;
+  color: var(--red);
+}
+
+.run-btn:disabled,
+.stop-btn:disabled {
+  color: var(--accent-disabled);
+  cursor: default;
 }
 
 @keyframes spin {
@@ -587,7 +599,7 @@ textarea{
 /* only the actions bar inside each test card */
 .test-item .item-actions{
   flex: 1 1 100%;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-top: .5em;
 }
 
@@ -621,6 +633,12 @@ textarea{
   background: none;
   border: none;
   color: #a22;
+  cursor: pointer;
+}
+.info-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
   cursor: pointer;
 }
 .delete-icon {
@@ -784,6 +802,18 @@ select{
   white-space: pre;         /* preserve \n, no soft wrapping          */
   overflow-x: auto;         /* add a horizontal scrollbar if too wide */
   max-width: 100%;          /* don’t blow past the layout on mobiles  */
+}
+
+.io-row {
+  display: flex;
+  gap: 1em;
+}
+
+.io-row > div {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: .25em;
 }
 
 /* --- Mini card style for test examples --- */
