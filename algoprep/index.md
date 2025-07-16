@@ -15,7 +15,12 @@ Find the source and contribute at [GitHub](https://github.com/viktor-shcherb/vik
 
 <hr>
 
-## Available Tasks
+<div class="tasks-header">
+  <h2 id="available-tasks">Available Tasks</h2>
+  <button id="contribute-btn" class="contribute-btn">
+    Contribute new task
+  </button>
+</div>
 
 <ul id="task-list" style="margin-top:2em;"><li>Loading tasks...</li></ul>
 
@@ -27,13 +32,8 @@ Find the source and contribute at [GitHub](https://github.com/viktor-shcherb/vik
       "{{ file.name | replace: '.json', '' }}"{% unless forloop.last %},{% endunless %}
     {% endfor %}
   ];
-</script>
 
-<div style="text-align:center; margin:3em 0;">
-  <button id="contribute-btn" class="contribute-btn">
-    Contribute new task
-  </button>
-</div>
+</script>
 
 {% include contribute-modal.html %}
 
