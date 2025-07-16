@@ -121,3 +121,6 @@ code {
   vertical-align:middle;
   margin-right: .5em;
 }
+
+pre.copy-wrap{position:relative;}
+.copy-btn{position:absolute;top:.25em;right:.25em;background:none;border:none;color:var(--accent);cursor:pointer;padding:.2em;}
