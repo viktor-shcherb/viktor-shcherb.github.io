@@ -45,6 +45,8 @@ function persistExtension(slug, state) {
   return EditorView.updateListener.of(update => {
     if (update.docChanged) {
       state.code = update.state.doc.toString();
+      const input = document.getElementById('save-name');
+      if (input) state.name = input.value.trim();
       saveTaskState(slug, state);
     }
   });
@@ -81,7 +83,7 @@ export async function setupEditor(initialDoc, slug = null) {
   const isVisible = !!(editorContainer.offsetWidth || editorContainer.offsetHeight || editorContainer.getClientRects().length);
   if (!isVisible) return;
 
-  const state = slug ? loadTaskState(slug) : {};
+  const state = slug ? await loadTaskState(slug) : {};
   let savedDoc = state.code;
   if (!savedDoc) {
     savedDoc = typeof initialDoc === "string" ? initialDoc : "# Write your Python code here\nprint('Hello!')";
@@ -238,7 +240,9 @@ async function runInWorker(payload, timeoutSec) {
 }
 
 export async function setupRunner(task) {
-  const state = loadTaskState(task.slug);
+  const state = await loadTaskState(task.slug);
+  const saveInput = document.getElementById('save-name');
+  if (saveInput && state.name) saveInput.value = state.name;
   const runBtn = document.getElementById('run-code-btn');
   const testsList = document.getElementById('tests-list');
   const addTestBtn = document.getElementById('add-test');
@@ -349,14 +353,15 @@ export async function setupRunner(task) {
   }
 
   function saveCurrentState(){
-    const cur = loadTaskState(task.slug);
-    cur.hidePassed = hidePassedCB?.checked;
-    cur.hideSample = hideSampleCB?.checked;
-    cur.timeout = parseInt(timeoutInput?.value || '5', 10);
-    cur.tests = [...testsList.querySelectorAll('.test-item')]
+    state.hidePassed = hidePassedCB?.checked;
+    state.hideSample = hideSampleCB?.checked;
+    state.timeout = parseInt(timeoutInput?.value || '5', 10);
+    state.tests = [...testsList.querySelectorAll('.test-item')]
       .filter(el => !el.classList.contains('sample-test'))
       .map(serializeTest);
-    saveTaskState(task.slug, cur);
+    const input = document.getElementById('save-name');
+    if (input) state.name = input.value.trim();
+    saveTaskState(task.slug, state);
   }
 
   function addTest(){

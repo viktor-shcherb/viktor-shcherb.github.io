@@ -17,7 +17,7 @@ This repository contains the source for a Jekyll-based personal website. Below i
 ## Core Directories
 
 - `_data/` – YAML data files used by Jekyll. `nav.yml` defines the site navigation and is referenced by layout templates.
-- `_includes/` – Reusable partial templates and assets. For example, `task-head-template.html` and `task-body-template.html` are injected into `algoprep/task.html` when rendering algorithm tasks.
+ - `_includes/` – Reusable partial templates and assets. For example, `task-head-template.html` and `task-body-template.html` are injected into `algoprep/task.html` when rendering algorithm tasks. `user-state-modal.html` defines the modal for saving user progress.
 - `_layouts/` – Page layouts for Jekyll. `default.html` is the base layout and `post.html` extends it for blog posts. Markdown files in `_posts/` and pages like `about.md` use these layouts via their front-matter.
 - `_posts/` – Blog posts written in Markdown. Each file has YAML front-matter specifying `layout: post` so they render with `_layouts/post.html`.
 - `assets/` – Static assets. Contains SCSS stylesheets under `css/`, JavaScript modules in `js` (e.g., `editor.js` bundles CodeMirror modules from a CDN while sharing a single `@codemirror/state` instance), GitHub logos in `github/`, and images under `python/`.
