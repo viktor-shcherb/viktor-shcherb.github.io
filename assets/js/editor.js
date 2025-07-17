@@ -7,7 +7,8 @@ import {lintKeymap} from "https://esm.sh/@codemirror/lint";
 import {searchKeymap, highlightSelectionMatches as selectionMatches} from "https://esm.sh/@codemirror/search";
 
 import {insertTab, history} from "https://esm.sh/@codemirror/commands";
-import {autocompletion, closeBrackets, completeAnyWord} from "https://esm.sh/@codemirror/autocomplete";
+import {autocompletion, closeBrackets, completeAnyWord, completeFromList} from "https://esm.sh/@codemirror/autocomplete";
+import {indentOnInput} from "https://esm.sh/@codemirror/language";
 import {
   buildTestField,
   buildReturnField,
@@ -18,9 +19,19 @@ import {
   uuid
 } from '/assets/js/test-fields.js';
 import { loadTaskState, saveTaskState } from '/assets/js/user-state.js';
-import { signatureToString } from '/assets/js/task-render-core.js';
+import { callFromSignature } from '/assets/js/task-render-core.js';
 
 const themeCompartment = new Compartment();
+
+const pythonCompletions = [
+  'import', 'from', 'as', 'def', 'return', 'for', 'while', 'if', 'else',
+  'elif', 'class', 'try', 'except', 'finally', 'with', 'lambda', 'yield',
+  'print', 'len', 'range', 'open', 'time', 'sleep'
+];
+
+const pythonAutocomplete = completeFromList(
+  pythonCompletions.map(w => ({label: w, type: 'keyword'}))
+);
 
 export function updateEditorTheme() {
   const effect = themeCompartment.reconfigure(getThemeExtension());
@@ -96,7 +107,8 @@ export async function setupEditor(initialDoc, slug = null) {
       history(),
       drawSelection(),
       selectionMatches(),
-      autocompletion({override: [completeAnyWord]}),
+      autocompletion({override: [pythonAutocomplete, completeAnyWord]}),
+      indentOnInput(),
       closeBrackets(),
       persistExtension(slug, state),
       lineNumbers(),
@@ -434,7 +446,7 @@ export async function setupRunner(task) {
       const stdoutInp = testEl.querySelector('.stdout-field textarea');
       const expectedStdout = stdoutInp ? stdoutInp.value.trim() : undefined;
 
-      const callLine = signatureToString(task.signature, args, 40);
+      const callLine = callFromSignature(task.signature, args, 40);
       let info = { call: callLine };
       if(stdin) info.stdin = stdin;
       if(retInp) info.expectedReturn = expectedReturn;
@@ -470,7 +482,9 @@ result = ${task.signature.name}(**args)
 sys.stdout = _sys_out
 json.dumps({'return': result, 'stdout': _out_buf.getvalue()})`;
 
-        const resStr = await pyodide.runPythonAsync(code + '\n' + snippet);
+        const resStr = await pyodide.runPythonAsync(
+          code.replace(/\t/g, '    ') + '\n' + snippet
+        );
         if(timer) clearTimeout(timer);
         if(interruptArr) interruptArr[0] = 0;
         const res = JSON.parse(resStr);

@@ -26,25 +26,24 @@ export function ensureTaskSkeleton(doc) {
  * Sharing this logic keeps editor hints identical between prerender
  * and client side.
  */
-export function signatureToString(sig, argValues = null, wrap = 40) {
+export function signatureToDef(sig) {
   if (!sig?.name) return '';
-  const parts = (sig.args || []).map(a => {
-    const val = argValues && a.name in argValues
-      ? `=${JSON.stringify(argValues[a.name])}`
-      : '';
-    const typ = !argValues && a.type ? `: ${a.type}` : '';
-    return `${a.name}${typ}${val}`;
-  });
-  if (argValues) {
-    let call = `${sig.name}(${parts.join(', ')})`;
-    if (call.length > wrap && parts.length > 1) {
-      call = `${sig.name}(\n  ${parts.join(',\n  ')}\n)`;
-    }
-    return call;
-  }
+  const parts = (sig.args || []).map(a =>
+    `${a.name}${a.type ? `: ${a.type}` : ''}`);
   const ret = sig.return_type || sig.returnType || '';
   const arrow = ret ? ` -> ${ret}` : '';
   return `def ${sig.name}(${parts.join(', ')})${arrow}:\n    pass`;
+}
+
+export function callFromSignature(sig, argValues = {}, wrap = 40) {
+  if (!sig?.name) return '';
+  const parts = (sig.args || []).map(a =>
+    `${a.name}=${JSON.stringify(argValues[a.name])}`);
+  let call = `${sig.name}(${parts.join(', ')})`;
+  if (call.length > wrap && parts.length > 1) {
+    call = `${sig.name}(\n  ${parts.join(',\n  ')}\n)`;
+  }
+  return call;
 }
 
 /**
@@ -62,8 +61,8 @@ export function buildExamples(tests = [], signature = {}) {
     '<h2>Examples</h2>\n' +
     tests.slice(0, 3).map((test, i) => {
       const callLine = 'return' in test
-        ? `${signatureToString(signature, test.args, 40)} == ${JSON.stringify(test.return)}`
-        : signatureToString(signature, test.args, 40);
+        ? `${callFromSignature(signature, test.args, 40)} == ${JSON.stringify(test.return)}`
+        : callFromSignature(signature, test.args, 40);
       const html = [`<div class="example-card">`,
         `<div class="io-block call" aria-labelledby="lbl-call-${i}">`,
         `<span id="lbl-call-${i}" class="io-label">Function call</span>`,
@@ -106,7 +105,7 @@ export function populateTaskDOM(task, container, parseMarkdown) {
   if (els.desc) els.desc.innerHTML = parseMarkdown ? parseMarkdown(task.description ?? '') : (task.description ?? '');
   if (els.signature) {
     els.signature.innerHTML = task.signature
-      ? `<pre><code class="language-python-codemirror">${signatureToString(task.signature)}</code></pre>`
+      ? `<pre><code class="language-python-codemirror">${signatureToDef(task.signature)}</code></pre>`
       : '';
   }
   if (els.examples) {
