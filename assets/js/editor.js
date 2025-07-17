@@ -183,7 +183,49 @@ export function renderReadOnlyInputOutputBlocks() {
 }
 
 
-let pyodideReadyPromise = null;
+let pyWorker = null;
+let workerReady = null;
+let workerReqId = 0;
+
+function createPyWorker() {
+  pyWorker = new Worker('/assets/js/pyodide-worker.js');
+  workerReady = new Promise(resolve => {
+    const handler = e => {
+      if (e.data && e.data.type === 'ready') {
+        pyWorker.removeEventListener('message', handler);
+        resolve();
+      }
+    };
+    pyWorker.addEventListener('message', handler);
+  });
+  return workerReady;
+}
+
+async function ensurePyWorker() {
+  if (!pyWorker) await createPyWorker();
+  return workerReady;
+}
+
+async function runInWorker(payload, timeoutSec) {
+  await ensurePyWorker();
+  return new Promise(resolve => {
+    const id = ++workerReqId;
+    const timer = timeoutSec > 0 ? setTimeout(() => {
+      pyWorker.terminate();
+      createPyWorker();
+      resolve({timeout: true});
+    }, timeoutSec * 1000) : null;
+    const handler = e => {
+      if (e.data && e.data.id === id) {
+        if (timer) clearTimeout(timer);
+        pyWorker.removeEventListener('message', handler);
+        resolve(e.data);
+      }
+    };
+    pyWorker.addEventListener('message', handler);
+    pyWorker.postMessage({...payload, type: 'run', id});
+  });
+}
 
 export async function setupRunner(task) {
   const state = loadTaskState(task.slug);
@@ -363,41 +405,16 @@ export async function setupRunner(task) {
   hidePassedCB?.addEventListener('change', () => { updateVisibility(); saveCurrentState(); });
   hideSampleCB?.addEventListener('change', () => { updateVisibility(); saveCurrentState(); });
 
-  // Disable run button while loading Pyodide
   runBtn.disabled = true;
   if(statusRow) statusRow.textContent = 'Loading interpreter...';
 
-  // Only load Pyodide once
-  if (!pyodideReadyPromise) {
-    if (window.loadPyodide) {
-      pyodideReadyPromise = window.loadPyodide();
-    } else {
-      pyodideReadyPromise = new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js';
-        script.onload = () => window.loadPyodide().then(resolve).catch(reject);
-        script.onerror = () => reject('Pyodide not loaded');
-        document.head.appendChild(script);
-      });
-    }
-  }
-
-  let pyodide;
   try {
-    pyodide = await pyodideReadyPromise;
+    await ensurePyWorker();
   } catch (e) {
     if(statusRow) statusRow.textContent = 'Failed to load interpreter';
-    runBtn.disabled = true;
     return;
   }
 
-  let interruptArr;
-  if (typeof SharedArrayBuffer !== 'undefined' && window.crossOriginIsolated) {
-    interruptArr = new Int32Array(new SharedArrayBuffer(4));
-    pyodide.setInterruptBuffer(interruptArr);
-  } else {
-    console.warn('SharedArrayBuffer not available; interrupt disabled');
-  }
   let running = false;
   stopBtn.disabled = true;
 
@@ -445,43 +462,27 @@ export async function setupRunner(task) {
       if(stdin) info.stdin = stdin;
       if(retInp) info.expectedReturn = expectedReturn;
       if(stdoutInp) info.expectedStdout = expectedStdout;
-      let timer;
       try {
-        if(interruptArr && timeoutSec > 0){
-          interruptArr[0] = 0;
-          timer = setTimeout(() => { interruptArr[0] = 2; }, timeoutSec * 1000);
+        const resMsg = await runInWorker({
+          code,
+          funcName: task.signature.name,
+          args,
+          stdin
+        }, timeoutSec);
+
+        if(resMsg.timeout){
+          info.error = 'Timed out';
+          testEl.classList.add('fail');
+          testEl.dataset.info = JSON.stringify(info);
+          continue;
         }
-        const snippet = String.raw`
-import json, sys
-from io import StringIO
-
-input_data = ${JSON.stringify(stdin)}
-class PatchedInput:
-    def __init__(self, data):
-        self.lines = data.splitlines()
-        self.index = 0
-    def __call__(self, prompt=None):
-        if self.index < len(self.lines):
-            line = self.lines[self.index]
-            self.index += 1
-            return line
-        raise EOFError('No more input')
-_input = PatchedInput(input_data)
-__builtins__.input = _input
-_out_buf = StringIO()
-_sys_out = sys.stdout
-sys.stdout = _out_buf
-args = json.loads('${JSON.stringify(args)}')
-result = ${task.signature.name}(**args)
-sys.stdout = _sys_out
-json.dumps({'return': result, 'stdout': _out_buf.getvalue()})`;
-
-        const resStr = await pyodide.runPythonAsync(
-          code.replace(/\t/g, '    ') + '\n' + snippet
-        );
-        if(timer) clearTimeout(timer);
-        if(interruptArr) interruptArr[0] = 0;
-        const res = JSON.parse(resStr);
+        if(resMsg.error){
+          info.error = resMsg.error;
+          testEl.classList.add('fail');
+          testEl.dataset.info = JSON.stringify(info);
+          continue;
+        }
+        const res = JSON.parse(resMsg.result);
 
         let ok = true;
         if(retInp){
@@ -495,7 +496,6 @@ json.dumps({'return': result, 'stdout': _out_buf.getvalue()})`;
         testEl.classList.add(ok ? 'pass' : 'fail');
         if(ok) passedCount++;
       } catch(err){
-        if(timer) clearTimeout(timer);
         testEl.classList.add('fail');
         info.error = err.message || String(err);
       }
@@ -512,8 +512,9 @@ json.dumps({'return': result, 'stdout': _out_buf.getvalue()})`;
   };
 
   stopBtn.onclick = () => {
-    if(!running || !interruptArr) return;
-    interruptArr[0] = 2;
+    if(!running || !pyWorker) return;
+    pyWorker.terminate();
+    createPyWorker();
   };
 
   infoModal?.addEventListener('click', e => {
