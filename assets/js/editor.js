@@ -7,7 +7,7 @@ import {lintKeymap} from "https://esm.sh/@codemirror/lint";
 import {searchKeymap, highlightSelectionMatches as selectionMatches} from "https://esm.sh/@codemirror/search";
 
 import {insertTab, history} from "https://esm.sh/@codemirror/commands";
-import {autocompletion, closeBrackets, completeAnyWord, completeFromList} from "https://esm.sh/@codemirror/autocomplete";
+import {autocompletion, closeBrackets, completeAnyWord} from "https://esm.sh/@codemirror/autocomplete";
 import {indentOnInput} from "https://esm.sh/@codemirror/language";
 import {
   buildTestField,
@@ -23,15 +23,6 @@ import { callFromSignature } from '/assets/js/task-render-core.js';
 
 const themeCompartment = new Compartment();
 
-const pythonCompletions = [
-  'import', 'from', 'as', 'def', 'return', 'for', 'while', 'if', 'else',
-  'elif', 'class', 'try', 'except', 'finally', 'with', 'lambda', 'yield',
-  'print', 'len', 'range', 'open', 'time', 'sleep'
-];
-
-const pythonAutocomplete = completeFromList(
-  pythonCompletions.map(w => ({label: w, type: 'keyword'}))
-);
 
 export function updateEditorTheme() {
   const effect = themeCompartment.reconfigure(getThemeExtension());
@@ -107,7 +98,7 @@ export async function setupEditor(initialDoc, slug = null) {
       history(),
       drawSelection(),
       selectionMatches(),
-      autocompletion({override: [pythonAutocomplete, completeAnyWord]}),
+      autocompletion({override: [completeAnyWord]}),
       indentOnInput(),
       closeBrackets(),
       persistExtension(slug, state),
