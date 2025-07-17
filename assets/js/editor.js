@@ -417,7 +417,10 @@ export async function setupRunner(task) {
 
       const argStr = Object.entries(args).map(([k,v])=>`${k}=${JSON.stringify(v)}`).join(', ');
       const callLine = `${task.signature.name}(${argStr})`;
-      let info = { call: callLine, stdin, expectedReturn, expectedStdout };
+      let info = { call: callLine };
+      if(stdin) info.stdin = stdin;
+      if(retInp) info.expectedReturn = expectedReturn;
+      if(stdoutInp) info.expectedStdout = expectedStdout;
       try {
         const snippet = String.raw`
 import json, sys
@@ -454,8 +457,8 @@ json.dumps({'return': result, 'stdout': _out_buf.getvalue()})`;
         if(stdoutInp){
           ok = ok && res.stdout.trim() === expectedStdout;
         }
-        info.return = res.return;
-        info.stdout = res.stdout.trim();
+        if(retInp || res.return !== undefined) info.return = res.return;
+        if(stdoutInp || res.stdout.trim()) info.stdout = res.stdout.trim();
         testEl.classList.add(ok ? 'pass' : 'fail');
         if(ok) passedCount++;
       } catch(err){
@@ -494,14 +497,18 @@ json.dumps({'return': result, 'stdout': _out_buf.getvalue()})`;
     if(info.stdin){
       html += `<div class="io-block input"><span class="io-label">stdin</span><div class="io-surface">${esc(info.stdin)}</div></div>`;
     }
-    html += `<div class="io-row"><div><div class="io-label">return</div><div class="io-surface">${esc(JSON.stringify(info.return))}</div></div><div><div class="io-label">expected</div><div class="io-surface">${esc(JSON.stringify(info.expectedReturn))}</div></div></div>`;
-    if('expectedStdout' in info || info.stdout !== undefined){
+    if('return' in info || 'expectedReturn' in info){
+      html += `<div class="io-row"><div><div class="io-label">return</div><div class="io-surface">${esc(JSON.stringify(info.return))}</div></div>`;
+      html += `<div><div class="io-label">expected</div><div class="io-surface">${esc(JSON.stringify(info.expectedReturn))}</div></div></div>`;
+    }
+    if('expectedStdout' in info || 'stdout' in info){
       html += `<div class="io-row"><div><div class="io-label">stdout</div><div class="io-surface">${esc(info.stdout)}</div></div><div><div class="io-label">expected stdout</div><div class="io-surface">${esc(info.expectedStdout)}</div></div></div>`;
     }
     if(info.error){
       html += `<div><div class="io-label">error</div><div class="io-surface">${esc(info.error)}</div></div>`;
     }
     infoBody.innerHTML = html;
+    renderReadOnlyCodeBlocks();
     renderReadOnlyInputOutputBlocks();
     infoModal.classList.add('open');
   }
