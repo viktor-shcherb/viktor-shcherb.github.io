@@ -187,6 +187,37 @@ input#tab-preview:checked + label[for="tab-preview"],
   display: block;
 }
 
+/* Show both tab panels on wide screens */
+@media (min-width: 75rem) {
+  /* shared layout for containers */
+  form.show-both,
+  .tab-switcher.show-both {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  /* hide radio controls */
+  form.show-both .tab-switcher,
+  .tab-switcher.show-both .tab-btn-row {
+    display: none;
+  }
+
+  /* stacked panels become columns */
+  form.show-both .tab-panel,
+  .tab-switcher.show-both .tab-panel {
+    display: block;
+    flex: 1 1 0;
+  }
+
+  /* task page panels container */
+  .tab-switcher.show-both .tab-content {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+  }
+}
+
 /* all disabled form controls – including the int-wrapper’s <input> */
 input:disabled,
 textarea:disabled,

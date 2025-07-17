@@ -4,6 +4,16 @@ export function initTabSwitcher(root = document) {
     const radios = switcher.querySelectorAll('input[type="radio"][data-panel]');
     const labels = switcher.querySelectorAll('label');
 
+    // container that also holds all panels
+    const container = switcher.parentElement.classList.contains('tab-switcher')
+      ? switcher
+      : switcher.parentElement;
+    const panels = [...radios]
+      .map(r => document.querySelector(r.dataset.panel))
+      .filter(Boolean);
+
+    const wideQuery = matchMedia('(min-width: 75em)');
+
     function show(panelSel){
       // hide all panels in this switcher
       radios.forEach(r => {
@@ -21,9 +31,20 @@ export function initTabSwitcher(root = document) {
       }));
     }
 
+    function updateLayout(){
+      if (wideQuery.matches){
+        container.classList.add('show-both');
+        panels.forEach(p => p.classList.add('active'));
+      }else{
+        container.classList.remove('show-both');
+        const current = switcher.querySelector('input[type="radio"]:checked');
+        if (current) show(current.dataset.panel);
+      }
+    }
+
     // initial state
-    const current = switcher.querySelector('input[type="radio"]:checked');
-    if (current) show(current.dataset.panel);
+    updateLayout();
+    wideQuery.addEventListener('change', updateLayout);
 
     // delegate change events
     switcher.addEventListener('change', e => {
