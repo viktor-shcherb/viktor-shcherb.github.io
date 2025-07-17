@@ -126,6 +126,9 @@ input#tab-preview:checked + label[for="tab-preview"],
 }
 
 .status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-size: 0.9rem;
   color: var(--text-muted);
 }
@@ -158,6 +161,30 @@ input#tab-preview:checked + label[for="tab-preview"],
 .stop-btn {
   @extend .run-btn;
   color: var(--red);
+}
+
+.settings-btn {
+  @extend %btn-base;
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.2em;
+  display: flex;
+  align-items: center;
+}
+
+.state-warning {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.save-name-input {
+  font-size: 0.8rem;
+  padding: 0.2em 0.4em;
+  border: 1px solid var(--accent-disabled);
+  border-radius: 4px;
 }
 
 .run-btn:disabled,
@@ -777,6 +804,8 @@ select{
   overflow:hidden;
   clip:rect(0 0 0 0); border:0;
 }
+
+.hidden { display:none !important; }
 
 .auto-grow{
   /* keep the browser from adding scrollbars while we grow */

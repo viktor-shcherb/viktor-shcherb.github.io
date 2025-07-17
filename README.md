@@ -6,6 +6,8 @@ This repository contains the source for my personal website. The site is built w
 
 **Algoprep** is an interactive collection of Python algorithm problems. Tasks can be solved right in the browser thanks to Pyodide. You can visit it at [`/algoprep/`](https://viktor-shcherb.github.io/algoprep/).
 
+Task progress can be saved remotely via [Open User State](https://github.com/viktor-shcherb/open-user-state). Use the settings cog next to the test results to authenticate with GitHub and choose a repository. The backend runs at [open-user-state-personal-website.viktoroo-sch.workers.dev](https://open-user-state-personal-website.viktoroo-sch.workers.dev/).
+
 #### Contributing a Task
 
 1. Go to the [Algoprep page](https://viktor-shcherb.github.io/algoprep/) and click **"Contribute new task"**.
