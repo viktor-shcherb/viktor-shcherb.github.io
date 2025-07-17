@@ -16,6 +16,7 @@ export function ensureTaskSkeleton(doc) {
   if (!headTpl || !bodyTpl) return;
   const tabs = doc.getElementById('task-tabs');
   const panel = doc.getElementById('panel-desc');
+  if (!tabs || !panel) return;
   tabs.parentNode.insertBefore(headTpl.content.cloneNode(true), tabs);
   panel.appendChild(bodyTpl.content.cloneNode(true));
 }
