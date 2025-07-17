@@ -93,6 +93,7 @@ input#tab-preview:checked + label[for="tab-preview"],
 }
 
 .cm-static-view {
+  position: relative;
   border: 1px solid var(--accent-disabled);
   border-radius: 8px;
   margin: 0;
@@ -253,6 +254,7 @@ pre code.language-io-codemirror {
 }
 .cm-static-view {
   display: block;
+  position: relative;
 }
 
 .contribute-btn {
@@ -867,5 +869,12 @@ pre.copy-wrap {
   color: var(--accent);
   cursor: pointer;
   padding: 0.2em;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+
+.copy-btn[data-copied] {
+  color: var(--accent);
 }
 

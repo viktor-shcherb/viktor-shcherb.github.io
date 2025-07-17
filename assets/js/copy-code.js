@@ -14,7 +14,18 @@ export function addCopyButtons(scope = document) {
       const text = el.matches('pre > code')
         ? el.innerText // (Consider textContent; see note below.)
         : el.getAttribute('data-code') || '';
-      navigator.clipboard.writeText(text).catch(() => {});
+      navigator.clipboard.writeText(text)
+        .then(() => {
+          btn.innerHTML =
+            '<span class="material-symbols-outlined btn-icon-material-symbols" aria-hidden="true">check</span>';
+          btn.dataset.copied = 'true';
+          setTimeout(() => {
+            btn.innerHTML =
+              '<span class="material-symbols-outlined btn-icon-material-symbols" aria-hidden="true">content_copy</span>';
+            delete btn.dataset.copied;
+          }, 2000);
+        })
+        .catch(() => {});
     });
 
     pre.appendChild(btn);
