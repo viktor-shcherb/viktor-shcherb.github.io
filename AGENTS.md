@@ -21,7 +21,7 @@ This repository contains the source for a Jekyll-based personal website. Below i
 - `_layouts/` – Page layouts for Jekyll. `default.html` is the base layout and `post.html` extends it for blog posts. Markdown files in `_posts/` and pages like `about.md` use these layouts via their front-matter.
 - `_posts/` – Blog posts written in Markdown. Each file has YAML front-matter specifying `layout: post` so they render with `_layouts/post.html`.
 - `assets/` – Static assets. Contains SCSS stylesheets under `css/`, JavaScript modules in `js/` (e.g., `editor.js` bundles CodeMirror modules from a CDN while sharing a single `@codemirror/state` instance), GitHub logos in `github/`, and images under `python/`.
-- `algoprep/` – JSON definitions of algorithm tasks and the `index.md` page for the Algoprep section. `scripts/prerender-tasks.mjs` reads these JSON files to generate static HTML using the templates from `_includes/`.
+- `algoprep/` – JSON definitions of algorithm tasks, the `index.md` page, and the dynamic `task.html` used for interactive code execution. `scripts/prerender-tasks.mjs` reads these JSON files to generate static HTML using the templates from `_includes/`.
 - `blog/` – Landing page for the blog. Displays the latest post and links to others.
 - `logos-flavicon/` – Favicon and web manifest files.
 - `scripts/` – Build and pre-render scripts. `prerender-tasks.mjs` runs during site builds to convert algorithm tasks into ready-to-serve HTML pages.
