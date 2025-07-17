@@ -5,7 +5,7 @@ const TTL = 3600_000;               // 1h
 
 self.__WB_DISABLE_DEV_LOGS = true;
 self.skipWaiting();
-self.clientsClaim();
+workbox.core.clientsClaim();
 
 workbox.precaching.precacheAndRoute([
   {url: 'https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js', revision: null}
