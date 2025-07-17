@@ -6,11 +6,12 @@ import { marked } from 'https://cdn.jsdelivr.net/npm/marked/+esm';
 import { renderReadOnlyCodeBlocks } from './editor.js';
 import {
   ensureTaskSkeleton as ensureDocSkeleton,
-  signatureToString,
+  signatureToDef,
+  callFromSignature,
   populateTaskDOM,
 } from './task-render-core.js';
 
-export { signatureToString } from './task-render-core.js';
+export { signatureToDef, callFromSignature } from './task-render-core.js';
 
 export function ensureTaskSkeleton() {
   // Keep a single implementation for injecting templates.

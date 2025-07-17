@@ -5,7 +5,7 @@ import { initTabSwitcher }  from '/assets/js/tab-switcher.js';
 import { loadTask }         from '/assets/js/task-loader.js';
 import { renderTask,
          ensureTaskSkeleton,
-         signatureToString } from '/assets/js/task-render.js';
+         signatureToDef } from '/assets/js/task-render.js';
 import { setupEditor,
          setupRunner,
          updateEditorTheme } from '/assets/js/editor.js';
@@ -46,7 +46,7 @@ document.addEventListener('themechange', updateEditorTheme);
 
 document.addEventListener('tabshown', async ({ detail }) => {
   if (detail.panel.id !== 'panel-code' || editorReady) return;
-  setupEditor(signatureToString(currentTask.signature), currentTask.slug);
+  setupEditor(signatureToDef(currentTask.signature), currentTask.slug);
   setupRunner(currentTask);
   editorReady = true;
 });
