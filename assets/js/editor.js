@@ -20,6 +20,7 @@ import {
 } from '/assets/js/test-fields.js';
 import { loadTaskState, saveTaskState } from '/assets/js/user-state.js';
 import { callFromSignature } from '/assets/js/task-render-core.js';
+import { addCopyButtons } from '/assets/js/copy-code.js';
 
 const themeCompartment = new Compartment();
 
@@ -137,6 +138,7 @@ export function renderReadOnlyCodeBlocks() {
       parent: wrapper
     });
   });
+  addCopyButtons();
 }
 
 
@@ -177,6 +179,7 @@ export function renderReadOnlyInputOutputBlocks() {
       parent: wrapper
     });
   });
+  addCopyButtons();
 }
 
 
