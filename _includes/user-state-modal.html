@@ -1,0 +1,33 @@
+<div id="user-state-modal" class="contribute-modal">
+  <div class="modal-overlay"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>User State Settings</h2>
+      <button type="button" class="modal-close" title="Close">
+        <span class="material-symbols-outlined" aria-hidden="true">close</span>
+        <span class="visually-hidden">Close</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p id="auth-warning">Authenticate to persist your progress remotely.</p>
+      <button type="button" id="github-auth-btn" class="add-btn">Authenticate via GitHub</button>
+      <form id="pat-form" style="display:none; margin-top:1em;">
+        <p class="hint">
+          Provide a fine-grained PAT restricted to the repository you wish to use.
+          Your token will be stored with <a href="https://github.com/viktor-shcherb/open-user-state" target="_blank" rel="noopener">Open User State</a>.
+        </p>
+        <label style="display:block; margin-top:.5em;">
+          <span>Repository</span>
+          <input id="repo-input" placeholder="owner/repo">
+        </label>
+        <label style="display:block; margin-top:.5em;">
+          <span>GitHub PAT</span>
+          <input id="pat-input" type="password" autocomplete="off">
+        </label>
+        <button type="submit" id="save-pat-btn" class="submit-btn" style="margin-top:1em;">
+          Save Settings
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

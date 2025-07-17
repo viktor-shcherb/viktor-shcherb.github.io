@@ -51,7 +51,12 @@ uses_pyodide: true
     <section class="tab-panel code-panel" id="panel-code">
       <div id="editor"></div>
       <div class="code-runner">
-        <div id="runner-status" class="status-row"></div>
+        <div class="status-row">
+          <span id="runner-status"></span>
+          <button type="button" id="state-settings-btn" class="settings-btn" title="State settings">
+            <span class="material-symbols-outlined" aria-hidden="true">settings</span>
+          </button>
+        </div>
         <div class="controls-row">
           <label class="timeout-label">
             <span>timeout</span>
@@ -69,6 +74,8 @@ uses_pyodide: true
           <button id="stop-code-btn" class="stop-btn" type="button" title="Stop" disabled>
             <span class="material-symbols-outlined" aria-hidden="true">stop</span>
           </button>
+          <input id="save-name" class="save-name-input" placeholder="Save name" style="display:none;">
+          <span id="state-warning" class="state-warning">Progress may be erased without authentication</span>
         </div>
         <div class="checks-row">
           <label>
@@ -105,4 +112,5 @@ uses_pyodide: true
 
 <script type="module" src="/assets/js/task-page.js"></script>
 {% include contribute-modal.html %}
+{% include user-state-modal.html %}
 <script type="module" src="/assets/js/algoprep-contribute.js"></script>
