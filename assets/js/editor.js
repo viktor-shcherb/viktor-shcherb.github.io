@@ -386,7 +386,7 @@ export async function setupRunner(task) {
   }
 
   let interruptArr;
-  if (typeof SharedArrayBuffer !== 'undefined') {
+  if (typeof SharedArrayBuffer !== 'undefined' && window.crossOriginIsolated) {
     interruptArr = new Int32Array(new SharedArrayBuffer(4));
     pyodide.setInterruptBuffer(interruptArr);
   } else {
@@ -439,8 +439,8 @@ export async function setupRunner(task) {
       if(stdin) info.stdin = stdin;
       if(retInp) info.expectedReturn = expectedReturn;
       if(stdoutInp) info.expectedStdout = expectedStdout;
+      let timer;
       try {
-        let timer;
         if(interruptArr && timeoutSec > 0){
           interruptArr[0] = 0;
           timer = setTimeout(() => { interruptArr[0] = 2; }, timeoutSec * 1000);

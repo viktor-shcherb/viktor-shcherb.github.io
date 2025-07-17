@@ -115,6 +115,16 @@ input#tab-preview:checked + label[for="tab-preview"],
   gap: .5em;
 }
 
+.timeout-label {
+  display:flex;
+  align-items:center;
+  gap:.25em;
+  font-size:.85rem;
+}
+.timeout-label input{
+  width:3.5em;
+}
+
 .status-row {
   font-size: 0.9rem;
   color: var(--text-muted);
