@@ -183,6 +183,7 @@ export function renderReadOnlyInputOutputBlocks() {
 let pyWorker = null;
 let workerReady = null;
 let workerReqId = 0;
+let cancelRun = null;
 
 function createPyWorker() {
   pyWorker = new Worker('/assets/js/pyodide-worker.js');
@@ -207,17 +208,26 @@ async function runInWorker(payload, timeoutSec) {
   await ensurePyWorker();
   return new Promise(resolve => {
     const id = ++workerReqId;
+    const finish = res => {
+      if (timer) clearTimeout(timer);
+      pyWorker.removeEventListener('message', handler);
+      cancelRun = null;
+      resolve(res);
+    };
     const timer = timeoutSec > 0 ? setTimeout(() => {
       pyWorker.terminate();
       createPyWorker();
-      resolve({timeout: true});
+      finish({timeout: true});
     }, timeoutSec * 1000) : null;
     const handler = e => {
       if (e.data && e.data.id === id) {
-        if (timer) clearTimeout(timer);
-        pyWorker.removeEventListener('message', handler);
-        resolve(e.data);
+        finish(e.data);
       }
+    };
+    cancelRun = () => {
+      pyWorker.terminate();
+      createPyWorker();
+      finish({interrupted: true});
     };
     pyWorker.addEventListener('message', handler);
     pyWorker.postMessage({...payload, type: 'run', id});
@@ -336,13 +346,14 @@ export async function setupRunner(task) {
   }
 
   function saveCurrentState(){
-    state.hidePassed = hidePassedCB?.checked;
-    state.hideSample = hideSampleCB?.checked;
-    state.timeout = parseInt(timeoutInput?.value || '5', 10);
-    state.tests = [...testsList.querySelectorAll('.test-item')]
+    const cur = loadTaskState(task.slug);
+    cur.hidePassed = hidePassedCB?.checked;
+    cur.hideSample = hideSampleCB?.checked;
+    cur.timeout = parseInt(timeoutInput?.value || '5', 10);
+    cur.tests = [...testsList.querySelectorAll('.test-item')]
       .filter(el => !el.classList.contains('sample-test'))
       .map(serializeTest);
-    saveTaskState(task.slug, state);
+    saveTaskState(task.slug, cur);
   }
 
   function addTest(){
@@ -425,6 +436,8 @@ export async function setupRunner(task) {
     runBtn.disabled = true;
     stopBtn.disabled = false;
 
+    let wasInterrupted = false;
+
     let code = "";
     if (editorContainer.cmView) {
       code = editorContainer.cmView.state.doc.toString();
@@ -467,6 +480,14 @@ export async function setupRunner(task) {
           stdin
         }, timeoutSec);
 
+        if(resMsg.interrupted){
+          info.error = 'Interrupted';
+          testEl.classList.add('fail');
+          testEl.dataset.info = JSON.stringify(info);
+          wasInterrupted = true;
+          break;
+        }
+
         if(resMsg.timeout){
           info.error = 'Timed out';
           testEl.classList.add('fail');
@@ -499,8 +520,12 @@ export async function setupRunner(task) {
       testEl.dataset.info = JSON.stringify(info);
     }
     if(statusRow){
-      const pct = Math.round((passedCount/tests.length)*100);
-      statusRow.textContent = `Passed tests: ${passedCount}/${tests.length} (${pct}%)`;
+      if(wasInterrupted){
+        statusRow.textContent = 'Execution interrupted';
+      } else {
+        const pct = Math.round((passedCount/tests.length)*100);
+        statusRow.textContent = `Passed tests: ${passedCount}/${tests.length} (${pct}%)`;
+      }
     }
     updateVisibility();
     running = false;
@@ -509,9 +534,8 @@ export async function setupRunner(task) {
   };
 
   stopBtn.onclick = () => {
-    if(!running || !pyWorker) return;
-    pyWorker.terminate();
-    createPyWorker();
+    if(!running || !cancelRun) return;
+    cancelRun();
   };
 
   infoModal?.addEventListener('click', e => {
