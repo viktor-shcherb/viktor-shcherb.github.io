@@ -25,6 +25,9 @@
       "return": false
     },
     {
+      "args": {
+        "s": ""
+      },
       "return": true
     },
     {
@@ -56,6 +59,18 @@
         "s": "abcba"
       },
       "return": true
+    },
+    {
+      "args": {
+        "s": "abccba"
+      },
+      "return": true
+    },
+    {
+      "args": {
+        "s": "abcdecba"
+      },
+      "return": false
     }
   ],
   "contributor": {
