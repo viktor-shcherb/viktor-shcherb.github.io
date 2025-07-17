@@ -26,14 +26,25 @@ export function ensureTaskSkeleton(doc) {
  * Sharing this logic keeps editor hints identical between prerender
  * and client side.
  */
-export function signatureToString(sig) {
+export function signatureToString(sig, argValues = null, wrap = 40) {
   if (!sig?.name) return '';
-  const args = (sig.args || [])
-    .map(a => a.name + (a.type ? `: ${a.type}` : ''))
-    .join(', ');
+  const parts = (sig.args || []).map(a => {
+    const val = argValues && a.name in argValues
+      ? `=${JSON.stringify(argValues[a.name])}`
+      : '';
+    const typ = !argValues && a.type ? `: ${a.type}` : '';
+    return `${a.name}${typ}${val}`;
+  });
+  if (argValues) {
+    let call = `${sig.name}(${parts.join(', ')})`;
+    if (call.length > wrap && parts.length > 1) {
+      call = `${sig.name}(\n  ${parts.join(',\n  ')}\n)`;
+    }
+    return call;
+  }
   const ret = sig.return_type || sig.returnType || '';
   const arrow = ret ? ` -> ${ret}` : '';
-  return `def ${sig.name}(${args})${arrow}:\n    pass`;
+  return `def ${sig.name}(${parts.join(', ')})${arrow}:\n    pass`;
 }
 
 /**
@@ -47,15 +58,12 @@ export function buildExamples(tests = [], signature = {}) {
     String(s).replace(/[&<>"']/g, m => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
     }[m]));
-  const fn = signature.name ?? 'fn';
   return (
     '<h2>Examples</h2>\n' +
     tests.slice(0, 3).map((test, i) => {
-      const argLines = Object.entries(test.args ?? {})
-        .map(([k, v]) => `  ${k}=${JSON.stringify(v)}`)
-        .join(',\n');
-      const call = argLines ? `${fn}(\n${argLines}\n)` : `${fn}()`;
-      const callLine = 'return' in test ? `${call} == ${JSON.stringify(test.return)}` : call;
+      const callLine = 'return' in test
+        ? `${signatureToString(signature, test.args, 40)} == ${JSON.stringify(test.return)}`
+        : signatureToString(signature, test.args, 40);
       const html = [`<div class="example-card">`,
         `<div class="io-block call" aria-labelledby="lbl-call-${i}">`,
         `<span id="lbl-call-${i}" class="io-label">Function call</span>`,
