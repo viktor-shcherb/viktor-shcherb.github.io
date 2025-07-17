@@ -1,6 +1,5 @@
-(() => {
-  function addButtons(scope = document) {
-    scope.querySelectorAll('pre > code, .cm-static-view').forEach(el => {
+export function addCopyButtons(scope = document) {
+  scope.querySelectorAll('pre > code, .cm-static-view').forEach(el => {
       const pre = el.matches('pre > code') ? el.parentElement : el;
       if (pre.querySelector('.copy-btn')) return;
       pre.classList.add('copy-wrap');
@@ -17,12 +16,14 @@
       });
       pre.appendChild(btn);
     });
-  }
+  });
+}
 
+if (typeof document !== 'undefined') {
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => addButtons());
+    document.addEventListener('DOMContentLoaded', () => addCopyButtons());
   } else {
-    addButtons();
+    addCopyButtons();
   }
-  document.addEventListener('turbo:load', () => addButtons());
-})();
+  document.addEventListener('turbo:load', () => addCopyButtons());
+}
