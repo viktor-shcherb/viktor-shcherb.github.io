@@ -4,8 +4,11 @@ export function initTabSwitcher(root = document) {
     const radios = switcher.querySelectorAll('input[type="radio"][data-panel]');
     const labels = switcher.querySelectorAll('label');
 
-    // container that also holds all panels
-    const container = switcher.parentElement.classList.contains('tab-switcher')
+    // choose the element that should get the `show-both` class
+    // If the panels live inside the `.tab-switcher` element itself (e.g. task page),
+    // use that as the container. Otherwise (e.g. contribute form) the panels are
+    // siblings of the switcher, so use its parent element instead.
+    const container = switcher.querySelector('.tab-content')
       ? switcher
       : switcher.parentElement;
     const panels = [...radios]
