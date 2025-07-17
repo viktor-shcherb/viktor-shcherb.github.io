@@ -17,6 +17,7 @@ import {
   html as htmlEl,
   uuid
 } from '/assets/js/test-fields.js';
+import { loadTaskState, saveTaskState } from '/assets/js/user-state.js';
 
 const themeCompartment = new Compartment();
 
@@ -35,16 +36,12 @@ export function updateEditorTheme() {
   });
 }
 
-// Helper: key for storage (can be per-page, or global)
-function storageKey(slug) {
-  return slug ? `cm-editor-doc:${slug}` : "cm-editor-doc";
-}
-
-// Save on every change
-function persistExtension(key) {
+// Save editor content on every change
+function persistExtension(slug, state) {
   return EditorView.updateListener.of(update => {
     if (update.docChanged) {
-      localStorage.setItem(key, update.state.doc.toString());
+      state.code = update.state.doc.toString();
+      saveTaskState(slug, state);
     }
   });
 }
@@ -80,9 +77,8 @@ export async function setupEditor(initialDoc, slug = null) {
   const isVisible = !!(editorContainer.offsetWidth || editorContainer.offsetHeight || editorContainer.getClientRects().length);
   if (!isVisible) return;
 
-  const key = storageKey(slug);
-  // Priority: localStorage > provided argument > default
-  let savedDoc = localStorage.getItem(key);
+  const state = slug ? loadTaskState(slug) : {};
+  let savedDoc = state.code;
   if (!savedDoc) {
     savedDoc = typeof initialDoc === "string" ? initialDoc : "# Write your Python code here\nprint('Hello!')";
   }
@@ -101,7 +97,7 @@ export async function setupEditor(initialDoc, slug = null) {
       selectionMatches(),
       autocompletion({override: [completeAnyWord]}),
       closeBrackets(),
-      persistExtension(key),
+      persistExtension(slug, state),
       lineNumbers(),
       themeCompartment.of(getThemeExtension()),
       python(),
@@ -183,6 +179,7 @@ export function renderReadOnlyInputOutputBlocks() {
 let pyodideReadyPromise = null;
 
 export async function setupRunner(task) {
+  const state = loadTaskState(task.slug);
   const runBtn = document.getElementById('run-code-btn');
   const testsList = document.getElementById('tests-list');
   const addTestBtn = document.getElementById('add-test');
@@ -192,11 +189,9 @@ export async function setupRunner(task) {
   const stopBtn = document.getElementById('stop-code-btn');
   const infoModal = document.getElementById('test-info-modal');
   const infoBody  = infoModal?.querySelector('.info-body');
-  const codeOutputWrapper = document.getElementById('output-wrapper');
-  function setCodeOutput(text) {
-    codeOutputWrapper.firstElementChild.innerHTML = `<pre><code class="language-io-codemirror">${text}</code></pre>`;
-    renderReadOnlyInputOutputBlocks();
-  }
+
+  if(hidePassedCB) hidePassedCB.checked = state.hidePassed ?? true;
+  if(hideSampleCB) hideSampleCB.checked = state.hideSample ?? true;
 
   const editorContainer = document.getElementById('editor');
   if (!runBtn || !editorContainer || !testsList || !addTestBtn) return;
@@ -271,11 +266,45 @@ export async function setupRunner(task) {
     return el;
   }
 
-  function addTest(){ createTest(); }
+  function serializeTest(el){
+    const obj = { args:{} };
+    for(const a of task.signature.args){
+      const inp = el.querySelector(`.test-arg-input[data-idx="${a.name}"]`);
+      if(inp) obj.args[a.name] = readValue(inp, a.type);
+    }
+    if(task.signature.return_type){
+      const inp = el.querySelector('.return-field .test-arg-input');
+      if(inp) obj.return = readValue(inp, task.signature.return_type);
+    }
+    if(hasStdin){
+      const inp = el.querySelector('.stdin-field textarea');
+      if(inp && inp.value) obj.stdin = inp.value;
+    }
+    if(hasStdout){
+      const inp = el.querySelector('.stdout-field textarea');
+      if(inp && inp.value) obj.stdout = inp.value;
+    }
+    return obj;
+  }
+
+  function saveCurrentState(){
+    state.hidePassed = hidePassedCB?.checked;
+    state.hideSample = hideSampleCB?.checked;
+    state.tests = [...testsList.querySelectorAll('.test-item')]
+      .filter(el => !el.classList.contains('sample-test'))
+      .map(serializeTest);
+    saveTaskState(task.slug, state);
+  }
+
+  function addTest(){
+    createTest();
+    saveCurrentState();
+  }
   addTestBtn.addEventListener('click', addTest);
   testsList.addEventListener('click', e => {
     if(e.target.closest('.del-btn')) {
       e.target.closest('.test-item').remove();
+      saveCurrentState();
       return;
     }
     if(e.target.closest('.info-btn')) {
@@ -290,9 +319,11 @@ export async function setupRunner(task) {
     const isTrue = btn.dataset.value === 'true';
     btn.dataset.value = isTrue ? 'false' : 'true';
     btn.textContent   = isTrue ? 'false' : 'true';
+    saveCurrentState();
   });
+  testsList.addEventListener('input', saveCurrentState);
   task.tests?.forEach(t => createTest(t, true));
-  addTest();
+  state.tests?.forEach(t => createTest(t));
   updateVisibility();
 
   function updateVisibility(){
@@ -305,14 +336,12 @@ export async function setupRunner(task) {
     });
   }
 
-  hidePassedCB?.addEventListener('change', updateVisibility);
-  hideSampleCB?.addEventListener('change', updateVisibility);
+  hidePassedCB?.addEventListener('change', () => { updateVisibility(); saveCurrentState(); });
+  hideSampleCB?.addEventListener('change', () => { updateVisibility(); saveCurrentState(); });
 
   // Disable run button while loading Pyodide
   runBtn.disabled = true;
   if(statusRow) statusRow.textContent = 'Loading interpreter...';
-  setCodeOutput("⏳ Loading Python interpreter...");
-  codeOutputWrapper.style.display = "";
 
   // Only load Pyodide once
   if (!pyodideReadyPromise) {
@@ -333,23 +362,27 @@ export async function setupRunner(task) {
   try {
     pyodide = await pyodideReadyPromise;
   } catch (e) {
-    setCodeOutput("❌ Failed to load Python environment");
     if(statusRow) statusRow.textContent = 'Failed to load interpreter';
     runBtn.disabled = true;
     return;
   }
 
-  const interruptArr = new Int32Array(new SharedArrayBuffer(4));
-  pyodide.setInterruptBuffer(interruptArr);
+  let interruptArr;
+  if (typeof SharedArrayBuffer !== 'undefined') {
+    interruptArr = new Int32Array(new SharedArrayBuffer(4));
+    pyodide.setInterruptBuffer(interruptArr);
+  } else {
+    console.warn('SharedArrayBuffer not available; interrupt disabled');
+  }
   let running = false;
   stopBtn.disabled = true;
 
   runBtn.disabled = false;
   runBtn.title = "Run code";
   if(statusRow) statusRow.textContent = '';
-  codeOutputWrapper.style.display = "none";
 
   runBtn.onclick = async () => {
+    saveCurrentState();
     running = true;
     runBtn.disabled = true;
     stopBtn.disabled = false;
@@ -359,8 +392,7 @@ export async function setupRunner(task) {
       code = editorContainer.cmView.state.doc.toString();
     }
 
-    setCodeOutput("⏳ Running...");
-    codeOutputWrapper.style.display = "";
+    if(statusRow) statusRow.textContent = 'Running tests...';
 
     const tests = [...testsList.querySelectorAll('.test-item')];
     let passedCount = 0;
@@ -443,7 +475,7 @@ json.dumps({'return': result, 'stdout': _out_buf.getvalue()})`;
   };
 
   stopBtn.onclick = () => {
-    if(!running) return;
+    if(!running || !interruptArr) return;
     interruptArr[0] = 2;
   };
 
