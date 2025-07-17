@@ -12,7 +12,7 @@ This repository contains the source for a Jekyll-based personal website. Below i
 - `index.md` – Home page. Uses the `default` layout defined in `_layouts/`.
 - `about.md` – “About me” page. Also uses the `default` layout and includes structured data via `_includes/person-schema.html`.
 - `robots.txt` – Sitemap reference for search engines.
-- `service-worker.js` – Caches algorithm task JSON files used by pages under `algoprep/`.
+- `service-worker.js` – Caches algorithm task JSON files and Pyodide resources using Workbox.
 
 ## Core Directories
 
@@ -21,7 +21,7 @@ This repository contains the source for a Jekyll-based personal website. Below i
 - `_layouts/` – Page layouts for Jekyll. `default.html` is the base layout and `post.html` extends it for blog posts. Markdown files in `_posts/` and pages like `about.md` use these layouts via their front-matter.
 - `_posts/` – Blog posts written in Markdown. Each file has YAML front-matter specifying `layout: post` so they render with `_layouts/post.html`.
 - `assets/` – Static assets. Contains SCSS stylesheets under `css/`, JavaScript modules in `js/` (e.g., `editor.js` bundles CodeMirror modules from a CDN while sharing a single `@codemirror/state` instance), GitHub logos in `github/`, and images under `python/`.
-  Code blocks with classes like `language-python-codemirror` are replaced at runtime by `editor.js` with `<div class="cm-static-view" data-code="…">` wrappers. Features such as the copy button should target these elements.
+  Code blocks with classes like `language-python-codemirror` are replaced at runtime by `editor.js` with `<div class="cm-static-view" data-code="…">` wrappers. A dedicated `pyodide-worker.js` runs the Python interpreter in a Web Worker for task execution. Features such as the copy button should target these elements.
 - `algoprep/` – JSON definitions of algorithm tasks, the `index.md` page, and the dynamic `task.html` used for interactive code execution. `scripts/prerender-tasks.mjs` reads these JSON files to generate static HTML using the templates from `_includes/`.
 - `blog/` – Landing page for the blog. Displays the latest post and links to others.
 - `logos-flavicon/` – Favicon and web manifest files.
