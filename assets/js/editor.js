@@ -18,6 +18,7 @@ import {
   uuid
 } from '/assets/js/test-fields.js';
 import { loadTaskState, saveTaskState } from '/assets/js/user-state.js';
+import { signatureToString } from '/assets/js/task-render-core.js';
 
 const themeCompartment = new Compartment();
 
@@ -187,11 +188,13 @@ export async function setupRunner(task) {
   const hidePassedCB = document.getElementById('hide-passed');
   const hideSampleCB = document.getElementById('hide-sample');
   const stopBtn = document.getElementById('stop-code-btn');
+  const timeoutInput = document.getElementById('test-timeout');
   const infoModal = document.getElementById('test-info-modal');
   const infoBody  = infoModal?.querySelector('.info-body');
 
   if(hidePassedCB) hidePassedCB.checked = state.hidePassed ?? true;
   if(hideSampleCB) hideSampleCB.checked = state.hideSample ?? true;
+  if(timeoutInput) timeoutInput.value = state.timeout ?? 5;
 
   const editorContainer = document.getElementById('editor');
   if (!runBtn || !editorContainer || !testsList || !addTestBtn) return;
@@ -290,6 +293,7 @@ export async function setupRunner(task) {
   function saveCurrentState(){
     state.hidePassed = hidePassedCB?.checked;
     state.hideSample = hideSampleCB?.checked;
+    state.timeout = parseInt(timeoutInput?.value || '5', 10);
     state.tests = [...testsList.querySelectorAll('.test-item')]
       .filter(el => !el.classList.contains('sample-test'))
       .map(serializeTest);
@@ -322,6 +326,20 @@ export async function setupRunner(task) {
     saveCurrentState();
   });
   testsList.addEventListener('input', saveCurrentState);
+  timeoutInput?.addEventListener('input', saveCurrentState);
+  document.querySelector('.controls-row')?.addEventListener('click', e => {
+    const btn = e.target.closest('.step');
+    if (!btn) return;
+    const input = btn.closest('.input-wrapper')?.querySelector('input[type="number"]');
+    if (!input) return;
+    const step = Number(input.step) || 1;
+    const min  = input.min === '' ? -Infinity : Number(input.min);
+    const max  = input.max === '' ?  Infinity : Number(input.max);
+    const val  = Number(input.value) || 0;
+    const next = btn.classList.contains('up') ? val + step : val - step;
+    input.value = Math.min(max, Math.max(min, next));
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  });
   task.tests?.forEach(t => createTest(t, true));
   state.tests?.forEach(t => createTest(t));
   updateVisibility();
@@ -395,6 +413,7 @@ export async function setupRunner(task) {
     if(statusRow) statusRow.textContent = 'Running tests...';
 
     const tests = [...testsList.querySelectorAll('.test-item')];
+    const timeoutSec = parseInt(timeoutInput?.value || '5', 10);
     let passedCount = 0;
     for(let i=0; i<tests.length; i++){
       const testEl = tests[i];
@@ -415,13 +434,17 @@ export async function setupRunner(task) {
       const stdoutInp = testEl.querySelector('.stdout-field textarea');
       const expectedStdout = stdoutInp ? stdoutInp.value.trim() : undefined;
 
-      const argStr = Object.entries(args).map(([k,v])=>`${k}=${JSON.stringify(v)}`).join(', ');
-      const callLine = `${task.signature.name}(${argStr})`;
+      const callLine = signatureToString(task.signature, args, 40);
       let info = { call: callLine };
       if(stdin) info.stdin = stdin;
       if(retInp) info.expectedReturn = expectedReturn;
       if(stdoutInp) info.expectedStdout = expectedStdout;
       try {
+        let timer;
+        if(interruptArr && timeoutSec > 0){
+          interruptArr[0] = 0;
+          timer = setTimeout(() => { interruptArr[0] = 2; }, timeoutSec * 1000);
+        }
         const snippet = String.raw`
 import json, sys
 from io import StringIO
@@ -448,6 +471,8 @@ sys.stdout = _sys_out
 json.dumps({'return': result, 'stdout': _out_buf.getvalue()})`;
 
         const resStr = await pyodide.runPythonAsync(code + '\n' + snippet);
+        if(timer) clearTimeout(timer);
+        if(interruptArr) interruptArr[0] = 0;
         const res = JSON.parse(resStr);
 
         let ok = true;
@@ -462,6 +487,7 @@ json.dumps({'return': result, 'stdout': _out_buf.getvalue()})`;
         testEl.classList.add(ok ? 'pass' : 'fail');
         if(ok) passedCount++;
       } catch(err){
+        if(timer) clearTimeout(timer);
         testEl.classList.add('fail');
         info.error = err.message || String(err);
       }

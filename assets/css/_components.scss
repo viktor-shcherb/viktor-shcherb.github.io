@@ -111,6 +111,7 @@ input#tab-preview:checked + label[for="tab-preview"],
 .controls-row {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   gap: .5em;
 }
 

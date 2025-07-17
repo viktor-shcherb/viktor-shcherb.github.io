@@ -53,6 +53,16 @@ uses_pyodide: true
       <div class="code-runner">
         <div id="runner-status" class="status-row"></div>
         <div class="controls-row">
+          <label class="timeout-label" style="display:flex; align-items:center; gap:.25em;">
+            <span style="font-size:.85rem;">timeout</span>
+            <div class="input-wrapper">
+              <input type="number" id="test-timeout" step="1" min="1" value="5" style="width:3.5em">
+              <div class="stepper">
+                <button type="button" class="step up" aria-label="increment">+</button>
+                <button type="button" class="step down" aria-label="decrement">−</button>
+              </div>
+            </div>
+          </label>
           <button id="run-code-btn" class="run-btn" type="button" title="Run code">
             <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
           </button>
