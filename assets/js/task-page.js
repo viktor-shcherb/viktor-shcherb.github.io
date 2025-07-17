@@ -9,6 +9,7 @@ import { renderTask,
 import { setupEditor,
          setupRunner,
          updateEditorTheme } from '/assets/js/editor.js';
+import { initStateSettings } from '/assets/js/state-settings.js';
 
 let currentTask, editorReady = false;
 
@@ -36,6 +37,7 @@ async function renderPage() {
   //    content is in place.
   initTabSwitcher(document);
   updateEditorTheme();
+  initStateSettings();
 }
 
 // first run + every Turbo visit
@@ -46,7 +48,7 @@ document.addEventListener('themechange', updateEditorTheme);
 
 document.addEventListener('tabshown', async ({ detail }) => {
   if (detail.panel.id !== 'panel-code' || editorReady) return;
-  setupEditor(signatureToDef(currentTask.signature), currentTask.slug);
-  setupRunner(currentTask);
+  await setupEditor(signatureToDef(currentTask.signature), currentTask.slug);
+  await setupRunner(currentTask);
   editorReady = true;
 });
