@@ -1,54 +1,82 @@
-// Page controller for an individual algorithm task.
-// It can operate on either a pre-rendered task object embedded by the
-// build step or a JSON file fetched at runtime.
 import { initTabSwitcher }  from '/assets/js/tab-switcher.js';
 import { loadTask }         from '/assets/js/task-loader.js';
 import { renderTask,
          ensureTaskSkeleton,
-         signatureToDef } from '/assets/js/task-render.js';
+         signatureToDef }   from '/assets/js/task-render.js';
 import { setupEditor,
          setupRunner,
          updateEditorTheme } from '/assets/js/editor.js';
 import { initStateSettings } from '/assets/js/state-settings.js';
 
-let currentTask, editorReady = false;
+let currentTask = null;
+let editorReady = false;
+let editorInitializing = false;
+let lastSlugLoaded = null;
+let listenersBound = false;
 
 async function renderPage() {
-  // When the page was created by the prerender script it defines
-  // `window.PRE_RENDERED_TASK` to avoid fetching the JSON again.
+  // Identify task slug
   const pre  = window.PRE_RENDERED_TASK;
   const slug = pre?.slug || new URLSearchParams(location.search).get('id');
   if (!slug) return;
 
-  // 1. Ensure the layout slots exist.  This runs here so the same
-  //    templates can also be injected by the prerender step.
+  lastSlugLoaded = slug;
+
   ensureTaskSkeleton();
-
-  // Reset editor state when navigating between tasks
   editorReady = false;
+  editorInitializing = false;
+  currentTask = null;
 
-  // 2. Either reuse the embedded object or fetch the task JSON and
-  //    render it into the skeleton.
-  currentTask = pre || await loadTask(slug);
-  window.currentTask = currentTask;
-  renderTask(currentTask, document);
+  try {
+    currentTask = pre || await loadTask(slug);
+    // Abort if navigation changed slug while awaiting
+    if (slug !== lastSlugLoaded) return;
 
-  // 3. Continue with the interactive features once the static
-  //    content is in place.
+    window.currentTask = currentTask; // optional; remove if you dislike globals
+    renderTask(currentTask, document);
+  } catch (err) {
+    console.error('Task load failed', err);
+    const container = document.querySelector('#panel-desc') || document.body;
+    container.innerHTML = `<p class="error">Failed to load task.</p>`;
+    return;
+  }
+
   initTabSwitcher(document);
-  updateEditorTheme();
-  initStateSettings();
+  updateEditorTheme();       // pre-editor (sets baseline)
 }
 
-// first run + every Turbo visit
+function bindGlobalListenersOnce() {
+  if (listenersBound) return;
+  listenersBound = true;
+
+  document.addEventListener('tabshown', async ({ detail }) => {
+    if (!currentTask) return;
+    if (detail.panel.id !== 'panel-code') return;
+    if (editorReady || editorInitializing) return;
+
+    editorInitializing = true; // lock
+    try {
+      await setupEditor(signatureToDef(currentTask.signature), currentTask.slug);
+      await initStateSettings(); // modal + state settings
+      await setupRunner(currentTask);
+      updateEditorTheme(); // ensure theme after editor init
+      editorReady = true;
+    } finally {
+      editorInitializing = false;
+    }
+  });
+
+  document.addEventListener('themechange', updateEditorTheme);
+}
+
+bindGlobalListenersOnce();
+
+// Turbo full or partial load
 document.addEventListener('turbo:load', renderPage);
-renderPage();
 
-document.addEventListener('themechange', updateEditorTheme);
-
-document.addEventListener('tabshown', async ({ detail }) => {
-  if (detail.panel.id !== 'panel-code' || editorReady) return;
-  await setupEditor(signatureToDef(currentTask.signature), currentTask.slug);
-  await setupRunner(currentTask);
-  editorReady = true;
-});
+// Initial (non-turbo) load fallback
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', renderPage, { once: true });
+} else {
+  renderPage();
+}

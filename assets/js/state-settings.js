@@ -1,160 +1,195 @@
-/* ---------------------------------------------------------------------------
- *  state‑settings.js   –   plain‑JavaScript (ES modules) version
- *     · resilient if some DOM nodes are missing
- *     · clear “anon | partial | ready” UI states
- *     · inline validation + error feedback
- * ------------------------------------------------------------------------ */
+import {API_BASE} from "./user-state.js";
 
-const API_BASE =
-  'https://open-user-state-personal-website.viktoroo-sch.workers.dev';
+
+/* ------------------------- DOM acquisition helpers --------------------- */
+async function waitForElement(id, maxMs = 1000) {
+  const start = performance.now();
+  while (performance.now() - start < maxMs) {
+    const el = document.getElementById(id);
+    if (el) return el;
+    await new Promise(r => requestAnimationFrame(r));
+  }
+  return null;
+}
+
+/* ------------------------- Regex & constants --------------------------- */
+const PAT_REGEX =
+  /^(?:gh[pous]_)[A-Za-z0-9_]{20,}|^(?:github_pat_)[A-Za-z0-9_]{20,}|^[0-9a-f]{40}$/i;
+const REPO_REGEX = /^[\w.-]+\/[\w.-]+$/;
+
+/* ------------------------- Idempotent initializer ---------------------- */
+let _initStarted = false;
 
 export async function initStateSettings() {
+  if (_initStarted) return;
+  _initStarted = true;
+
   async function run() {
-    /* ---------- fast DOM look‑ups -------------------------------------- */
-    const $        = id => /** @type {HTMLElement|null} */ (document.getElementById(id));
-    const btn      = $('#state-settings-btn');
-    const modal    = $('#user-state-modal');
-    if (!btn || !modal) return;  // nothing to do on pages without the dialog
+    const modal = await waitForElement('user-state-modal');
+    if (!modal) {
+      console.warn('[state-settings] modal not found');
+      return;
+    }
 
-    const authBtn    = $('#github-auth-btn');
-    const patSection = $('#pat-section');
-    const saveBtn    = $('#save-pat-btn');
-    const patInput   = /** @type {HTMLInputElement|null} */ ($('#pat-input'));
-    const repoInput  = /** @type {HTMLInputElement|null} */ ($('#repo-input'));
-    const warning    = $('#state-warning');
-    const saveName   = $('#save-name');
+    /* Fast getters */
+    const $ = id => document.getElementById(id);
 
-    /* ---------- tiny helpers --------------------------------------------- */
+    const authBtn    = $('github-auth-btn');
+    const patSection = $('pat-section');    // container shown after auth or partial
+    const saveBtn    = $('save-pat-btn');
+    const patInput   = $('pat-input');
+    const repoInput  = $('repo-input');
+    const warning    = $('state-warning');
+    const saveName   = $('save-name');
+
+    /* ------------- UI helpers ---------------- */
     const show = el => el && (el.style.display = '');
     const hide = el => el && (el.style.display = 'none');
     const message = txt => {
-      if (warning) {
-        warning.textContent = txt;
-        warning.classList.remove('hidden');
-      }
+      if (!warning) return;
+      warning.textContent = txt;
+      warning.classList.remove('hidden');
     };
+    const clearMessage = () => warning && warning.classList.add('hidden');
 
-    /** @param {'anon'|'partial'|'ready'} state */
     function setUI(state) {
       switch (state) {
         case 'anon':
           show(authBtn);
           hide(patSection);
-          message('Connect GitHub to enable state‑saving.');
+          message('Connect GitHub to enable state-saving.');
           hide(saveName);
           break;
-
         case 'partial':
           hide(authBtn);
-          show(patSection);
-          message('Finish token / repo setup to save state.');
+            show(patSection);
+          message('Finish token / repo setup to save state.');
           show(saveName);
           break;
-
         case 'ready':
           hide(authBtn);
           show(patSection);
-          warning && warning.classList.add('hidden');
+          clearMessage();
           show(saveName);
           break;
       }
     }
 
-    /* ---------- modal open / close logic --------------------------------- */
-    btn.addEventListener('click', () => modal.classList.add('open'));
-
-    modal.addEventListener('click', e => {
-      const t = /** @type {HTMLElement} */ (e.target);
-      if (t.closest('.modal-close') || t.classList.contains('modal-overlay')) {
+    /* ------------- Modal open / close (delegated) ------------- */
+    document.addEventListener('click', e => {
+      const t = e.target instanceof Element ? e.target : null;
+      if (!t) return;
+      if (t.id === 'state-settings-btn' || t.closest('#state-settings-btn')) {
+        modal.classList.add('open');
+      } else if (
+        t.classList.contains('modal-overlay') ||
+        t.closest('.modal-close')
+      ) {
         modal.classList.remove('open');
       }
     });
-
     document.addEventListener('keyup', e => {
       if (e.key === 'Escape') modal.classList.remove('open');
     });
 
-    /* ---------- OAuth kick‑off ------------------------------------------- */
-    authBtn && authBtn.addEventListener(
-      'click',
-      () => (window.location.href = `${API_BASE}/api/auth/github`),
-    );
+    /* ------------- Button actions (delegated) ------------- */
+    modal.addEventListener('click', async e => {
+      const btn = e.target instanceof Element ? e.target.closest('button') : null;
+      if (!btn) return;
 
-    /* ---------- current setup probe -------------------------------------- */
+      // Start OAuth
+      if (btn.id === 'github-auth-btn') {
+        e.preventDefault();
+        const next =
+          window.location.pathname +
+          window.location.search +
+          window.location.hash;
+        window.location.href = `${API_BASE}/api/auth/github?next=${encodeURIComponent(next)}`;
+        return;
+      }
+
+      // Save settings
+      if (btn.id === 'save-pat-btn') {
+        e.preventDefault();
+        if (!patInput || !repoInput) return;
+        if (btn.disabled) return;
+
+        btn.disabled = true;
+
+        const patValue  = patInput.value.trim();
+        const repoValue = repoInput.value.trim();
+
+        const patOk  = !patValue || PAT_REGEX.test(patValue);
+        const repoOk = !repoValue || REPO_REGEX.test(repoValue);
+
+        if (!patOk)  { message('PAT format looks wrong.'); btn.disabled = false; return; }
+        if (!repoOk) { message('Repo must be “owner/name”.'); btn.disabled = false; return; }
+
+        const tasks = [];
+        if (patValue) {
+          tasks.push(fetch(`${API_BASE}/api/token`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pat: patValue }),
+          }));
+        }
+        if (repoValue) {
+          tasks.push(fetch(`${API_BASE}/api/repository`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ repo: repoValue }),
+          }));
+        }
+
+        const results = await Promise.allSettled(tasks);
+        const fail = results.find(r =>
+          r.status === 'rejected' || (r.value && !r.value.ok)
+        );
+
+        btn.disabled = false;
+
+        if (fail) {
+          message('Save failed – check PAT / repo permissions.');
+          return;
+        }
+
+        modal.classList.remove('open');
+        setUI('ready');
+      }
+    });
+
+    /* ------------- Probe existing setup ------------- */
     async function probeSetup() {
-      // 1‑ Does the user have a session cookie?
+      // Check repo (auth presence)
+      let repoState = null;
       const repoRes = await fetch(`${API_BASE}/api/repository`, {
         credentials: 'include',
       });
       if (repoRes.status === 401) return 'anon';
-
-      let repo = null;
-      try {
-        const { repo: r } = await repoRes.json();
-        repo = r || null;
-        if (repo && repoInput) repoInput.value = repo;
-      } catch { /* ignore JSON error */ }
-
-      // 2‑ Is a PAT stored?  Use OPTIONS as a cheap probe that the worker answers 204 on success
-      const tokenOk = await fetch(`${API_BASE}/api/token`, {
-        method: 'OPTIONS',
-        credentials: 'include',
-      }).then(r => r.status === 204);
-
-      return repo && tokenOk ? 'ready' : 'partial';
-    }
-
-    /* ---------- save / update handler ------------------------------------ */
-    saveBtn && saveBtn.addEventListener('click', async () => {
-      if (!patInput || !repoInput) return;
-
-      saveBtn.disabled = true;
-
-      const pat  = patInput.value.trim();
-      const repo = repoInput.value.trim();
-
-      /* client‑side regexes mirror the worker */
-      const patOk  =
-        !pat ||
-        /^(gh[pous]_)[A-Za-z0-9_]{20,}|^(github_pat_)[A-Za-z0-9_]{20,}|^[0-9a-f]{40}$/i.test(pat);
-      const repoOk = !repo || /^[\w.-]+\/[\w.-]+$/.test(repo);
-
-      if (!patOk)   { message('PAT format looks wrong.'); saveBtn.disabled = false; return; }
-      if (!repoOk)  { message('Repo must be “owner/name”.'); saveBtn.disabled = false; return; }
-
-      const tasks = [];
-      if (pat)  tasks.push(fetch(`${API_BASE}/api/token`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pat }),
-      }));
-      if (repo) tasks.push(fetch(`${API_BASE}/api/repository`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ repo }),
-      }));
-
-      const results = await Promise.allSettled(tasks);
-      const fail = results.find(r =>
-        r.status === 'rejected' || (r.value && !r.value.ok),
-      );
-
-      saveBtn.disabled = false;
-
-      if (fail) {
-        message('Save failed – check PAT / repo permissions.');
-        return;
+      if (repoRes.ok) {
+        try {
+          const { repo } = await repoRes.json();
+            repoState = repo || null;
+            if (repoState && repoInput) repoInput.value = repoState;
+        } catch { /* ignore parse error */ }
       }
 
-      modal.classList.remove('open');
-      setUI('ready');
-    });
+      // Check PAT via OPTIONS
+      const tokenOk = await fetch(`${API_BASE}/api/token`, {
+        method: 'OPTIONS',
+        credentials: 'include'
+      }).then(r => r.status === 204).catch(() => false);
 
-    /* ---------- kick‑off -------------------------------------------------- */
+      return repoState && tokenOk ? 'ready' : 'partial';
+    }
+
+    /* ------------- Kick-off ------------- */
     setUI('anon');
-    setUI(await probeSetup());
+    probeSetup()
+      .then(state => setUI(state))
+      .catch(() => setUI('anon'));
   }
 
   if (document.readyState === 'loading') {
