@@ -9,11 +9,12 @@ const API_BASE =
   'https://open-user-state-personal-website.viktoroo-sch.workers.dev';
 
 export async function initStateSettings() {
-  /* ---------- fast DOM look‑ups ---------------------------------------- */
-  const $        = id => /** @type {HTMLElement|null} */ (document.getElementById(id));
-  const btn      = $('#state-settings-btn');
-  const modal    = $('#user-state-modal');
-  if (!btn || !modal) return;                      // nothing to do on pages without the dialog
+  async function run() {
+    /* ---------- fast DOM look‑ups -------------------------------------- */
+    const $        = id => /** @type {HTMLElement|null} */ (document.getElementById(id));
+    const btn      = $('#state-settings-btn');
+    const modal    = $('#user-state-modal');
+    if (!btn || !modal) return;  // nothing to do on pages without the dialog
 
   const authBtn    = $('#github-auth-btn');
   const patSection = $('#pat-section');
@@ -154,4 +155,11 @@ export async function initStateSettings() {
   /* ---------- kick‑off -------------------------------------------------- */
   setUI('anon');
   setUI(await probeSetup());
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run, { once: true });
+  } else {
+    run();
+  }
 }
