@@ -48,24 +48,12 @@ uses_pyodide: true
           </button>
         </div>
         <div class="controls-row">
-          <label class="timeout-label">
-            <span>timeout</span>
-            <div class="input-wrapper">
-              <input type="number" id="test-timeout" step="1" min="1" value="5">
-              <div class="stepper">
-                <button type="button" class="step up" aria-label="increment">+</button>
-                <button type="button" class="step down" aria-label="decrement">−</button>
-              </div>
-            </div>
-          </label>
           <button id="run-code-btn" class="run-btn" type="button" title="Run code">
             <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
           </button>
           <button id="stop-code-btn" class="stop-btn" type="button" title="Stop" disabled>
             <span class="material-symbols-outlined" aria-hidden="true">stop</span>
           </button>
-          <input id="save-name" class="save-name-input" placeholder="Save name" style="display:none;">
-          <span id="state-warning" class="state-warning">Progress may be erased without authentication</span>
         </div>
         <div class="checks-row">
           <label>
