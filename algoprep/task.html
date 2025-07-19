@@ -47,13 +47,21 @@ uses_pyodide: true
             <span class="material-symbols-outlined" aria-hidden="true">settings</span>
           </button>
         </div>
-        <div class="controls-row">
-          <button id="run-code-btn" class="run-btn" type="button" title="Run code">
-            <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
-          </button>
-          <button id="stop-code-btn" class="stop-btn" type="button" title="Stop" disabled>
-            <span class="material-symbols-outlined" aria-hidden="true">stop</span>
-          </button>
+        <div class="controls-row two-col">
+          <div>
+            <button id="run-code-btn" class="run-btn" type="button" title="Run code">
+              <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
+            </button>
+            <button id="stop-code-btn" class="stop-btn" type="button" title="Stop" disabled>
+              <span class="material-symbols-outlined" aria-hidden="true">stop</span>
+            </button>
+          </div>
+          <div>
+            <button id="save-state-btn" class="save-btn" type="button" title="Save">
+              <span class="material-symbols-outlined" aria-hidden="true">save</span>
+            </button>
+            <input id="save-name" class="save-name-input" placeholder="Version">
+          </div>
         </div>
         <div class="checks-row">
           <label>

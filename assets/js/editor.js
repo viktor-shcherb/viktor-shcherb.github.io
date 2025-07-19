@@ -250,6 +250,7 @@ export async function setupRunner(task) {
   const hidePassedCB = document.getElementById('hide-passed');
   const hideSampleCB = document.getElementById('hide-sample');
   const stopBtn = document.getElementById('stop-code-btn');
+  const saveBtn = document.getElementById('save-state-btn');
   const timeoutInput = document.getElementById('test-timeout');
   const infoModal = document.getElementById('test-info-modal');
   const infoBody  = infoModal?.querySelector('.info-body');
@@ -352,7 +353,7 @@ export async function setupRunner(task) {
     return obj;
   }
 
-  function saveCurrentState(){
+  function saveCurrentState(force = false){
     state.hidePassed = hidePassedCB?.checked;
     state.hideSample = hideSampleCB?.checked;
     state.timeout = parseInt(timeoutInput?.value || '5', 10);
@@ -361,7 +362,7 @@ export async function setupRunner(task) {
       .map(serializeTest);
     const input = document.getElementById('save-name');
     if (input) state.name = input.value.trim();
-    saveTaskState(task.slug, state);
+    saveTaskState(task.slug, state, force ? { force: true } : {});
   }
 
   function addTest(){
@@ -369,6 +370,7 @@ export async function setupRunner(task) {
     saveCurrentState();
   }
   addTestBtn.addEventListener('click', addTest);
+  saveBtn?.addEventListener('click', () => saveCurrentState(true));
   testsList.addEventListener('click', e => {
     if(e.target.closest('.del-btn')) {
       e.target.closest('.test-item').remove();
