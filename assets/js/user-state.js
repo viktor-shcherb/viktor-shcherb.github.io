@@ -25,7 +25,13 @@ const API_BASE = getApiBase();
 const COMMIT_MIN_INTERVAL_MS = 60_000; // 1 minute
 
 // In-memory caches keyed by slug
-const lastCommitMeta = new Map(); // slug -> { ts: number, hash: string }
+const lastCommitMeta = new Map();
+// slug -> {
+//   ts: number,
+//   metaHash: string,
+//   codeHash: string,
+//   testsHash: string
+// }
 
 // Persist key builder (optional localStorage persistence)
 const persistKey = slug => `task-commit-info:${slug}`;
@@ -40,15 +46,23 @@ function hashString(str) {
   return (h >>> 0).toString(16);
 }
 
-function computeStateHash(slug, state) {
-  // Only hash the parts we actually commit remotely
-  const meta = JSON.stringify({
+function computeStateHashes(slug, state) {
+  const metaPayload = JSON.stringify({
     lastSaved: state.lastSaved || 0,
     name: state.name || ''
   });
   const code = typeof state.code === 'string' ? state.code : '';
   const tests = JSON.stringify(state.tests || []);
-  return hashString(`${slug}::${meta}::${code}::${tests}`);
+  return {
+    metaHash:  hashString(`${slug}::meta::${metaPayload}`),
+    codeHash:  hashString(`${slug}::code::${code}`),
+    testsHash: hashString(`${slug}::tests::${tests}`)
+  };
+}
+
+function computeStateHash(slug, state) {
+  const h = computeStateHashes(slug, state);
+  return hashString(`${h.metaHash}::${h.codeHash}::${h.testsHash}`);
 }
 
 /* ---------------- Small fetch helpers -------------------------------- */
@@ -91,7 +105,13 @@ function loadPersistedCommitMeta(slug) {
     const raw = localStorage.getItem(persistKey(slug));
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (parsed && typeof parsed.ts === 'number' && typeof parsed.hash === 'string') {
+      if (parsed && typeof parsed.ts === 'number') {
+        if (typeof parsed.metaHash !== 'string') {
+          const legacy = parsed.hash || '';
+          parsed.metaHash = legacy;
+          parsed.codeHash = legacy;
+          parsed.testsHash = legacy;
+        }
         lastCommitMeta.set(slug, parsed);
         return parsed;
       }
@@ -138,9 +158,8 @@ export async function loadTaskState(slug) {
 
   // Seed commit meta cache if lastSaved present
   if (state.lastSaved) {
-    // Create a synthetic hash so an immediate unchanged forced save does nothing
-    const syntheticHash = computeStateHash(slug, state);
-    storeCommitMeta(slug, { ts: state.lastSaved, hash: syntheticHash });
+    const hashes = computeStateHashes(slug, state);
+    storeCommitMeta(slug, { ts: state.lastSaved, ...hashes });
   }
 
   return state;
@@ -171,44 +190,43 @@ export async function saveTaskState(slug, state, options = {}) {
     } catch { /* ignore quota */ }
 
     // 2. Hash & throttle check
-    const commitInfo = loadPersistedCommitMeta(slug) || { ts: 0, hash: '' };
+    const commitInfo =
+      loadPersistedCommitMeta(slug) ||
+      { ts: 0, metaHash: '', codeHash: '', testsHash: '' };
     const now = Date.now();
-    const newHash = computeStateHash(slug, state);
+    const hashes = computeStateHashes(slug, state);
 
     const tooSoon = !force && (now - commitInfo.ts < COMMIT_MIN_INTERVAL_MS);
-    const unchanged = newHash === commitInfo.hash;
+    const changedMeta = hashes.metaHash !== commitInfo.metaHash;
+    const changedCode = 'code' in state && hashes.codeHash !== commitInfo.codeHash;
+    const changedTests = hashes.testsHash !== commitInfo.testsHash;
+    const anyChanged = changedMeta || changedCode || changedTests;
 
-    // If it's too soon OR unchanged, we still update meta timestamp ONLY if force?
-    if (!force && (tooSoon || unchanged)) {
-      // Optionally refresh lastSaved in commit meta if changed a lot locally:
-      // We *do not* update commit meta hash/time unless forced & changed.
+    if (!force && (tooSoon || !anyChanged)) {
       return; // skip remote commits
     }
 
-    if (unchanged && force) {
-      // Force requested but content identical: nothing to send.
-      // Still update stored timestamp so next minute window references now.
-      storeCommitMeta(slug, { ts: now, hash: newHash });
+    if (!anyChanged && force) {
+      storeCommitMeta(slug, { ts: now, ...hashes });
       return;
     }
 
     // 3. Perform remote commits (only changed & allowed)
     const basePath = `user_state/algoprep/${slug}`;
 
-    const metaPayload = JSON.stringify({
-      lastSaved: state.lastSaved,
-      name: state.name || ''
-    });
+    if (changedMeta || force) {
+      const metaPayload = JSON.stringify({
+        lastSaved: state.lastSaved,
+        name: state.name || ''
+      });
+      await commitFile(
+        `${basePath}/metadata.json`,
+        metaPayload,
+        `Update state meta for ${slug}`
+      );
+    }
 
-    // Commit metadata
-    await commitFile(
-      `${basePath}/metadata.json`,
-      metaPayload,
-      `Update state meta for ${slug}`
-    );
-
-    // Commit code (guard)
-    if ('code' in state) {
+    if (changedCode || force) {
       await commitFile(
         `${basePath}/code.py`,
         state.code || '',
@@ -216,15 +234,16 @@ export async function saveTaskState(slug, state, options = {}) {
       );
     }
 
-    // Commit tests
-    await commitFile(
-      `${basePath}/custom_tests.json`,
-      JSON.stringify(state.tests || []),
-      `Update tests for ${slug}`
-    );
+    if (changedTests || force) {
+      await commitFile(
+        `${basePath}/custom_tests.json`,
+        JSON.stringify(state.tests || []),
+        `Update tests for ${slug}`
+      );
+    }
 
     // 4. Record commit meta
-    storeCommitMeta(slug, { ts: now, hash: newHash });
+    storeCommitMeta(slug, { ts: now, ...hashes });
   })();
 
   try {
