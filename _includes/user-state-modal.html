@@ -57,6 +57,12 @@
               <span>GitHub PAT</span>
             </label>
             <input id="pat-input" type="password" autocomplete="off">
+            <div id="pat-valid" style="display:none; align-items:center; gap:.25em;">
+              <span>PAT stored</span>
+              <button type="button" id="delete-pat-btn" class="del-btn">
+                <span class="material-symbols-outlined delete-icon">delete</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -65,9 +71,14 @@
         </label>
         <input id="save-name" placeholder="Save name">
 
-        <button type="button" id="save-pat-btn" class="submit-btn" style="margin-top:1em;">
-          Save Settings
-        </button>
+        <div class="action-row" style="margin-top:1em;">
+          <button type="button" id="save-pat-btn" class="submit-btn">
+            Save Settings
+          </button>
+          <button type="button" id="logout-btn" class="submit-btn" style="background: var(--red);">
+            Logout
+          </button>
+        </div>
       </div>
       <p id="state-status" class="state-status" style="margin-top:.5em;"></p>
     </div>
