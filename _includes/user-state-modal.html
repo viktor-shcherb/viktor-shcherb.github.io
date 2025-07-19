@@ -13,7 +13,7 @@
       <button type="button" id="github-auth-btn" class="add-btn">Authenticate via GitHub</button>
       <div id="pat-section" style="display:none; margin-top:1em;">
         <p class="hint">
-          Provide a fine-grained PAT restricted to the repository you wish to use. 
+          Provide a fine-grained PAT restricted to the repository you wish to use.
           Your token will be stored with <a href="https://github.com/viktor-shcherb/open-user-state" target="_blank" rel="noopener">Open User State</a>.
         </p>
         <label style="display:block; margin-top:.5em;">
@@ -27,6 +27,23 @@
         <button type="button" id="save-pat-btn" class="submit-btn" style="margin-top:1em;">
           Save Settings
         </button>
+      </div>
+      <div id="state-section" style="display:none; margin-top:1em;">
+        <label style="display:block; margin-top:.5em;">
+          <span>Save name</span>
+          <input id="save-name" class="save-name-input" placeholder="Save name">
+        </label>
+        <label class="timeout-label" style="display:block; margin-top:.5em;">
+          <span>timeout</span>
+          <div class="input-wrapper">
+            <input type="number" id="test-timeout" step="1" min="1" value="5">
+            <div class="stepper">
+              <button type="button" class="step up" aria-label="increment">+</button>
+              <button type="button" class="step down" aria-label="decrement">−</button>
+            </div>
+          </div>
+        </label>
+        <p id="state-status" class="state-status" style="margin-top:.5em;"></p>
       </div>
     </div>
   </div>
