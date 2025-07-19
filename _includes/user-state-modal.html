@@ -9,32 +9,15 @@
       </button>
     </div>
     <div class="modal-body">
-      <p id="auth-warning">Authenticate to persist your progress remotely.</p>
-      <button type="button" id="github-auth-btn" class="add-btn">Authenticate via GitHub</button>
-      <div id="pat-section" style="display:none; margin-top:1em;">
-        <p class="hint">
-          Provide a fine-grained PAT restricted to the repository you wish to use.
-          Your token will be stored with <a href="https://github.com/viktor-shcherb/open-user-state" target="_blank" rel="noopener">Open User State</a>.
-        </p>
-        <label style="display:block; margin-top:.5em;">
-          <span>Repository</span>
-          <input id="repo-input" placeholder="owner/repo">
-        </label>
-        <label style="display:block; margin-top:.5em;">
-          <span>GitHub PAT</span>
-          <input id="pat-input" type="password" autocomplete="off">
-        </label>
-        <button type="button" id="save-pat-btn" class="submit-btn" style="margin-top:1em;">
-          Save Settings
-        </button>
-      </div>
-      <div id="state-section" style="display:none; margin-top:1em;">
-        <label style="display:block; margin-top:.5em;">
-          <span>Save name</span>
-          <input id="save-name" class="save-name-input" placeholder="Save name">
-        </label>
-        <label class="timeout-label" style="display:block; margin-top:.5em;">
-          <span>timeout</span>
+      <div class="two-col" style="margin-top: 0; grid-template-columns: 1fr 1.7fr; align-items: end;">
+        <div class="field">
+          <p class="hint">The timeout is used to interrupt test runs that are too long.</p>
+        </div>
+
+        <div class="field">
+          <label class="io-label" for="test-timeout" style="display:block; margin-top: 0;">
+            <span>Timeout (seconds)</span>
+          </label>
           <div class="input-wrapper">
             <input type="number" id="test-timeout" step="1" min="1" value="5">
             <div class="stepper">
@@ -42,9 +25,51 @@
               <button type="button" class="step down" aria-label="decrement">−</button>
             </div>
           </div>
-        </label>
-        <p id="state-status" class="state-status" style="margin-top:.5em;"></p>
+        </div>
       </div>
+
+      <div id="auth-section" style="margin-top:2em;">
+        <p class="hint">Authenticate to persist your editor state!</p>
+        <button type="button" id="github-auth-btn" class="submit-btn">
+          <img src="/assets/github/github-mark-white.svg"
+                 alt="GitHub" class="submit-btn-icon">
+          Authenticate
+        </button>
+      </div>
+
+      <div id="pat-section" style="display:none; margin-top:2em; margin-bottom: 0">
+        <p class="hint" style="margin-bottom: .5em">
+          Provide a <strong>fine‑grained</strong> GitHub PAT and specify the repository to persist editor state.<br>
+          Grant <strong>Contents (read &amp; write)</strong>; add <strong>Administration</strong> only if the repository must be created.<br>
+          Do not grant extra scopes or include other repositories!
+        </p>
+
+        <div class="two-col" style="margin-top: 0">
+          <div class="field">
+            <label for="repo-input" class="io-label">
+              <span>Repository</span>
+            </label>
+            <input id="repo-input" placeholder="owner/repo">
+          </div>
+
+          <div class="field">
+            <label for="pat-input" class="io-label">
+              <span>GitHub PAT</span>
+            </label>
+            <input id="pat-input" type="password" autocomplete="off">
+          </div>
+        </div>
+
+        <label class="io-label" for="save-name" style="display:block; margin-top:.5em;">
+          <span>Save name</span>
+        </label>
+        <input id="save-name" placeholder="Save name">
+
+        <button type="button" id="save-pat-btn" class="submit-btn" style="margin-top:1em;">
+          Save Settings
+        </button>
+      </div>
+      <p id="state-status" class="state-status" style="margin-top:.5em;"></p>
     </div>
   </div>
 </div>
