@@ -38,7 +38,10 @@ export async function initStateSettings() {
     const patSection  = $('pat-section');    // container shown after auth or partial
     const stateSection= $('state-section');  // timeout / save name display
     const saveBtn     = $('save-pat-btn');
+    const logoutBtn   = $('logout-btn');
+    const delTokenBtn = $('delete-pat-btn');
     const patInput    = $('pat-input');
+    const patOkWrap   = $('pat-valid');
     const repoInput   = $('repo-input');
     const statusEl    = $('state-status');
     const saveName    = $('save-name');
@@ -61,6 +64,19 @@ export async function initStateSettings() {
       const name = saveName?.value.trim() || '(none)';
       statusEl.textContent = `Repo: ${repo} \u2013 Save: ${name}`;
     };
+
+    const updatePatUI = valid => {
+      if (!patInput || !patOkWrap) return;
+      if (valid) {
+        hide(patInput);
+        show(patOkWrap);
+      } else {
+        show(patInput);
+        hide(patOkWrap);
+      }
+    };
+
+    updatePatUI(false);
 
     function setUI(state) {
       switch (state) {
@@ -168,8 +184,29 @@ export async function initStateSettings() {
         }
 
         modal.classList.remove('open');
-        setUI('ready');
+        const res = await probeSetup();
+        setUI(res.state);
         updateSummary();
+        updatePatUI(res.patValid);
+      }
+
+      if (btn.id === 'delete-pat-btn') {
+        e.preventDefault();
+        await fetch(`${API_BASE}/api/token`, {
+          method: 'DELETE',
+          credentials: 'include'
+        }).catch(() => {});
+        updatePatUI(false);
+      }
+
+      if (btn.id === 'logout-btn') {
+        e.preventDefault();
+        await fetch(`${API_BASE}/api/logout`, {
+          method: 'POST',
+          credentials: 'include'
+        }).catch(() => {});
+        setUI('anon');
+        updatePatUI(false);
       }
     });
 
@@ -179,33 +216,28 @@ export async function initStateSettings() {
 
     /* ------------- Probe existing setup ------------- */
     async function probeSetup() {
-      // Check repo (auth presence)
-      let repoState = null;
-      const repoRes = await fetch(`${API_BASE}/api/repository`, {
-        credentials: 'include',
-      });
-      if (repoRes.status === 401) return { state: 'anon', repo: null };
-      if (repoRes.ok) {
-        try {
-          const { repo } = await repoRes.json();
-          repoState = repo || null;
-          if (repoState && repoInput) repoInput.value = repoState;
-        } catch { /* ignore parse error */ }
-      }
-
-      // Check PAT via OPTIONS
-      const tokenOk = await fetch(`${API_BASE}/api/token`, {
-        method: 'OPTIONS',
+      const res = await fetch(`${API_BASE}/api/profile`, {
         credentials: 'include'
-      }).then(r => r.status === 204).catch(() => false);
+      });
+      if (res.status === 401) return { state: 'anon', repo: null, patValid: false };
+      if (!res.ok) return { state: 'anon', repo: null, patValid: false };
 
-      return { state: repoState && tokenOk ? 'ready' : 'partial', repo: repoState };
+      let info = {};
+      try { info = await res.json(); } catch {}
+      if (info.repo && repoInput) repoInput.value = info.repo;
+
+      const state = info.repo && info.patValid ? 'ready' : 'partial';
+      return { state, repo: info.repo || null, patValid: !!info.patValid };
     }
 
     /* ------------- Kick-off ------------- */
     setUI('anon');
     probeSetup()
-      .then(res => { setUI(res.state); updateSummary(); })
+      .then(res => {
+        setUI(res.state);
+        updateSummary();
+        updatePatUI(res.patValid);
+      })
       .catch(() => setUI('anon'));
   }
 
