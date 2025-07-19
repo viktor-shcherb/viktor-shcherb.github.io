@@ -336,7 +336,7 @@ export async function setupRunner(task) {
   });
   testsList.addEventListener('input', saveCurrentState);
   timeoutInput?.addEventListener('input', saveCurrentState);
-  document.querySelector('.controls-row')?.addEventListener('click', e => {
+  document.addEventListener('click', e => {
     const btn = e.target.closest('.step');
     if (!btn) return;
     const input = btn.closest('.input-wrapper')?.querySelector('input[type="number"]');

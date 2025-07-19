@@ -35,42 +35,54 @@ export async function initStateSettings() {
     const $ = id => document.getElementById(id);
 
     const authBtn    = $('github-auth-btn');
-    const patSection = $('pat-section');    // container shown after auth or partial
-    const saveBtn    = $('save-pat-btn');
-    const patInput   = $('pat-input');
-    const repoInput  = $('repo-input');
-    const warning    = $('state-warning');
-    const saveName   = $('save-name');
+    const patSection  = $('pat-section');    // container shown after auth or partial
+    const stateSection= $('state-section');  // timeout / save name display
+    const saveBtn     = $('save-pat-btn');
+    const patInput    = $('pat-input');
+    const repoInput   = $('repo-input');
+    const statusEl    = $('state-status');
+    const saveName    = $('save-name');
+    const timeoutInp  = $('test-timeout');
 
     /* ------------- UI helpers ---------------- */
     const show = el => el && (el.style.display = '');
     const hide = el => el && (el.style.display = 'none');
     const message = txt => {
-      if (!warning) return;
-      warning.textContent = txt;
-      warning.classList.remove('hidden');
+      if (!statusEl) return;
+      statusEl.textContent = txt;
     };
-    const clearMessage = () => warning && warning.classList.add('hidden');
+    const clearMessage = () => {
+      if (statusEl) statusEl.textContent = '';
+    };
+
+    const updateSummary = () => {
+      if (!statusEl) return;
+      const repo = repoInput?.value.trim() || '(none)';
+      const name = saveName?.value.trim() || '(none)';
+      statusEl.textContent = `Repo: ${repo} \u2013 Save: ${name}`;
+    };
 
     function setUI(state) {
       switch (state) {
         case 'anon':
           show(authBtn);
           hide(patSection);
+          hide(stateSection);
           message('Connect GitHub to enable state-saving.');
-          hide(saveName);
           break;
         case 'partial':
           hide(authBtn);
-            show(patSection);
+          show(patSection);
+          show(stateSection);
           message('Finish token / repo setup to save state.');
-          show(saveName);
+          updateSummary();
           break;
         case 'ready':
           hide(authBtn);
           show(patSection);
+          show(stateSection);
           clearMessage();
-          show(saveName);
+          updateSummary();
           break;
       }
     }
@@ -157,8 +169,13 @@ export async function initStateSettings() {
 
         modal.classList.remove('open');
         setUI('ready');
+        updateSummary();
       }
     });
+
+    repoInput?.addEventListener('input', updateSummary);
+    saveName?.addEventListener('input', updateSummary);
+    timeoutInp?.addEventListener('input', updateSummary);
 
     /* ------------- Probe existing setup ------------- */
     async function probeSetup() {
@@ -167,12 +184,12 @@ export async function initStateSettings() {
       const repoRes = await fetch(`${API_BASE}/api/repository`, {
         credentials: 'include',
       });
-      if (repoRes.status === 401) return 'anon';
+      if (repoRes.status === 401) return { state: 'anon', repo: null };
       if (repoRes.ok) {
         try {
           const { repo } = await repoRes.json();
-            repoState = repo || null;
-            if (repoState && repoInput) repoInput.value = repoState;
+          repoState = repo || null;
+          if (repoState && repoInput) repoInput.value = repoState;
         } catch { /* ignore parse error */ }
       }
 
@@ -182,13 +199,13 @@ export async function initStateSettings() {
         credentials: 'include'
       }).then(r => r.status === 204).catch(() => false);
 
-      return repoState && tokenOk ? 'ready' : 'partial';
+      return { state: repoState && tokenOk ? 'ready' : 'partial', repo: repoState };
     }
 
     /* ------------- Kick-off ------------- */
     setUI('anon');
     probeSetup()
-      .then(state => setUI(state))
+      .then(res => { setUI(res.state); updateSummary(); })
       .catch(() => setUI('anon'));
   }
 
