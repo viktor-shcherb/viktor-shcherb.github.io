@@ -131,7 +131,7 @@ export async function initStateSettings() {
         const next =
           window.location.pathname +
           window.location.search +
-          window.location.hash;
+          '#code';
         window.location.href = `${API_BASE}/api/auth/github?next=${encodeURIComponent(next)}`;
         return;
       }
