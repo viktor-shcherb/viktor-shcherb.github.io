@@ -34,7 +34,7 @@ export async function initStateSettings() {
     /* Fast getters */
     const $ = id => document.getElementById(id);
 
-    const authBtn    = $('github-auth-btn');
+    const authSection = $('auth-section');   // container hidden after auth or partial
     const patSection  = $('pat-section');    // container shown after auth or partial
     const stateSection= $('state-section');  // timeout / save name display
     const saveBtn     = $('save-pat-btn');
@@ -65,20 +65,20 @@ export async function initStateSettings() {
     function setUI(state) {
       switch (state) {
         case 'anon':
-          show(authBtn);
+          show(authSection);
           hide(patSection);
           hide(stateSection);
           message('Connect GitHub to enable state-saving.');
           break;
         case 'partial':
-          hide(authBtn);
+          hide(authSection);
           show(patSection);
           show(stateSection);
           message('Finish token / repo setup to save state.');
           updateSummary();
           break;
         case 'ready':
-          hide(authBtn);
+          hide(authSection);
           show(patSection);
           show(stateSection);
           clearMessage();
