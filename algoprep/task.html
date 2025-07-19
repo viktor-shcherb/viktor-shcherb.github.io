@@ -11,7 +11,7 @@ uses_pyodide: true
   <div class="tab-btn-row" role="tablist">
     <!-- — Task description — -->
     <input  type="radio" id="tab-desc" name="tasktab"
-            data-panel=".task-preview" checked hidden>
+            data-panel=".task-preview" data-anchor="desc" checked hidden>
     <label  for="tab-desc" class="tab-btn" role="tab" aria-controls="panel-desc">
       <span class="material-symbols-outlined btn-icon-material-symbols"
             aria-hidden="true">description</span>
@@ -20,7 +20,7 @@ uses_pyodide: true
 
     <!-- — Code interpreter — -->
     <input  type="radio" id="tab-code" name="tasktab"
-            data-panel="#panel-code" hidden>
+            data-panel="#panel-code" data-anchor="code" hidden>
     <label  for="tab-code" class="tab-btn" role="tab" aria-controls="panel-code">
       <img src="/assets/python/logo-white.png" alt="Python" class="btn-icon">
       Code Interpreter
