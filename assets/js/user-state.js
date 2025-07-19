@@ -144,7 +144,8 @@ export async function loadTaskState(slug) {
   const state = {};
   try { Object.assign(state, JSON.parse(metaObj.content)); } catch { /* ignore */ }
 
-  const codeObj = await fetchFile(`user_state/algoprep/${slug}/code.py`);
+  const codeFile = state.name ? `${state.name}.py` : 'code.py';
+  const codeObj = await fetchFile(`user_state/algoprep/${slug}/${codeFile}`);
   state.code = (codeObj && typeof codeObj.content === 'string') ? codeObj.content : '';
 
   const testsObj = await fetchFile(`user_state/algoprep/${slug}/custom_tests.json`);
@@ -227,8 +228,9 @@ export async function saveTaskState(slug, state, options = {}) {
     }
 
     if (changedCode || force) {
+      const codeFile = state.name ? `${state.name}.py` : 'code.py';
       await commitFile(
-        `${basePath}/code.py`,
+        `${basePath}/${codeFile}`,
         state.code || '',
         `Update code for ${slug}`
       );
