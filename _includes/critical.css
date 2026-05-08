@@ -69,8 +69,6 @@ body{background:var(--bg);color:var(--text);font-family:sans-serif;margin:0;}
 .site-nav a:hover::after,.site-nav a:focus-visible::after,.site-nav a.active::after{background:var(--accent);}
 .theme-btn{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--accent);line-height:1;}
 
-/* --- Loading curtain --- */
-
 .wrapper { position: relative; }
 
 pre, code, .highlight {
