@@ -8,10 +8,10 @@ const CHECK_SVG =
   '<path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>' +
   '</svg>';
 
-export function addCopyButtons(scope = document) {
-  scope.querySelectorAll('pre > code, .cm-static-view').forEach(el => {
-    const pre = el.matches('pre > code') ? el.parentElement : el;
-    if (pre.querySelector('.copy-btn')) return;
+function addCopyButtons(scope: ParentNode = document): void {
+  scope.querySelectorAll<HTMLElement>('pre > code').forEach(code => {
+    const pre = code.parentElement;
+    if (!pre || pre.querySelector('.copy-btn')) return;
     pre.classList.add('copy-wrap');
 
     const btn = document.createElement('button');
@@ -20,16 +20,13 @@ export function addCopyButtons(scope = document) {
     btn.innerHTML = COPY_SVG;
 
     btn.addEventListener('click', () => {
-      const text = el.matches('pre > code')
-        ? el.innerText
-        : el.getAttribute('data-code') || '';
-      navigator.clipboard.writeText(text)
+      navigator.clipboard.writeText(code.innerText)
         .then(() => {
           btn.innerHTML = CHECK_SVG;
-          btn.dataset.copied = 'true';
+          btn.dataset['copied'] = 'true';
           setTimeout(() => {
             btn.innerHTML = COPY_SVG;
-            delete btn.dataset.copied;
+            delete btn.dataset['copied'];
           }, 2000);
         })
         .catch(() => {});

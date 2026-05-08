@@ -37,15 +37,8 @@
     <!-- structured information about blog owner -->
     {% include person-schema.html %}
 
-    <!-- shared JS -->
-    <script type="module" src="/assets/js/main.js" defer></script>
-    <script type="module" src="/assets/js/theme-toggle.js"></script>
-    <script type="module" src="/assets/js/copy-code.js" defer></script>
-
-    <!-- page-specific JS -->
-    {% if page.layout == 'post' %}
-      <script type="module" src="/assets/js/post.js" defer></script>
-    {% endif %}
+    <!-- bundled site JS -->
+    <script type="module" src="{{ '/assets/js/site.js?v=' | append: site.github.build_revision | relative_url }}" defer></script>
   </head>
   <body>
     <div class="wrapper">
