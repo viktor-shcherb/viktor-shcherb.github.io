@@ -15,10 +15,10 @@ description: "Things Viktor Shcherbakov is building. Currently featured: jseek.c
   {%- for p in visible_projects -%}
     <li class="project-card">
       <a class="project-card-link" href="{{ p.url | relative_url }}">
-        {%- if p.logo -%}
-          <img class="project-card-logo" src="{{ p.logo | relative_url }}" alt="" loading="lazy" decoding="async">
-        {%- endif -%}
-        <div class="project-card-text">
+        <div class="project-card-row">
+          {%- if p.logo -%}
+            <img class="project-card-logo" src="{{ p.logo | relative_url }}" alt="" loading="lazy" decoding="async">
+          {%- endif -%}
           <h2 class="project-card-title">
             {{ p.title }}
             {%- if p.status -%}
@@ -28,10 +28,10 @@ description: "Things Viktor Shcherbakov is building. Currently featured: jseek.c
           {%- if p.tagline -%}
             <p class="project-card-tagline">{{ p.tagline }}</p>
           {%- endif -%}
-          {%- if p.description -%}
-            <p class="project-card-desc">{{ p.description | strip_newlines | strip }}</p>
-          {%- endif -%}
         </div>
+        {%- if p.description -%}
+          <p class="project-card-desc">{{ p.description | strip_newlines | strip }}</p>
+        {%- endif -%}
       </a>
     </li>
   {%- endfor -%}
