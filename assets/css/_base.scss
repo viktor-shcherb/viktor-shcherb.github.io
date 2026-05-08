@@ -505,6 +505,14 @@ img.avatar {
   margin-left: 0.4em;
 }
 
+/* --- Currently block (shared by / and /about/) --- */
+.currently-date {
+  color: var(--text-muted);
+  font-weight: 400;
+  font-size: 0.85em;
+  letter-spacing: 0;
+}
+
 /* --- Footer --- */
 .site-footer {
   margin-top: 4rem;
