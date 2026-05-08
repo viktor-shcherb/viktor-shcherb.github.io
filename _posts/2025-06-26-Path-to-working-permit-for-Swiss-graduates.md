@@ -3,7 +3,12 @@ layout: post
 title: "Path to working permits for Swiss graduates"
 author: "Viktor Shcherbakov"
 image: "https://images.unsplash.com/photo-1593186344142-ef775a6e596f?w=1200&h=630&fit=crop&auto=format&q=75"
-image_alt: "Photo by Piotr Guzik, Unsplash.com"
+image_alt: "Red mountain train traversing the Swiss alps"
+image_credit:
+  by: "Piotr Guzik"
+  url: "https://unsplash.com/@piotrguzik"
+  source: "Unsplash"
+  source_url: "https://unsplash.com/photos/red-and-black-train-on-snow-covered-mountain-during-daytime-T9k5L_KKYIA"
 redirect_from:
   - /2025/06/20/Path-to-working-permit-for-Swiss-graduates.html
 description: >
@@ -21,14 +26,6 @@ tags:
   - Expat careers
   - Higher education
 ---
-
-<img src="{{ page.image }}"
-     alt="Photo by Piotr Guzik, Unsplash.com"
-     width="1200" height="630"
-     loading="lazy"
-     decoding="async">
-*Photo by Piotr Guzik / Unsplash*
-{: .img-caption }
 
 ### Disclaimer {#disclaimer}
 The author is not a lawyer, and not even a German-speaker. The information here is compiled from personal notes of the 

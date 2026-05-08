@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: default
 permalink: /blog/
 ---
 {% assign latest = site.posts | first %}
@@ -17,10 +17,12 @@ permalink: /blog/
   </time>
 </p>
 
+{% include post-cover.html post=latest %}
+
 {{ latest.content }}
 
 {%- if latest.tags and latest.tags != empty -%}
-  <p class="post-tags" style="font-size:0.85em;">
+  <p class="post-tags">
     <strong><em>Keywords: </em></strong>
     {%- for tag in latest.tags -%}
       <em>{{ tag }}</em>{% unless forloop.last %}&nbsp;&middot;&nbsp;{% endunless %}

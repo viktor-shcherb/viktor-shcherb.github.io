@@ -14,16 +14,15 @@ layout: default
   </time>
 </p>
 
+{% include post-cover.html post=page %}
+
 {{ content }}
 
 {%- if page.tags and page.tags != empty -%}
-  <p class="post-tags" style="font-size:0.85em;">
+  <p class="post-tags">
     <strong><em>Keywords: </em></strong>
     {%- for tag in page.tags -%}
       <em>{{ tag }}</em>{% unless forloop.last %}&nbsp;&middot;&nbsp;{% endunless %}
     {%- endfor -%}
   </p>
 {%- endif -%}
-
-
-

@@ -1,0 +1,38 @@
+{%- comment -%}
+Renders a post's cover image with linked source attribution.
+
+Usage: {% include post-cover.html post=page %}  (or post=latest)
+
+Front-matter shape:
+  image:        /assets/images/posts/<slug>/cover.jpg  # or remote URL
+  image_alt:    "..."
+  image_credit:
+    by:          "Photographer Name"
+    url:         https://example.com/profile        # optional
+    source:      "Unsplash"                         # optional
+    source_url:  https://unsplash.com/photos/abc    # optional
+{%- endcomment -%}
+{%- if include.post.image -%}
+<figure class="post-cover">
+  <img src="{{ include.post.image }}"
+       alt="{{ include.post.image_alt | default: include.post.title }}"
+       loading="lazy" decoding="async">
+  {%- if include.post.image_credit -%}
+    <figcaption>
+      Photo by
+      {%- if include.post.image_credit.url %}
+        <a href="{{ include.post.image_credit.url }}" rel="noopener nofollow">{{ include.post.image_credit.by }}</a>
+      {%- else %}
+        {{ include.post.image_credit.by }}
+      {%- endif -%}
+      {%- if include.post.image_credit.source %} on
+        {%- if include.post.image_credit.source_url %}
+          <a href="{{ include.post.image_credit.source_url }}" rel="noopener nofollow">{{ include.post.image_credit.source }}</a>
+        {%- else %}
+          {{ include.post.image_credit.source }}
+        {%- endif -%}
+      {%- endif -%}
+    </figcaption>
+  {%- endif -%}
+</figure>
+{%- endif -%}
