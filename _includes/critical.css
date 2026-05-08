@@ -53,26 +53,27 @@ code {
   font-size: 1em;
 }
 
-/* Icon helpers used by the copy-code button on first paint */
-.btn-icon {
-  height: 1.4em;
-  width: 1.4em;
-  font-size: 1.4em;
-  flex-shrink: 0;
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: .5em;
-  object-fit: contain;
-}
+/* Theme toggle icons: render the right one for the current theme up
+   front (theme-sniff sets data-theme before paint), no JS swap needed. */
+.theme-icon { display: inline-block; vertical-align: middle; }
+.theme-icon-dark { display: none; }
+[data-theme='dark'] .theme-icon-light { display: none; }
+[data-theme='dark'] .theme-icon-dark { display: inline-block; }
 
-.btn-icon-material-symbols {
-  font-size: 1.65em;
-  flex-shrink: 0;
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: .5em;
-}
+.heading-icon { vertical-align: -.2em; margin-right: .25em; }
 
 pre.copy-wrap { position: relative; }
-.copy-btn { position: absolute; top: .25em; right: .25em; background: none; border: none; color: var(--accent); cursor: pointer; padding: .2em; line-height: 1; display: flex; align-items: center; }
+.copy-btn {
+  position: absolute;
+  top: .25em;
+  right: .25em;
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  padding: .2em;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
 .copy-btn[data-copied] { color: var(--accent); }

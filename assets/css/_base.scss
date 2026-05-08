@@ -110,16 +110,10 @@ hr { border-color: rgba(var(--text), .2); }
   background: none;
   border: none;
   cursor: pointer;
-  font-size: .01rem;
   color: var(--accent);
   line-height: 1;
-  transition: background 0.2s;
-}
-
-#theme-icon {
-  font-size: 1.25rem;
-  width: 1em;
-  display: inline-block;
+  transition: opacity 0.15s;
+  padding: .25em;
 }
 
 .theme-btn:hover { opacity: 0.75; }
@@ -139,29 +133,23 @@ hr { border-color: rgba(var(--text), .2); }
 }
 
 .go-blog a:hover { text-decoration: underline; }
-.go-blog .material-symbols-outlined { font-size: 1.2em; }
 
-.material-symbols-outlined {
-  display: inline-block;
-  width: 1em;
-}
-
-.anchorjs-link::after {
-  font-family: "Material Symbols Outlined";
-  content: "link";
-  font-size: 1em;
-  vertical-align: -0.15em;
+/* Heading anchor links injected by anchor-js on post pages. The icon is
+   a plain '#' character so we have no font dependency. */
+.anchorjs-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  margin-left: .25rem;
   opacity: 0;
   transition: opacity .15s ease;
-  margin-left: .25rem;
 }
 
-h1:hover .anchorjs-link::after,
-h2:hover .anchorjs-link::after,
-h3:hover .anchorjs-link::after,
-h4:hover .anchorjs-link::after,
-h5:hover .anchorjs-link::after,
-h6:hover .anchorjs-link::after {
+h1:hover .anchorjs-link,
+h2:hover .anchorjs-link,
+h3:hover .anchorjs-link,
+h4:hover .anchorjs-link,
+h5:hover .anchorjs-link,
+h6:hover .anchorjs-link {
   opacity: .6;
 }
 
