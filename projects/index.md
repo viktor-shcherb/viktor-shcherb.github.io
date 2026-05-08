@@ -19,15 +19,17 @@ description: "Things Viktor Shcherbakov is building. Currently featured: jseek.c
           {%- if p.logo -%}
             <img class="project-card-logo" src="{{ p.logo | relative_url }}" alt="" loading="lazy" decoding="async">
           {%- endif -%}
-          <h2 class="project-card-title">
-            {{ p.title }}
-            {%- if p.status -%}
-              <span class="project-status project-status--{{ p.status }}">{{ p.status }}</span>
+          <div class="project-card-meta">
+            <h2 class="project-card-title">
+              {{ p.title }}
+              {%- if p.status -%}
+                <span class="project-status project-status--{{ p.status }}">{{ p.status }}</span>
+              {%- endif -%}
+            </h2>
+            {%- if p.tagline -%}
+              <p class="project-card-tagline">{{ p.tagline }}</p>
             {%- endif -%}
-          </h2>
-          {%- if p.tagline -%}
-            <p class="project-card-tagline">{{ p.tagline }}</p>
-          {%- endif -%}
+          </div>
         </div>
         {%- if p.description -%}
           <p class="project-card-desc">{{ p.description | strip_newlines | strip }}</p>
