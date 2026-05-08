@@ -159,19 +159,16 @@ h6:hover .anchorjs-link { opacity: 0.6; }
   margin: 1.4em auto;
 }
 
-/* --- Avatar (the stamp portrait used on /about/) --- */
+/* --- Avatar (real portrait used on /about/) --- */
 .post-content img.avatar,
 img.avatar {
   display: block;
   width: 11rem;
   height: 11rem;
+  border-radius: 50%;
+  object-fit: cover;
   margin: 0 0 1.5rem;
-  border-radius: 0;
-  box-shadow: none;
-}
-[data-theme='dark'] .post-content img.avatar,
-[data-theme='dark'] img.avatar {
-  filter: invert(1) brightness(.92);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .12);
 }
 .img-caption {
   display: block;
