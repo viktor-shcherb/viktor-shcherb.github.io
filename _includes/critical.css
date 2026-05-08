@@ -152,7 +152,7 @@ header.site-header {
   flex-direction: column;
   gap: 0;
 }
-.posts-feed li { display: block; padding: 0; margin: 0; }
+.posts-feed li { display: block; padding: 0; margin: 0; width: 100%; }
 .posts-feed-row,
 .posts-feed-row:visited {
   display: grid;
@@ -160,11 +160,13 @@ header.site-header {
   align-items: baseline;
   column-gap: 1em;
   row-gap: 0.15em;
+  width: 100%;
+  box-sizing: border-box;
   padding: 0.4rem 0.55rem;
   border-radius: 6px;
   color: var(--text);
   text-decoration: none;
-  transition: background-color .15s ease;
+  transition: background-color .15s ease, color .15s ease;
 }
 .posts-feed-row:hover,
 .posts-feed-row:focus-visible {
