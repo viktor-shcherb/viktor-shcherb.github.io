@@ -30,6 +30,19 @@ sass:
   load_paths:
     - assets/css
 
+collections:
+  projects:
+    output: true
+    permalink: /projects/:path/
+    sort_by: order
+
+defaults:
+  - scope:
+      path: ""
+      type: projects
+    values:
+      layout: project
+
 # Hide developer docs and tool config from the published site so they
 # don't end up in /AGENTS/, /README/, etc. and pollute the sitemap.
 exclude:

@@ -328,6 +328,142 @@ img.avatar {
   line-height: 1.55;
 }
 
+/* --- Home: featured projects compact list (mirrors recent posts) --- */
+.featured-projects { margin-top: 1.5rem; }
+.featured-projects .posts-feed li .project-tagline {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  white-space: normal;
+  text-align: right;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* --- /projects/ listing --- */
+.project-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0;
+}
+.project-card {
+  margin: 0;
+  border-top: 1px solid var(--border);
+}
+.project-card:last-child { border-bottom: 1px solid var(--border); }
+.project-card-link,
+.post-content .project-card-link,
+.post-content .project-card-link:visited {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  padding: 1.5rem 0;
+  text-decoration: none;
+  color: var(--text);
+}
+.project-card-link * { text-decoration: none !important; }
+.project-card-logo {
+  flex: 0 0 4.5rem;
+  width: 4.5rem;
+  height: 4.5rem;
+  display: block;
+}
+.project-card-text { flex: 1 1 0; min-width: 0; }
+.project-card-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  font-size: 1.25rem;
+  margin: 0 0 0.3rem;
+  line-height: 1.25;
+  color: var(--text);
+}
+.project-card-link:hover .project-card-title { color: var(--accent); }
+.project-card-tagline {
+  margin: 0 0 0.4rem;
+  color: var(--text);
+  font-size: 0.96rem;
+}
+.project-card-desc {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+/* --- Per-project page hero --- */
+.project-hero {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin: 0 0 2rem;
+}
+.project-logo {
+  width: 5.5rem;
+  height: 5.5rem;
+  flex-shrink: 0;
+  display: block;
+}
+.project-hero-text { min-width: 0; }
+.project-title {
+  font-size: 2rem;
+  margin: 0 0 0.2em;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+.project-tagline {
+  margin: 0 0 0.65rem;
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
+.project-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+}
+.project-link,
+.project-link:visited {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  transition: border-color .15s ease;
+}
+.project-link:hover { border-bottom-color: var(--accent); }
+
+/* --- Status pill --- */
+.project-status {
+  display: inline-block;
+  padding: 0.1em 0.55em;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.6;
+  vertical-align: middle;
+  background: var(--surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+.project-status--live {
+  background: color-mix(in srgb, var(--accent) 14%, var(--bg));
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.project-status--beta {
+  background: color-mix(in srgb, var(--accent) 8%, var(--bg));
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.project-status--wip,
+.project-status--archived {
+  background: var(--surface);
+  color: var(--text-muted);
+}
+
 /* --- Footer --- */
 .site-footer {
   margin-top: 4rem;
