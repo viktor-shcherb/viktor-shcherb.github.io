@@ -494,6 +494,17 @@ img.avatar {
   color: var(--text-muted);
 }
 
+/* Title contexts emit `<title text><pill>` without a separating space
+   (Liquid's whitespace control eats it), so push the pill off the
+   title with a small left margin. Scoped to title contexts so it
+   doesn't shift the pill in .project-meta where it sits in a gap-spaced
+   flex row. */
+.posts-feed-title .project-status,
+.project-card-title .project-status,
+.post-content .project-card-title .project-status {
+  margin-left: 0.4em;
+}
+
 /* --- Footer --- */
 .site-footer {
   margin-top: 4rem;
