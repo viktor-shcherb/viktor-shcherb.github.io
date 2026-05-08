@@ -1,0 +1,27 @@
+---
+layout: default
+---
+<div class="project-hero">
+  {%- if page.logo -%}
+    <img class="project-logo" src="{{ page.logo | relative_url }}" alt="" width="120" height="120" decoding="async">
+  {%- endif -%}
+  <div class="project-hero-text">
+    <h1 class="project-title">{{ page.title }}</h1>
+    {%- if page.tagline -%}
+      <p class="project-tagline">{{ page.tagline }}</p>
+    {%- endif -%}
+    <div class="project-meta">
+      {%- if page.status -%}
+        <span class="project-status project-status--{{ page.status }}">{{ page.status }}</span>
+      {%- endif -%}
+      {%- if page.live_url -%}
+        <a class="project-link" href="{{ page.live_url }}" rel="noopener">Visit</a>
+      {%- endif -%}
+      {%- if page.repo_url -%}
+        <a class="project-link" href="{{ page.repo_url }}" rel="noopener">Source</a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{{ content }}
