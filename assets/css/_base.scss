@@ -134,6 +134,65 @@ li { margin: 0.25em 0; }
 }
 .post-tags em { font-style: normal; color: var(--text-muted); }
 
+/* --- Post cover image with linked source attribution --- */
+.post-cover {
+  margin: 1.75em 0 2.25em;
+}
+.post-cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin: 0;
+}
+.post-cover figcaption {
+  margin-top: 0.45em;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
+  text-align: center;
+  line-height: 1.5;
+}
+.post-cover figcaption a,
+.post-cover figcaption a:visited {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--border);
+  text-underline-offset: 2px;
+}
+.post-cover figcaption a:hover {
+  color: var(--accent);
+  text-decoration-color: currentColor;
+}
+
+/* Inline figures inside post body (when content uses <figure> directly) */
+.post-content figure {
+  margin: 1.75em 0;
+}
+.post-content figure img {
+  margin: 0;
+  border-radius: 6px;
+}
+.post-content figure figcaption {
+  margin-top: 0.45em;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
+  text-align: center;
+  line-height: 1.5;
+}
+.post-content figure figcaption a,
+.post-content figure figcaption a:visited {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--border);
+  text-underline-offset: 2px;
+}
+.post-content figure figcaption a:hover {
+  color: var(--accent);
+  text-decoration-color: currentColor;
+}
+
 /* --- Heading anchors (anchor-js) --- */
 .anchorjs-link {
   color: var(--text-muted);
