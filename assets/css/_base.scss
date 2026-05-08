@@ -253,6 +253,33 @@ img.avatar {
 .site-footer a:visited { color: var(--text-muted); text-decoration: underline; text-decoration-color: var(--border); }
 .site-footer a:hover { color: var(--accent); text-decoration-color: currentColor; }
 
+/* --- Social links row in footer --- */
+.social-links {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.9rem;
+  display: flex;
+  justify-content: center;
+  gap: 1.1rem;
+}
+.social-links a,
+.social-links a:visited {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color .15s ease, transform .15s ease;
+}
+.social-links a:hover,
+.social-links a:focus-visible {
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+.social-links svg { display: block; }
+
 /* --- Tables (rare in posts) --- */
 table {
   width: 100%;

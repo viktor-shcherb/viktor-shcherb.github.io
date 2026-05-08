@@ -107,6 +107,7 @@
       </section>
 
       <footer class="site-footer">
+        {% include social-links.html %}
         <p>© {{ 'now' | date: "%Y" }} {{ site.author }} · <a href="https://github.com/{{ site.github.username }}/{{ site.github.repository_name | default: 'viktor-shcherb.github.io' }}">source</a></p>
       </footer>
     </div>
