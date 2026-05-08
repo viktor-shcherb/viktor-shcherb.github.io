@@ -1,11 +1,14 @@
 title: Viktor Shcherbakov
 tagline: Machine Learning Engineer
 description: >-
-  This is a personal website where I write about my experience, thoughts and share
-  potentially useful information.
+  Personal site of Viktor Shcherbakov — Machine Learning Engineer based in Switzerland.
+  Long-form notes on ML, software, and the practical side of working in Switzerland as
+  a non-EU graduate.
 url: "https://viktor-shcherb.github.io"
 baseurl: ""
 logo: /logos-flavicon/favicon-96x96.png
+# Default Open Graph / Twitter card image for pages without an explicit `image:`.
+image: /logos-flavicon/web-app-manifest-512x512.png
 author: Viktor Shcherbakov
 github:
   username: viktor-shcherb
@@ -26,10 +29,29 @@ sass:
   load_paths:
     - assets/css
 
+# Hide developer docs and tool config from the published site so they
+# don't end up in /AGENTS/, /README/, etc. and pollute the sitemap.
+exclude:
+  - AGENTS.md
+  - README.md
+  - LICENSE
+  - Gemfile
+  - Gemfile.lock
+  - package.json
+  - package-lock.json
+  - tsconfig.json
+  - scripts/
+  - src/
+  - vendor/
+  - node_modules/
+  - .bundle/
+  - .sass-cache/
+  - .jekyll-cache/
+
 feed:
   path: feed.xml
   title: "Viktor Shcherbakov — Blog"
-  description: "The theme of the blog is to be defined, but you are welcome to have a look around!"
+  description: "Long-form notes on ML, software, and the practical side of life and work in Switzerland."
   lang: en-US
   author_name: Viktor Shcherbakov
   author_url: https://viktor-shcherb.github.io/about/

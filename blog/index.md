@@ -1,9 +1,12 @@
 ---
 layout: default
 permalink: /blog/
+title: "Blog"
+description: "Latest post by Viktor Shcherbakov."
+sitemap: false
 ---
 {% assign latest = site.posts | first %}
-<link rel="canonical" href="{{ latest.url | absolute_url }}">
+<meta name="robots" content="noindex, follow">
 
 <h1>{{ latest.title }}</h1>
 <p class="post-meta">

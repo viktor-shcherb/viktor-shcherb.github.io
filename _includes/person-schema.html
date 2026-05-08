@@ -1,11 +1,15 @@
-{% comment %}
-Outputs JSON-LD only on pages whose front-matter sets schema: person
-{% endcomment %}
-{% if page.schema == 'person' %}
+{%- comment -%}
+Person schema. Rendered on the home page and on any page whose front-matter
+sets `schema: person`. The stable @id lets other JSON-LD blocks (post
+authors, WebSite.author) reference the same entity.
+{%- endcomment -%}
+{%- if page.home or page.schema == 'person' -%}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Person",
+  "@id": "{{ site.url }}/#viktor",
+  "mainEntityOfPage": "{{ '/about/' | absolute_url }}",
 
   "name": "Viktor Shcherbakov",
   "givenName": "Viktor",
@@ -13,7 +17,7 @@ Outputs JSON-LD only on pages whose front-matter sets schema: person
   "alternateName": "Viktor Scherbakov",
   "jobTitle": "Machine-Learning Engineer",
   "description": "Machine-learning engineer based in Switzerland.",
-  "url": "https://viktor-shcherb.github.io/about/",
+  "url": "{{ site.url }}/",
 
   "address": {
     "@type": "PostalAddress",
@@ -22,8 +26,8 @@ Outputs JSON-LD only on pages whose front-matter sets schema: person
   },
 
   "birthPlace": {
-    "@type":"City",
-    "name":"Moscow"
+    "@type": "City",
+    "name": "Moscow"
   },
 
   "image": {
@@ -45,7 +49,6 @@ Outputs JSON-LD only on pages whose front-matter sets schema: person
       "name": "University of Geneva",
       "url": "https://www.unige.ch/en/"
     },
-
     {
       "@type": "CollegeOrUniversity",
       "name": "Lomonosov Moscow State University",
@@ -75,4 +78,4 @@ Outputs JSON-LD only on pages whose front-matter sets schema: person
   ]
 }
 </script>
-{% endif %}
+{%- endif -%}
