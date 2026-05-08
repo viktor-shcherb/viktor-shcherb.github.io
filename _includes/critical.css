@@ -160,7 +160,7 @@ header.site-header {
 .posts-feed-row,
 .posts-feed-row:visited {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: baseline;
   column-gap: 1em;
   row-gap: 0.15em;
@@ -171,6 +171,19 @@ header.site-header {
   color: var(--text);
   text-decoration: none;
   transition: background-color .15s ease, color .15s ease;
+}
+/* On narrow viewports drop the side-by-side date/tagline column —
+   stack title above the metadata so the title can use full row width
+   without overflow. */
+@media (max-width: 30rem) {
+  .posts-feed-row {
+    grid-template-columns: 1fr;
+    row-gap: 0.1em;
+  }
+  .posts-feed time,
+  .featured-projects .posts-feed-row .project-tagline {
+    text-align: left;
+  }
 }
 .posts-feed-row:hover,
 .posts-feed-row:focus-visible {
