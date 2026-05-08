@@ -147,27 +147,33 @@ header.site-header {
 .posts-feed {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 -0.55rem;
   display: flex;
   flex-direction: column;
-  gap: 0.15em;
+  gap: 0;
 }
-.posts-feed li {
+.posts-feed li { display: block; padding: 0; margin: 0; }
+.posts-feed-row,
+.posts-feed-row:visited {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
   gap: 0.5em 1em;
-  padding: 0.2em 0;
-}
-.posts-feed a,
-.posts-feed a:visited {
+  padding: 0.4rem 0.55rem;
+  border-radius: 6px;
   color: var(--text);
   text-decoration: none;
-  font-weight: 500;
+  transition: background-color .15s ease;
 }
-.posts-feed a:hover,
-.posts-feed a:focus-visible { color: var(--accent); }
+.posts-feed-row:hover,
+.posts-feed-row:focus-visible {
+  background: var(--surface);
+  color: var(--text);
+}
+.posts-feed-title { font-weight: 500; }
+.posts-feed-row:hover .posts-feed-title,
+.posts-feed-row:focus-visible .posts-feed-title { color: var(--accent); }
 .posts-feed time {
   font-size: 0.85rem;
   color: var(--text-muted);
