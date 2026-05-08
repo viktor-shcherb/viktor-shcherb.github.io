@@ -291,9 +291,7 @@ img.avatar {
   height: auto;
   aspect-ratio: 1600 / 840;
   object-fit: cover;
-  transition: transform .35s ease;
 }
-.archive-entry:hover .archive-entry-cover { transform: scale(1.02); }
 .archive-entry-content {
   position: absolute;
   inset: auto 0 0 0;
