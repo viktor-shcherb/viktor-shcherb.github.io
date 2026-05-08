@@ -5,7 +5,4 @@ permalink: /
 home: true 
 ---
 
-# Hi, I’m Viktor 👋
-
-WIP
-
+Welcome — long-form thoughts and projects, slowly.
