@@ -7,7 +7,9 @@ This repository contains the source for a Jekyll-based personal website. Below i
 - `README.md` — Overview of the website.
 - `LICENSE` — Repository license.
 - `Gemfile` / `Gemfile.lock` — Ruby dependencies for building the site with GitHub Pages.
-- `package.json` — Reserved for future Node tooling (currently unused at runtime).
+- `package.json` / `package-lock.json` — Node tooling (esbuild + TypeScript) for the bundled site script. `npm run build` emits `assets/js/site.js` from sources under `src/ts/`. Run before `jekyll build` (CI does this automatically).
+- `tsconfig.json` — Strict TypeScript config used by `npm run typecheck`.
+- `src/ts/` — TypeScript sources for the bundle: nav dropdown, theme toggle, copy-code button, post-page heading anchors, and the SW cleanup registration.
 - `_config.yml` — Jekyll configuration. Determines site metadata (title, baseurl, author, etc.) and interacts with layouts under `_layouts/` and data files under `_data/`.
 - `index.md` — Home page, uses `_layouts/default.html`.
 - `about.md` — "About me" page. Uses `_layouts/default.html` and includes structured data via `_includes/person-schema.html`.
