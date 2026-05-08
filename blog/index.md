@@ -27,14 +27,3 @@ permalink: /blog/
     {%- endfor -%}
   </p>
 {%- endif -%}
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "EducationalAudience",
-  "educationalRole": "learner",
-  "name": "Algorithms Preparation",
-  "description": "Practice Python algorithm problems interactively in your browser. Browse, solve, and contribute new tasks at /algoprep/."
-}
-</script>
