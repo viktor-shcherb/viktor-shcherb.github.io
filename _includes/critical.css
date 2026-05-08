@@ -91,15 +91,6 @@ code {
   font-size: 1em;
 }
 
-.output code {
-  color: #35393f; /* dark gray for 'disabled' look, adjust as needed */
-  background: #eee;
-}
-[data-theme='dark'] .output code {
-  color: #55595f;
-  background: #232730;
-}
-
 /* --- Icon image helper ------------------------------------- */
 /* Add class="btn-icon" (or .btn__icon) to any <img> inside a button. */
 .btn-icon{
