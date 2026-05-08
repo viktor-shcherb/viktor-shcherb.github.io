@@ -14,15 +14,22 @@ description: "All posts by Viktor Shcherbakov — long-form notes on ML, softwar
   <ol class="archive-list">
   {%- for post in visible_posts -%}
     <li class="archive-entry">
-      <h2 class="archive-entry-title">
-        <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-      </h2>
-      <p class="archive-entry-meta">
-        <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %-d, %Y" }}</time>
-      </p>
-      {%- if post.description -%}
-        <p class="archive-entry-desc">{{ post.description | strip_newlines | strip }}</p>
+      {%- if post.image -%}
+        <a class="archive-entry-cover" href="{{ post.url | relative_url }}" aria-hidden="true" tabindex="-1">
+          <img src="{{ post.image }}" alt="" loading="lazy" decoding="async">
+        </a>
       {%- endif -%}
+      <div class="archive-entry-text">
+        <h2 class="archive-entry-title">
+          <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+        </h2>
+        <p class="archive-entry-meta">
+          <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %-d, %Y" }}</time>
+        </p>
+        {%- if post.description -%}
+          <p class="archive-entry-desc">{{ post.description | strip_newlines | strip }}</p>
+        {%- endif -%}
+      </div>
     </li>
   {%- endfor -%}
   </ol>
