@@ -12,8 +12,8 @@
     <script>{% include theme-sniff.js %}</script>
 
     <!-- favicons -->
-    <link rel="icon" type="image/png" href="/logos-flavicon/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/logos-flavicon/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/logos-flavicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/logos-flavicon/favicon-96x96.png" />
     <link rel="shortcut icon" href="/logos-flavicon/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/logos-flavicon/apple-touch-icon.png" />
     <link rel="manifest" href="/logos-flavicon/site.webmanifest" />
@@ -42,7 +42,7 @@
   </head>
   <body>
     <div class="wrapper">
-      <header>
+      <header class="site-header">
         <nav class="site-nav">
           {% for item in site.data.nav %}
             {% if item.sublinks %}
@@ -74,16 +74,18 @@
           </button>
         </nav>
 
-        <hr style="margin:1.5rem 0">
-
         {%- if page.home -%}
-          <h1>Viktor Shcherbakov</h1>
-          <p>Machine Learning Engineer</p>
+          <div class="home-hero">
+            <img class="home-hero-stamp" src="/logos-flavicon/my_face_stamp.png" alt="" width="120" height="120" decoding="async">
+            <div class="home-hero-text">
+              <h1>Viktor Shcherbakov</h1>
+              <p class="tagline">Machine Learning Engineer</p>
+            </div>
+          </div>
 
-        {%- else -%}
           <div class="recent-posts">
             <h2 class="recent-heading">
-              <svg class="heading-icon" viewBox="0 -960 960 960" width="22" height="22" fill="currentColor" aria-hidden="true">
+              <svg class="heading-icon" viewBox="0 -960 960 960" width="14" height="14" fill="currentColor" aria-hidden="true">
                 <path d="M280-280h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/>
               </svg>
               Recent posts
@@ -101,7 +103,6 @@
             </ul>
           </div>
         {%- endif -%}
-
       </header>
 
       <section>
@@ -111,6 +112,7 @@
       </section>
 
       <footer class="site-footer">
+        <p>© {{ 'now' | date: "%Y" }} {{ site.author }} · <a href="https://github.com/{{ site.github.username }}/{{ site.github.repository_name | default: 'viktor-shcherb.github.io' }}">source</a></p>
       </footer>
     </div>
   </body>
