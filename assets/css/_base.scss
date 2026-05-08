@@ -248,49 +248,73 @@ img.avatar {
   padding: 0;
   margin: 1.5rem 0 0;
 }
+.archive-list { list-style: none; padding: 0; margin: 1.5rem 0 0; }
+
+/* Archive cards: cover image with text overlaid on a palette gradient.
+   The gradient fades to var(--bg) so text reads against the cream paper
+   in light mode and against the warm-near-black in dark mode. */
 .archive-entry {
+  position: relative;
   display: block;
-  padding: 1.75rem 0 2rem;
-  border-top: 1px solid var(--border);
+  margin: 1.25rem 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.archive-entry:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
+}
+.archive-entry-link,
+.archive-entry-link:visited {
+  display: block;
+  color: inherit;
+  text-decoration: none;
 }
 .archive-entry-cover {
   display: block;
-  margin: 0 0 1.1rem;
-  border-radius: 6px;
-  overflow: hidden;
-  line-height: 0;
-}
-.archive-entry-cover img {
   width: 100%;
   height: auto;
-  display: block;
-  transition: transform .25s ease;
+  aspect-ratio: 1600 / 840;
+  object-fit: cover;
+  transition: transform .35s ease;
 }
-.archive-entry-cover:hover img { transform: scale(1.015); }
+.archive-entry:hover .archive-entry-cover { transform: scale(1.02); }
+.archive-entry-content {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 5.5rem 1.4rem 1.3rem;
+  background: linear-gradient(
+    to top,
+    var(--bg) 0%,
+    color-mix(in srgb, var(--bg) 92%, transparent) 35%,
+    color-mix(in srgb, var(--bg) 50%, transparent) 70%,
+    transparent 100%
+  );
+  color: var(--text);
+}
 .archive-entry-title {
-  font-size: 1.4rem;
+  font-size: 1.45rem;
   margin: 0 0 0.3rem;
+  color: var(--text);
   letter-spacing: -0.015em;
   line-height: 1.2;
+  font-weight: 600;
 }
-.archive-entry-title a,
-.archive-entry-title a:visited {
-  color: var(--text);
-  text-decoration: none;
-}
-.archive-entry-title a:hover,
-.archive-entry-title a:focus-visible { color: var(--accent); }
 .archive-entry-meta {
-  margin: 0 0 0.6rem;
-  font-size: 0.85rem;
+  margin: 0 0 0.4rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
 }
 .archive-entry-desc {
   margin: 0;
   color: var(--text-muted);
-  font-size: 0.96rem;
-  line-height: 1.6;
+  font-size: 0.93rem;
+  line-height: 1.55;
 }
 
 /* --- Footer --- */
