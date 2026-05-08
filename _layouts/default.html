@@ -36,10 +36,6 @@
     <noscript><link rel="stylesheet"
           href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}"></noscript>
 
-    <!-- Turbo Drive -->
-    <script type="module"
-            src="https://unpkg.com/@hotwired/turbo@8/dist/turbo.es2017-esm.js" crossorigin="anonymous"></script>
-
     <!-- speculation rules -->
     <script type="speculationrules">
     { "prerender": [ { "source":"list","urls":["/blog/","/about/","/"] } ] }
@@ -82,7 +78,7 @@
           {% endfor %}
 
           <button id="theme-toggle" class="theme-btn"
-            aria-label="Toggle colour scheme" data-turbo-permanent>
+            aria-label="Toggle colour scheme">
             <span class="material-symbols-outlined" id="theme-icon" aria-hidden="true" data-icon></span>
           </button>
         </nav>

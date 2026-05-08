@@ -1,7 +1,6 @@
 /* ------------------------------------------------------------------
  *  • lazy-loads Anchor-JS the first time it’s needed
  *  • adds clean, right-hand anchor links to every heading
- *  • re-runs on each Turbo navigation so “next/prev” posts work
  * ----------------------------------------------------------------- */
 
 (() => {
@@ -37,11 +36,10 @@
     });
   }
 
-  /* ---------------------------------------------------- run once + on Turbo */
+  /* ---------------------------------------------------- run once */
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', addHeadingAnchors, { once: true });
   } else {
     addHeadingAnchors();
   }
-  document.addEventListener('turbo:load', addHeadingAnchors);
 })();
