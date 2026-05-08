@@ -107,8 +107,8 @@ header.site-header {
   height: 5.5rem;
   flex-shrink: 0;
   display: block;
+  border-radius: 50%;
 }
-[data-theme='dark'] .home-hero-stamp { filter: invert(1) brightness(.92); }
 .home-hero-text { min-width: 0; }
 .home-hero h1 {
   font-size: 1.95rem;
