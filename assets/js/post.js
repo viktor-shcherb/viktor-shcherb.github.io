@@ -26,12 +26,7 @@
     if (!article) return;                     // nothing to do
 
     ensureAnchorLib().then(anchors => {
-      anchors.options = { placement: 'right', icon: '', visible: 'hover' };
-
-      /* remove any anchors Turbo carried over from the previous post */
-      anchors.remove('h1,h2,h3,h4,h5,h6', article);
-
-      /* add fresh ones for the current post */
+      anchors.options = { placement: 'right', icon: '#', visible: 'hover' };
       anchors.add('h1,h2,h3,h4,h5,h6', article);
     });
   }
