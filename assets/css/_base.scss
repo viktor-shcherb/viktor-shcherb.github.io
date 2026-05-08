@@ -239,6 +239,45 @@ img.avatar {
   margin-bottom: 1.5em;
 }
 
+/* --- Blog archive (/blog/) --- */
+.archive-title {
+  margin-top: 0;
+}
+.archive-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0;
+}
+.archive-entry {
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--border);
+}
+.archive-entry:last-child { border-bottom: 1px solid var(--border); }
+.archive-entry-title {
+  font-size: 1.25rem;
+  margin: 0 0 0.25rem;
+  letter-spacing: -0.01em;
+}
+.archive-entry-title a,
+.archive-entry-title a:visited {
+  color: var(--text);
+  text-decoration: none;
+}
+.archive-entry-title a:hover,
+.archive-entry-title a:focus-visible { color: var(--accent); }
+.archive-entry-meta {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.archive-entry-desc {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.96rem;
+  line-height: 1.55;
+}
+
 /* --- Footer --- */
 .site-footer {
   margin-top: 4rem;

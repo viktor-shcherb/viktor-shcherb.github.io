@@ -87,7 +87,8 @@
             </h2>
 
             <ul class="posts-feed">
-            {%- for post in site.posts limit:5 -%}
+            {%- assign recent = site.posts | where_exp: "p", "p.hidden != true" -%}
+            {%- for post in recent limit:5 -%}
               <li>
                 <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
                 <time datetime="{{ post.date | date_to_xmlschema }}">
