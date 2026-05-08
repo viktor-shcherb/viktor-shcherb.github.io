@@ -422,11 +422,17 @@ img.avatar {
   gap: 1.25rem;
   margin: 0 0 2rem;
 }
-.project-logo {
+.project-logo,
+.post-content .project-logo {
   width: 5.5rem;
   height: 5.5rem;
   flex-shrink: 0;
   display: block;
+  /* Defeat .post-content img { margin: 1.4em auto } — inside a flex
+     container the auto horizontal margin would eat all the free space
+     and float the logo into the middle of the row. */
+  margin: 0;
+  border-radius: 0;
 }
 .project-hero-text { min-width: 0; }
 .project-title {
