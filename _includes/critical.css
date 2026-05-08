@@ -46,9 +46,16 @@ body {
 .wrapper {
   max-width: 38rem;
   margin-inline: auto;
-  padding: 2.5rem 1.5rem 4rem;
+  padding: 2.5rem 1.5rem 2.5rem;
   position: relative;
+
+  /* Sticky footer: short pages still pin the footer to the viewport bottom. */
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
+.wrapper > section { flex: 1 0 auto; }
 
 /* --- Header --- */
 header.site-header {
