@@ -19,17 +19,15 @@ description: "All posts by Viktor Shcherbakov — long-form notes on ML, softwar
           <img src="{{ post.image }}" alt="" loading="lazy" decoding="async">
         </a>
       {%- endif -%}
-      <div class="archive-entry-text">
-        <h2 class="archive-entry-title">
-          <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-        </h2>
-        <p class="archive-entry-meta">
-          <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %-d, %Y" }}</time>
-        </p>
-        {%- if post.description -%}
-          <p class="archive-entry-desc">{{ post.description | strip_newlines | strip }}</p>
-        {%- endif -%}
-      </div>
+      <h2 class="archive-entry-title">
+        <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+      </h2>
+      <p class="archive-entry-meta">
+        <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %-d, %Y" }}</time>
+      </p>
+      {%- if post.description -%}
+        <p class="archive-entry-desc">{{ post.description | strip_newlines | strip }}</p>
+      {%- endif -%}
     </li>
   {%- endfor -%}
   </ol>
