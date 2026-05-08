@@ -2,8 +2,8 @@
 layout: post
 title: "Path to working permits for Swiss graduates"
 author: "Viktor Shcherbakov"
-image: "https://images.unsplash.com/photo-1593186344142-ef775a6e596f?w=1200&h=630&fit=crop&auto=format&q=75"
-image_alt: "Red mountain train traversing the Swiss alps"
+image: /assets/images/posts/path-to-working-permits-for-swiss-graduates/cover.jpg
+image_alt: "Stylised etching of a mountain train traversing the Swiss alps"
 image_credit:
   by: "Piotr Guzik"
   url: "https://unsplash.com/@piotrguzik"

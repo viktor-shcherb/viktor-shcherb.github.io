@@ -29,11 +29,6 @@
     <noscript><link rel="stylesheet"
           href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}"></noscript>
 
-    <!-- speculation rules -->
-    <script type="speculationrules">
-    { "prerender": [ { "source":"list","urls":["/blog/","/about/","/"] } ] }
-    </script>
-
     <!-- structured information about blog owner -->
     {% include person-schema.html %}
 
