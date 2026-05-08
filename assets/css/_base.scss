@@ -113,6 +113,15 @@ li { margin: 0.25em 0; }
 .post-content {
   font-size: 1.0625rem;
   line-height: 1.75;
+  /* Mobile safety: long URLs and tokens shouldn't overflow the column. */
+  overflow-wrap: anywhere;
+}
+.post-content table {
+  /* Wide tables become horizontally scrollable inside the column rather
+     than overflowing the viewport. */
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
 }
 .post-content h1 { font-size: 2rem; }
 .post-content h2 { font-size: 1.45rem; margin-top: 2em; }
@@ -303,18 +312,32 @@ img.avatar {
     var(--bg) 80%,
     var(--bg) 100%
   );
-  /* Blur the cover image visible through the gradient ramp. The
-     opaque bottom of the gradient hides the blur; the transparent
-     top shows a blurred slice of the image. */
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
   color: var(--text);
   /* Restore type defaults that .archive-entry zeroed out for layout. */
   font-size: 1rem;
   line-height: 1.6;
 }
-.archive-entry-title {
+
+/* Blur layer that fades in alongside the gradient. The pseudo-element
+   carries backdrop-filter; mask-image scopes the blur effect to the
+   bottom 80 % of the panel so the cover image stays sharp at the top
+   and gradually goes blurred as the gradient takes over. The pseudo
+   sits on top of the gradient in stacking order; text inside the
+   panel sits on top of the pseudo because it comes later in DOM. */
+.archive-entry-content::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, transparent 20%, #000 80%, #000 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, transparent 20%, #000 80%, #000 100%);
+}
+.archive-entry-title,
+.post-content .archive-entry-title {
   font-size: 1.45rem;
+  /* explicit zero — overrides .post-content h2 { margin-top: 2em } */
   margin: 0 0 0.3rem;
   color: var(--text);
   letter-spacing: -0.015em;
@@ -396,11 +419,13 @@ img.avatar {
   flex: 1 1 0;
   min-width: 0;
 }
-.project-card-title {
+.project-card-title,
+.post-content .project-card-title {
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
   gap: 0.5rem;
+  /* explicit zero — overrides .post-content h2 { margin-top: 2em } */
   margin: 0 0 0.15rem;
   font-size: 1.2rem;
   font-weight: 600;

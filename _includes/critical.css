@@ -41,6 +41,10 @@ body {
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* Belt-and-braces against rogue horizontal overflow (negative margins,
+     wide tables, long URLs in posts). `clip` keeps sticky positioning
+     working unlike `hidden`. */
+  overflow-x: clip;
 }
 
 .wrapper {
