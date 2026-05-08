@@ -1,7 +1,7 @@
 title: Viktor Shcherbakov
 tagline: Machine Learning Engineer
 description: >-
-  This is a personal website where I write about my experience, thoughts and share 
+  This is a personal website where I write about my experience, thoughts and share
   potentially useful information.
 url: "https://viktor-shcherb.github.io"
 baseurl: ""
@@ -16,9 +16,7 @@ future: true          # tells Jekyll to publish posts dated in the future
 # remove .html from the blog pages
 permalink: /:year/:month/:day/:title/
 
-remote_theme: pages-themes/minimal
 plugins:
-  - jekyll-remote-theme
   - jekyll-seo-tag
   - jekyll-sitemap
   - jekyll-feed
@@ -27,11 +25,6 @@ plugins:
 sass:
   load_paths:
     - assets/css
-defaults:
-  -
-    scope: { path: "" }
-    values:
-      header: header-custom
 
 feed:
   path: feed.xml
@@ -41,4 +34,3 @@ feed:
   author_name: Viktor Shcherbakov
   author_url: https://viktor-shcherb.github.io/about/
   full_content: true
-
