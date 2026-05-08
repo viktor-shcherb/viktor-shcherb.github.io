@@ -1,12 +1,14 @@
 /* ------------------------------------------------------------------
- *  – registers the Service Worker
+ *  – registers the (self-unregistering) Service Worker
  *  – handles the nav dropdowns with event-delegation
- *  – repeats the loader-fade after every Turbo navigation
  * ----------------------------------------------------------------- */
 
 /* ———————————————————————————————————————— service-worker — */
+/* The SW only exists to clean up a previous install from the algoprep
+ * era. Once activated, it unregisters itself; visitors with no prior
+ * SW will register the stub and immediately drop it. Both calls are
+ * deferred to load so they never block first paint. */
 if ('serviceWorker' in navigator) {
-  /* defer until full load so it never blocks first paint */
   window.addEventListener('load', () =>
     navigator.serviceWorker.register('/service-worker.js').catch(() => {})
   );
