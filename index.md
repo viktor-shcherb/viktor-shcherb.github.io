@@ -8,6 +8,6 @@ permalink: /
 home: true
 ---
 
-This is where I keep notes. ML research at EPFL pays the bills, side projects keep me honest, and life in Switzerland keeps me amused. Long-form thoughts and projects, slowly.
+This is where I keep notes — on ML research at EPFL, the side projects I'm building, and life in Switzerland. Long-form thoughts and projects, slowly.
 
 {% include currently.html %}

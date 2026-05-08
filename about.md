@@ -15,11 +15,11 @@ schema: person
      loading="lazy"
      decoding="async">
 
-I grew up in Moscow. I studied computer science at MSU's Faculty of Computational Mathematics and Cybernetics, and spent most evenings during the BSc at the Russian Academy of Sciences — deploying and fine-tuning BERT on whichever custom task the lab was chasing that month. My first real ML job, paid by the hour, slowly figuring out the difference between a model that fits and a model that ships.
+I grew up in Moscow. I studied computer science at MSU's Faculty of Computational Mathematics and Cybernetics, alternating full days on campus with full days at an institute of the Russian Academy of Sciences, where a department was building a BERT-based product across a rotating set of tasks. My first real ML job — the start of figuring out the difference between a model that fits and one that ships.
 
 I came to Switzerland aiming for a PhD at EPFL. The route's been a detour: an MSc in computer science from the University of Geneva, then a stretch at UNIL's Digital Markets lab on the intersection of AI and digital-platform economics. I'm now an ML research engineer at EPFL's MLO group, working on LLMs. The PhD is still the goal.
 
-Side projects keep me honest. **[jseek.co]({{ '/projects/jseek/' | relative_url }})** — a watchlist-style aggregator for company career pages — began as the scraper I wrote for myself during a long Swiss job hunt and grew into something I now run as a small product. There's usually something else half-built on the side too.
+On the side: **[jseek.co]({{ '/projects/jseek/' | relative_url }})** — a watchlist-style aggregator for company career pages — which began as the scraper I wrote for myself during a long Swiss job hunt and grew into a small product I still run. Something else is usually half-built next to it.
 
 {% include currently.html heading_level="h2" %}
 
