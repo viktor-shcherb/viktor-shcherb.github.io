@@ -29,6 +29,9 @@
     <noscript><link rel="stylesheet"
           href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}"></noscript>
 
+    <!-- feed auto-discovery -->
+    <link rel="alternate" type="application/atom+xml" title="{{ site.feed.title | default: site.title }}" href="{{ '/feed.xml' | absolute_url }}">
+
     <!-- structured information about blog owner -->
     {% include person-schema.html %}
 
