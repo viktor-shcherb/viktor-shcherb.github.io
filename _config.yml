@@ -4,7 +4,7 @@ description: >-
   Personal site of Viktor Shcherbakov — Machine Learning Engineer based in Switzerland.
   Long-form notes on ML, software, and the practical side of working in Switzerland as
   a non-EU graduate.
-url: "https://viktor-shcherb.github.io"
+url: "https://vshcherbakov.com"
 baseurl: ""
 logo: /logos-flavicon/favicon-96x96.png
 # Default Open Graph / Twitter card image for pages without an explicit `image:`.
@@ -54,5 +54,5 @@ feed:
   description: "Long-form notes on ML, software, and the practical side of life and work in Switzerland."
   lang: en-US
   author_name: Viktor Shcherbakov
-  author_url: https://viktor-shcherb.github.io/about/
+  author_url: https://vshcherbakov.com/about/
   full_content: true
