@@ -1,0 +1,127 @@
+name: IndexNow ping
+
+# Fires after a successful Pages deploy. Detects which posts under
+# `_posts/` changed in the deployed commit and POSTs their canonical
+# URLs to IndexNow (Bing + Yandex + others). Skips posts marked
+# `hidden: true` so the hidden Hello-world post isn't advertised even
+# if it's edited.
+#
+# The IndexNow key is the basename of the `*.txt` file in the repo
+# root (e.g. `60a220adbde50722730c23a928e0b74c.txt` → key
+# `60a220adbde50722730c23a928e0b74c`). The file's content must equal
+# that key for ownership verification — keep them in sync.
+
+on:
+  workflow_run:
+    workflows: ['Build and Deploy Site']
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      submit_all:
+        description: 'Submit every visible post URL (use after the first setup)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master') }}
+    runs-on: ubuntu-latest
+    env:
+      HOST: vshcherbakov.com
+      ENDPOINT: https://api.indexnow.org/indexnow
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 5
+
+      - name: Discover IndexNow key
+        id: key
+        run: |
+          set -euo pipefail
+          keyfile=$(ls *.txt 2>/dev/null | grep -E '^[a-zA-Z0-9-]{8,128}\.txt$' | head -1 || true)
+          if [ -z "$keyfile" ]; then
+            echo "::error::No IndexNow key file found at repo root."
+            exit 1
+          fi
+          key=$(basename "$keyfile" .txt)
+          file_contents=$(tr -d '[:space:]' < "$keyfile")
+          if [ "$file_contents" != "$key" ]; then
+            echo "::error::Key file $keyfile content does not match its filename."
+            exit 1
+          fi
+          echo "key=$key" >> "$GITHUB_OUTPUT"
+          echo "keyfile=$keyfile" >> "$GITHUB_OUTPUT"
+
+      - name: Compute URL list
+        id: urls
+        run: |
+          set -euo pipefail
+          submit_all="${{ github.event.inputs.submit_all }}"
+
+          if [ "$submit_all" = 'true' ]; then
+            mapfile -t posts < <(ls _posts/*.md 2>/dev/null || true)
+          else
+            mapfile -t posts < <(git diff --name-only HEAD~1 HEAD -- '_posts/*.md' 2>/dev/null || true)
+          fi
+
+          if [ ${#posts[@]} -eq 0 ]; then
+            echo 'No posts changed; nothing to ping.'
+            echo 'urls=' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          urls=()
+          for p in "${posts[@]}"; do
+            [ -f "$p" ] || continue
+            # Skip hidden posts (matches `hidden: true` front-matter).
+            if grep -qE '^hidden:\s*true\s*$' "$p"; then
+              echo "skip (hidden): $p"
+              continue
+            fi
+            base=$(basename "$p" .md)
+            year=${base:0:4}
+            month=${base:5:2}
+            day=${base:8:2}
+            slug=${base:11}
+            urls+=("https://${HOST}/${year}/${month}/${day}/${slug}/")
+          done
+
+          if [ ${#urls[@]} -eq 0 ]; then
+            echo 'All changed posts were hidden; nothing to ping.'
+            echo 'urls=' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          printf '%s\n' "${urls[@]}"
+          # JSON array literal for the request body
+          json=$(printf '%s\n' "${urls[@]}" | jq -R . | jq -s .)
+          {
+            echo 'urls<<EOF'
+            echo "$json"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: POST to IndexNow
+        if: steps.urls.outputs.urls != ''
+        env:
+          KEY: ${{ steps.key.outputs.key }}
+          KEYFILE: ${{ steps.key.outputs.keyfile }}
+          URL_JSON: ${{ steps.urls.outputs.urls }}
+        run: |
+          set -euo pipefail
+          payload=$(jq -n \
+            --arg host "$HOST" \
+            --arg key "$KEY" \
+            --arg keyLocation "https://${HOST}/${KEYFILE}" \
+            --argjson urlList "$URL_JSON" \
+            '{host: $host, key: $key, keyLocation: $keyLocation, urlList: $urlList}')
+          echo "Submitting:"
+          echo "$payload" | jq .
+          curl -fsS -X POST "$ENDPOINT" \
+            -H 'Content-Type: application/json; charset=utf-8' \
+            --data-raw "$payload"
+          echo "OK"

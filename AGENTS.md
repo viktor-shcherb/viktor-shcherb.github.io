@@ -52,6 +52,12 @@ For inline figures inside the body, use semantic `<figure>` markup:
 </figure>
 ```
 
+## IndexNow
+
+`/<key>.txt` at the repo root is the IndexNow ownership-verification file (Bing, Yandex, etc.). The filename **is** the key; the file content must equal the filename's basename. Do not rename without updating both.
+
+`.github/workflows/indexnow.yml` fires after a successful `Build and Deploy Site` run. It finds which `_posts/**.md` changed in the deployed commit, skips any post with `hidden: true` front-matter, maps the rest to canonical URLs, and POSTs them to `https://api.indexnow.org/indexnow`. The workflow has a `workflow_dispatch` trigger with a `submit_all` boolean for the initial ping after setting things up.
+
 ## Maintenance
 
 When adding, removing, or renaming files in this repository, update this `AGENTS.md` so it reflects the current structure.
