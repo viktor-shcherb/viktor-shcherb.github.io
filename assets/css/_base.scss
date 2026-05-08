@@ -228,13 +228,17 @@ h6:hover .anchorjs-link { opacity: 0.6; }
 /* --- Avatar (real portrait used on /about/) --- */
 .post-content img.avatar,
 img.avatar {
-  display: block;
   width: 11rem;
   height: 11rem;
   border-radius: 50%;
   object-fit: cover;
-  margin: 0 0 1.5rem;
   box-shadow: 0 1px 4px rgba(0, 0, 0, .12);
+  /* Editorial float: image sits in the top-right of the bio and text
+     wraps around its circular edge. shape-outside follows the circle
+     so the wrap hugs the curve instead of a rectangle. */
+  float: right;
+  shape-outside: circle();
+  margin: 0.25rem 0 1rem 1.5rem;
 }
 .img-caption {
   display: block;
@@ -589,5 +593,17 @@ th { color: var(--text); font-weight: 600; }
     flex: 0 0 2.5rem;
     width: 2.5rem;
     height: 2.5rem;
+  }
+
+  /* Mobile: avatar can't share a line with text; let it stack
+     normally above the first paragraph and stay centered. */
+  .post-content img.avatar,
+  img.avatar {
+    float: none;
+    shape-outside: none;
+    display: block;
+    width: 9rem;
+    height: 9rem;
+    margin: 0 auto 1rem;
   }
 }
