@@ -1,0 +1,15 @@
+{%- comment -%}
+"Currently" block, shared between / and /about/. Pass `heading_level`
+(default h3) to control the heading element so the block sits at the
+right depth in each page's heading hierarchy. To refresh: edit the
+date and the bullets together.
+{%- endcomment -%}
+{%- assign hl = include.heading_level | default: 'h3' -%}
+<{{ hl }} id="currently">Currently <span class="currently-date">— May 2026</span></{{ hl }}>
+
+<ul>
+  <li>Working on LLMs at <strong>MLO, EPFL</strong>.</li>
+  <li>Running <a href="{{ '/projects/jseek/' | relative_url }}">jseek.co</a> as a small side product.</li>
+  <li>Slowly retooling this site and writing more.</li>
+  <li>Settling deeper into Lausanne — paperwork, neighbourhood, the lake.</li>
+</ul>
