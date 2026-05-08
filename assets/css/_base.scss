@@ -294,14 +294,15 @@ img.avatar {
   position: absolute;
   inset: auto 0 0 0;
   padding: 4.5rem 1.4rem 1.3rem;
-  /* Solid behind the text, then a steep ramp to transparent so most of
-     the cover stays visible above the panel. */
+  /* Top 30 % of the panel is fully transparent (image shows clearly),
+     middle 30 % is the linear ramp, bottom 40 % is solid var(--bg)
+     behind the text. Stops are written `to top`, so 0 % = bottom. */
   background: linear-gradient(
     to top,
     var(--bg) 0%,
-    var(--bg) 45%,
-    color-mix(in srgb, var(--bg) 60%, transparent) 65%,
-    transparent 80%
+    var(--bg) 40%,
+    transparent 70%,
+    transparent 100%
   );
   color: var(--text);
   /* Restore type defaults that .archive-entry zeroed out for layout. */
@@ -335,10 +336,8 @@ img.avatar {
 .featured-projects .posts-feed-row .project-tagline {
   font-size: 0.85rem;
   color: var(--text-muted);
-  white-space: normal;
   text-align: right;
-  flex: 1 1 auto;
-  min-width: 0;
+  white-space: normal;
 }
 
 /* --- /projects/ listing as cards (icon stamped at top, text below) --- */
@@ -364,39 +363,49 @@ img.avatar {
 .post-content .project-card-link,
 .post-content .project-card-link:visited {
   display: block;
-  padding: 1.5rem;
+  padding: 1.4rem 1.5rem;
   text-decoration: none;
   color: var(--text);
 }
 .project-card-link * { text-decoration: none !important; }
+.project-card-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin: 0 0 0.7rem;
+}
 .project-card-logo,
 .post-content .project-card-logo {
-  width: 3.75rem;
-  height: 3.75rem;
+  flex: 0 0 2.75rem;
+  width: 2.75rem;
+  height: 2.75rem;
   display: block;
-  /* override .post-content img { margin: 1.4em auto } so the icon
-     stays left-aligned at the card top instead of centring */
-  margin: 0 0 1.1rem;
+  /* override .post-content img { margin: 1.4em auto } that would
+     otherwise auto-center the icon and add vertical margin */
+  margin: 0;
   border-radius: 0;
   max-width: none;
 }
-.project-card-text { min-width: 0; }
 .project-card-title {
   display: flex;
   align-items: baseline;
-  gap: 0.6rem;
   flex-wrap: wrap;
-  font-size: 1.35rem;
-  margin: 0 0 0.3rem;
-  line-height: 1.2;
-  letter-spacing: -0.015em;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
   color: var(--text);
 }
 .project-card:hover .project-card-title { color: var(--accent); }
 .project-card-tagline {
-  margin: 0 0 0.5rem;
-  color: var(--text);
-  font-size: 0.98rem;
+  margin: 0;
+  flex: 1 1 14rem;
+  min-width: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
   line-height: 1.45;
 }
 .project-card-desc {
