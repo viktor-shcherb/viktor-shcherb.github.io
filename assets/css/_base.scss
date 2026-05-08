@@ -247,125 +247,62 @@ img.avatar {
 }
 
 /* --- Blog archive (/blog/) --- */
-.archive-title {
-  margin-top: 0;
-}
+.archive-title { margin-top: 0; }
+
+/* 2-column grid on desktop, single column on narrow viewports. */
 .archive-list {
   list-style: none;
   padding: 0;
   margin: 1.5rem 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
 }
-.archive-list { list-style: none; padding: 0; margin: 1.5rem 0 0; }
 
-/* Archive cards: cover image with text overlaid on a palette gradient.
-   The gradient fades to var(--bg) so text reads against the cream paper
-   in light mode and against the warm-near-black in dark mode. */
 .archive-entry {
-  position: relative;
-  display: block;
-  margin: 1.25rem 0;
-  border-radius: 8px;
+  margin: 0;
   background: var(--surface);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
-  transition: box-shadow .2s ease, transform .2s ease;
-  /* Collapse any inline whitespace inside the <li> so the cover image
-     sits flush against the card's top edge. .archive-entry-content
-     restores font-size / line-height for its own text. */
-  font-size: 0;
-  line-height: 0;
-  /* Clip in two ways: clip-path is the authoritative clip that respects
-     transformed children (Chrome/Safari leak the scaled image's bottom
-     edge past plain `overflow:hidden` + `border-radius`). isolation
-     gives us our own stacking context. */
+  border-radius: 8px;
   overflow: hidden;
-  clip-path: inset(0 round 8px);
-  isolation: isolate;
-  will-change: transform;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
+  transition: transform .2s ease, box-shadow .2s ease;
 }
 .archive-entry:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
 }
 .archive-entry-link,
-.archive-entry-link:visited {
+.archive-entry-link:visited,
+.post-content .archive-entry-link,
+.post-content .archive-entry-link:visited {
   display: block;
-  color: inherit;
+  color: var(--text);
   text-decoration: none;
 }
+/* Kill any inherited underlines from .post-content a rules. */
+.archive-entry-link * { text-decoration: none !important; }
 .archive-entry-cover {
   display: block;
   width: 100%;
   height: auto;
+  /* Match the source aspect ratio of the stamp covers (1600 × 840) so
+     object-fit: cover doesn't shave the sides off. */
   aspect-ratio: 1600 / 840;
   object-fit: cover;
+  margin: 0;
 }
 .archive-entry-content {
-  position: absolute;
-  inset: auto 0 0 0;
-  padding: 4.5rem 1.4rem 1.3rem;
-  /* Direction `to bottom`. Aggressive ease-in: top 15 % fully
-     transparent (image sharp), then a steep ramp finishing by 28 %
-     so the title (which sits around 30 % from the top of the panel)
-     is already on a solid var(--bg) backdrop. */
-  background: linear-gradient(
-    to bottom,
-    transparent 0%,
-    transparent 15%,
-    color-mix(in srgb, var(--bg) 60%, transparent) 20%,
-    color-mix(in srgb, var(--bg) 90%, transparent) 24%,
-    var(--bg) 28%,
-    var(--bg) 100%
-  );
-  color: var(--text);
-  /* Restore type defaults that .archive-entry zeroed out for layout. */
-  font-size: 1rem;
-  line-height: 1.6;
-}
-
-/* Blur layer that fades in alongside the gradient. The pseudo-element
-   carries backdrop-filter; mask-image scopes the blur effect to the
-   bottom 80 % of the panel so the cover image stays sharp at the top
-   and gradually goes blurred as the gradient takes over. The pseudo
-   sits on top of the gradient in stacking order; text inside the
-   panel sits on top of the pseudo because it comes later in DOM. */
-.archive-entry-content::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  -webkit-backdrop-filter: blur(18px);
-  backdrop-filter: blur(18px);
-  /* Same aggressive ease-in as the bg gradient so the blur intensity
-     matches the cream tint at every Y position. By the title's
-     vertical position the blur is at full strength. */
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    transparent 15%,
-    rgba(0, 0, 0, 0.6) 20%,
-    rgba(0, 0, 0, 0.9) 24%,
-    #000 28%,
-    #000 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    transparent 15%,
-    rgba(0, 0, 0, 0.6) 20%,
-    rgba(0, 0, 0, 0.9) 24%,
-    #000 28%,
-    #000 100%
-  );
+  padding: 1.1rem 1.2rem 1.3rem;
 }
 .archive-entry-title,
 .post-content .archive-entry-title {
-  font-size: 1.45rem;
   /* explicit zero — overrides .post-content h2 { margin-top: 2em } */
-  margin: 0 0 0.3rem;
-  color: var(--text);
-  letter-spacing: -0.015em;
-  line-height: 1.2;
+  margin: 0 0 0.4rem;
+  font-size: 1.15rem;
   font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  color: var(--text);
   transition: color .2s ease;
 }
 .archive-entry:hover .archive-entry-title { color: var(--accent); }
@@ -599,24 +536,14 @@ th, td {
 }
 th { color: var(--text); font-weight: 600; }
 
-/* --- Mobile: stacked blog cards (image + text), no gradient overlay
-       --- */
+/* --- Mobile tweaks --- */
 @media (max-width: 30rem) {
-  .archive-entry-cover {
-    aspect-ratio: 16 / 10;
-  }
-  .archive-entry-content {
-    position: static;
-    inset: auto;
-    padding: 1.1rem 1rem 1.2rem;
-    background: var(--surface);
-  }
-  .archive-entry-content::before { display: none; }
-  .archive-entry-title,
-  .post-content .archive-entry-title {
-    font-size: 1.15rem;
-  }
-  .archive-entry-desc { font-size: 0.88rem; }
+  /* Collapse blog archive grid to a single column. Cards keep the
+     stacked cover-on-top layout; image keeps its source aspect ratio
+     so nothing gets cropped on the sides. */
+  .archive-list { grid-template-columns: 1fr; gap: 1rem; }
+  .archive-entry-content { padding: 1rem 1.1rem 1.2rem; }
+  .archive-entry-desc { font-size: 0.92rem; }
 
   /* Project card breathing room on small viewports */
   .project-card-link,
