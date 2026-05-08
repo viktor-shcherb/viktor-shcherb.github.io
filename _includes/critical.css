@@ -1,89 +1,51 @@
 /* --- Critical CSS for initial render --- */
-:root{
-  --bg:          #ffffff;  /* light mode */
-  --surface:     #efefef;
-  --text:        #232730;
+:root {
+  --bg:      #ffffff;
+  --surface: #efefef;
+  --text:    #232730;
 
   --accent-h: 184deg;
   --accent-s: 50%;
-  --accent-l: 35%;      /* darker ⇒ passes contrast on light bg */
+  --accent-l: 35%;     /* darker → passes contrast on light bg */
   --accent: hsl(var(--accent-h) var(--accent-s) var(--accent-l));
 
-  /* tuned colours for tests */
-  --green: color-mix(in srgb, hsl(140deg 60% 40%) 80%, var(--accent));
-  --red:   color-mix(in srgb, hsl(0deg 70% 45%) 80%, var(--accent));
-  --surface-pass: color-mix(in srgb, var(--green) 15%, transparent);
-  --surface-fail: color-mix(in srgb, var(--red) 15%, transparent);
-
-  /*--accent:      #4b6f71; */
-  --surface-accented: color-mix(in srgb, var(--accent) 6%, transparent);
-
-  --text-muted:  #6f747d;  /* 60 % greyed version of --text */
-  --btn-disabled-bg: #6e747d;      /* same as text-muted */
-  --btn-text:        #ffffff;      /* one text colour for ALL buttons */
-
-  /* --- Overlay / glass --- */
-  --glass-overlay-clr : rgba(20 20 30 / .15);  /* tint colour   */
-  --glass-blur        : 6px;                  /* blur strength */
-  --glass-dim         : 1;                    /* brightness()  */
-
-  --surface-hover : color-mix(in srgb, var(--surface) 90%, black 10%);
-  --surface-active: color-mix(in srgb, var(--surface) 80%, black 20%);
-
-  --accent-disabled: #b3b7c0;
+  --text-muted: #6f747d;
 }
 
-[data-theme='dark']{
-  --bg:          #232730;
-  --surface:     #31353e;
-  --text:        #efefef;
+[data-theme='dark'] {
+  --bg:      #232730;
+  --surface: #31353e;
+  --text:    #efefef;
+
   --accent-s: 15%;
-  --accent-l: 50%;      /* lighter ⇒ pops on dark bg */
-  /*--accent:      #82a9ac;*/
+  --accent-l: 50%;     /* lighter → pops on dark bg */
 
-  --green: color-mix(in srgb, hsl(140deg 60% 50%) 80%, var(--accent));
-  --red:   color-mix(in srgb, hsl(0deg 70% 60%) 80%, var(--accent));
-
-  --btn-disabled-bg: #31353e;      /* same as surface */
-  --text-muted:  #a9adb8;  /* 65 % tint of --text */
-
-  /* lighter tint + dimmer backdrop */
-  --glass-overlay-clr : rgba(255 255 255 / .08);
-  --glass-dim         : .7;
-
-  --surface-hover : color-mix(in srgb, var(--surface) 85%, white 15%);
-  --surface-active: color-mix(in srgb, var(--surface) 70%, white 30%);
-
-  --accent-disabled: #50545e;
+  --text-muted: #a9adb8;
 }
 
-html{
-  scrollbar-gutter: stable both-edges;
-}
-html{scrollbar-gutter:stable both-edges;}
-body{background:var(--bg);color:var(--text);font-family:sans-serif;margin:0;}
-.wrapper{max-width:80rem;margin:0 auto;}
-.site-nav{display:flex;align-items:center;gap:1rem;font-weight:600;}
-.site-nav a{position:relative;color:var(--accent);text-decoration:none;padding-block:.25rem;}
-.site-nav a::after{content:"";position:absolute;inset-inline:0;bottom:0;height:2px;border-radius:1px;background:transparent;transition:background .15s ease-in-out;}
-.site-nav a:hover::after,.site-nav a:focus-visible::after,.site-nav a.active::after{background:var(--accent);}
-.theme-btn{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--accent);line-height:1;}
+html { scrollbar-gutter: stable both-edges; }
+body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; }
 
-.wrapper { position: relative; }
+.wrapper { max-width: 80rem; margin: 0 auto; position: relative; }
 
+/* Nav baseline (full styles in _base.scss) */
+.site-nav { display: flex; align-items: center; gap: 1rem; font-weight: 600; }
+.site-nav a { position: relative; color: var(--accent); text-decoration: none; padding-block: .25rem; }
+.site-nav a::after { content: ""; position: absolute; inset-inline: 0; bottom: 0; height: 2px; border-radius: 1px; background: transparent; transition: background .15s ease-in-out; }
+.site-nav a:hover::after, .site-nav a:focus-visible::after, .site-nav a.active::after { background: var(--accent); }
+.theme-btn { margin-left: auto; background: none; border: none; cursor: pointer; color: var(--accent); line-height: 1; }
+
+/* Code blocks (FOUC-safe baseline) */
 pre, code, .highlight {
-  background: var(--surface) !important;
-  color: var(--text) !important;
+  background: var(--surface);
+  color: var(--text);
   border-radius: 4px;
   padding: 0.4em 0.7em;
   font-family: 'Fira Mono', 'Consolas', monospace;
   font-size: 1em;
-  box-shadow: none;
-  border: none;
-  margin-top: 0rem;
+  margin-top: 0;
   margin-bottom: 1rem;
 }
-
 
 code {
   padding: 0.15em 0.35em;
@@ -91,35 +53,26 @@ code {
   font-size: 1em;
 }
 
-/* --- Icon image helper ------------------------------------- */
-/* Add class="btn-icon" (or .btn__icon) to any <img> inside a button. */
-.btn-icon{
-  height:1.4em;
-  width:1.4em;
-  font-size:1.4em;  /* for some reason this makes the size better */
-
-  /* — Layout — */
-  flex-shrink:0;        /* prevents icon from shrinking in flex buttons */
-  display:inline-block; /* ensures the width/height actually apply      */
-  vertical-align:middle;
+/* Icon helpers used by the copy-code button on first paint */
+.btn-icon {
+  height: 1.4em;
+  width: 1.4em;
+  font-size: 1.4em;
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
   margin-right: .5em;
-
-  /* — Render quality + clean look — */
-  object-fit:contain;   /* avoid distortion for non-SVG images */
-  box-shadow:none !important;   /* nuke any inherited shadows */
-  filter:none !important;       /* avoid unexpected drop-shadows */
+  object-fit: contain;
 }
 
-.btn-icon-material-symbols{
-  font-size:1.65em !important;  /* material-symbols icons obey font-size, so set that too */
-
-  /* — Layout — */
-  flex-shrink:0;        /* prevents icon from shrinking in flex buttons */
-  display:inline-block; /* ensures the width/height actually apply      */
-  vertical-align:middle;
+.btn-icon-material-symbols {
+  font-size: 1.65em;
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
   margin-right: .5em;
 }
 
-pre.copy-wrap{position:relative;}
-.copy-btn{position:absolute;top:.25em;right:.25em;background:none;border:none;color:var(--accent);cursor:pointer;padding:.2em;line-height:1;display:flex;align-items:center;}
-.copy-btn[data-copied]{color:var(--accent);}
+pre.copy-wrap { position: relative; }
+.copy-btn { position: absolute; top: .25em; right: .25em; background: none; border: none; color: var(--accent); cursor: pointer; padding: .2em; line-height: 1; display: flex; align-items: center; }
+.copy-btn[data-copied] { color: var(--accent); }
