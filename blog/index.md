@@ -14,20 +14,20 @@ description: "All posts by Viktor Shcherbakov — long-form notes on ML, softwar
   <ol class="archive-list">
   {%- for post in visible_posts -%}
     <li class="archive-entry">
-      {%- if post.image -%}
-        <a class="archive-entry-cover" href="{{ post.url | relative_url }}" aria-hidden="true" tabindex="-1">
-          <img src="{{ post.image }}" alt="" loading="lazy" decoding="async">
-        </a>
-      {%- endif -%}
-      <h2 class="archive-entry-title">
-        <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-      </h2>
-      <p class="archive-entry-meta">
-        <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %-d, %Y" }}</time>
-      </p>
-      {%- if post.description -%}
-        <p class="archive-entry-desc">{{ post.description | strip_newlines | strip }}</p>
-      {%- endif -%}
+      <a class="archive-entry-link" href="{{ post.url | relative_url }}">
+        {%- if post.image -%}
+          <img class="archive-entry-cover" src="{{ post.image }}" alt="" loading="lazy" decoding="async">
+        {%- endif -%}
+        <div class="archive-entry-content">
+          <h2 class="archive-entry-title">{{ post.title }}</h2>
+          <p class="archive-entry-meta">
+            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %-d, %Y" }}</time>
+          </p>
+          {%- if post.description -%}
+            <p class="archive-entry-desc">{{ post.description | strip_newlines | strip }}</p>
+          {%- endif -%}
+        </div>
+      </a>
     </li>
   {%- endfor -%}
   </ol>
