@@ -39,9 +39,3 @@ function applyTheme(isDark){
 
 /* --- once fonts are ready, paint all glyphs --------------------- */
 document.fonts.ready.then(paintMaterialIcons.bind(null, document));
-
-/* --- repaint on every Turbo render (new <body>) ----------------- */
-document.addEventListener('turbo:render', () => {
-  setIcon(root.dataset.theme === 'dark');   // refresh the toggle itself
-  paintMaterialIcons();                     // paint any new glyphs
-});
