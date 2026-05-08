@@ -275,13 +275,17 @@ img.avatar {
 .archive-entry-link:visited,
 .post-content .archive-entry-link,
 .post-content .archive-entry-link:visited {
-  display: block;
+  /* flex column eliminates the anonymous line box that would otherwise
+     leave a sliver of surface visible above the cover image. */
+  display: flex;
+  flex-direction: column;
   color: var(--text);
   text-decoration: none;
 }
 /* Kill any inherited underlines from .post-content a rules. */
 .archive-entry-link * { text-decoration: none !important; }
-.archive-entry-cover {
+.archive-entry-cover,
+.post-content .archive-entry-cover {
   display: block;
   width: 100%;
   height: auto;
@@ -289,7 +293,10 @@ img.avatar {
      object-fit: cover doesn't shave the sides off. */
   aspect-ratio: 1600 / 840;
   object-fit: cover;
+  /* Beat the .post-content img { margin: 1.4em auto } rule that would
+     otherwise push the cover down inside its rounded card. */
   margin: 0;
+  border-radius: 0;
 }
 .archive-entry-content {
   padding: 1.1rem 1.2rem 1.3rem;
