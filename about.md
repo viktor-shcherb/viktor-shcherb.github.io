@@ -15,7 +15,7 @@ schema: person
      loading="lazy"
      decoding="async">
 
-I grew up in Moscow. I studied computer science at MSU's Faculty of Computational Mathematics and Cybernetics, alternating full days on campus with full days at an institute of the Russian Academy of Sciences, where a department was building a product. My piece of it was BERT — fine-tuning it for various information-extraction tasks. My first real ML job — the start of figuring out the difference between a model that fits and one that ships.
+I grew up in Moscow. I studied computer science at MSU's Faculty of Computational Mathematics and Cybernetics, alternating full days on campus with full days at an institute of the Russian Academy of Sciences, where I fine-tuned BERT for various information-extraction tasks. My first real ML job — the start of figuring out the difference between a model that fits and one that ships.
 
 I came to Switzerland aiming for a PhD at EPFL. The route's been a detour: an MSc in computer science from the University of Geneva, then a stretch at UNIL's Digital Markets lab on the intersection of AI and digital-platform economics. I'm now an ML research engineer at EPFL's MLO group, working on LLMs. The PhD is still the goal.
 
