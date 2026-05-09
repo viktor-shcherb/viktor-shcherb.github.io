@@ -1,5 +1,5 @@
 <a href="https://vshcherbakov.com">
-  <img src="https://vshcherbakov.com/assets/images/og/og-default.png" alt="Viktor Shcherbakov — ML Research Engineer at EPFL" width="100%">
+  <img src="https://vshcherbakov.com/assets/images/og/readme-hero.png" alt="Viktor Shcherbakov — ML Research Engineer at EPFL" width="100%">
 </a>
 
 # vshcherbakov.com
