@@ -3,8 +3,7 @@ layout: default
 title: "About"
 description: "ML research engineer at EPFL's MLO group, based in Lausanne. Originally from Moscow; degrees from MSU and the University of Geneva."
 permalink: /about/
-image: "https://github.com/viktor-shcherb.png?size=600"
-image_alt: "Photograph of Viktor Shcherbakov"
+image_alt: "Viktor Shcherbakov — ML Research Engineer at EPFL"
 schema: person
 ---
 

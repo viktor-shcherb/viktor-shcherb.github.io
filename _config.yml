@@ -1,15 +1,17 @@
 title: Viktor Shcherbakov
-tagline: Machine Learning Engineer
+tagline: Machine Learning Research Engineer
 description: >-
-  Personal site of Viktor Shcherbakov — Machine Learning Engineer based in Switzerland.
-  Long-form notes on ML, software, and the practical side of working in Switzerland as
-  a non-EU graduate.
+  Personal site of Viktor Shcherbakov — ML Research Engineer at EPFL's MLO group.
+  Long-form notes on ML, software, and life in Switzerland as a non-EU graduate.
 url: "https://vshcherbakov.com"
 baseurl: ""
 logo: /logos-flavicon/favicon-96x96.png
 # Default Open Graph / Twitter card image for pages without an explicit `image:`.
-image: /logos-flavicon/web-app-manifest-512x512.png
-author: Viktor Shcherbakov
+# 1200x630 PNG so Twitter/LinkedIn unfurls don't letterbox a square logo.
+image: /assets/images/og/og-default.png
+author:
+  name: Viktor Shcherbakov
+  url: https://vshcherbakov.com/about/
 github:
   username: viktor-shcherb
 locale: en_US
@@ -37,6 +39,12 @@ collections:
     sort_by: order
 
 defaults:
+  - scope:
+      path: ""
+    values:
+      # Default Open Graph / Twitter card image used by jekyll-seo-tag.
+      # Pages can override by setting `image:` in their own front matter.
+      image: /assets/images/og/og-default.png
   - scope:
       path: ""
       type: projects
