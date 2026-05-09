@@ -16,7 +16,7 @@ description: "All posts by Viktor Shcherbakov — long-form notes on ML, softwar
     <li class="archive-entry">
       <a class="archive-entry-link" href="{{ post.url | relative_url }}">
         {%- if post.image -%}
-          <img class="archive-entry-cover" src="{{ post.image }}" alt="" loading="lazy" decoding="async">
+          <img class="archive-entry-cover" src="{{ post.image }}" alt="{{ post.image_alt | default: post.title }}" loading="lazy" decoding="async">
         {%- endif -%}
         <div class="archive-entry-content">
           <h2 class="archive-entry-title">{{ post.title }}</h2>

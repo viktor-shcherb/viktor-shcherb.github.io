@@ -4,7 +4,7 @@ title: "What worked when we applied for apartments in Lausanne"
 author: "Viktor Shcherbakov"
 date: 2026-05-08
 image: /assets/images/posts/what-worked-when-we-applied-for-apartments-in-lausanne/cover.jpg
-image_alt: "Stylised view of Lausanne rooftops from an apartment window"
+image_alt: "Stylised ink-stamp view from the window of the Lausanne apartment we eventually landed on — rooftops, the town, a sliver of lake"
 description: >
   One application cycle, four serious dossiers, two contract offers in central Lausanne.
   Notes on what likely mattered, what looked clever but probably didn't, and the

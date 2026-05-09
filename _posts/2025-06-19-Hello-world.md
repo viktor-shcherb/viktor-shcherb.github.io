@@ -6,6 +6,7 @@ description: >
   My “Hello world” post on why I’m launching this blog for long-form thoughts—plus a teaser on Swiss work-permits for non-EU grads.
 tags: ["first post", "hello world", "why bother"]
 hidden: true
+sitemap: false
 ---
 
 # Why bother?
