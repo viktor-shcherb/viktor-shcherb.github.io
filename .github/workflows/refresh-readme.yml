@@ -1,0 +1,36 @@
+name: Refresh README recent posts
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "_posts/**"
+      - "scripts/update_readme_posts.py"
+      - ".github/workflows/refresh-readme.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-readme
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Refresh recent posts
+        run: python3 scripts/update_readme_posts.py
+      - name: Commit if changed
+        run: |
+          if [[ -n $(git status --porcelain README.md) ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add README.md
+            git commit -m "chore: refresh recent posts in README"
+            git push
+          else
+            echo "README already up to date."
+          fi
